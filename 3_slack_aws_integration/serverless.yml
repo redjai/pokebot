@@ -1,0 +1,28 @@
+
+service: pokebot 
+
+frameworkVersion: '2'
+
+package:
+  exclude:
+    - config.*.yml
+
+provider:
+  name: aws
+  runtime: ruby2.7
+  profile: pokebot-deploy
+  stage: ${opt:stage} 
+  region: ${self:custom.config.region}
+
+custom:
+  config: ${file(config.${self:provider.stage}.yml)}
+ 
+functions:
+  gateway:
+    handler: gateway.handle
+    events:
+      - httpApi:
+          method: POST 
+          path:  /gateway
+    environment:
+      SLACK_SIGNED_SECRET: ${self:custom.config.slack_signed_secret}  

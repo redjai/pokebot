@@ -1,15 +1,12 @@
-require 'json'
-require 'pokebot/data'
-require 'pokebot/slack'
+require 'bot/aws/event'
+require 'bot/slack/response'
 
 def handle(event:, context:)
-  puts event
-
   event["Records"].each do |record|
-    event_data = sqs_record_data(record)
-    respond_to_slack(
-      channel: event_data['slack']['event']['channel'], 
-      text: event_data['responses']['text']
+    pokebot_data = Bot::Aws::Event.sqs_record_data(record)
+    Bot::Slack::Response.respond(
+      channel: pokebot_data['slack']['event']['channel'], 
+      text: pokebot_data['responses']['text']
     )
   end 
 end

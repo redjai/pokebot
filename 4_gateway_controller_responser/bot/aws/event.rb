@@ -7,6 +7,12 @@ module Bot
         data(aws_event)
       end
 
+      def record_data(aws_event)
+        aws_event['Records'].each do |aws_record|
+          yield sqs_record_data(aws_record)
+        end
+      end
+
       def sqs_record_data(aws_record)
         JSON.parse(data(aws_record)["Message"])
       end

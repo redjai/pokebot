@@ -1,13 +1,17 @@
-module Bot
-  module Aws
+module Pokebot
+  module Lambda 
     module Event 
       extend self
+
+      def from_slack_event(aws_event)
+        { 'slack' => http_data(aws_event) }
+      end
 
       def http_data(aws_event)
         data(aws_event)
       end
 
-      def record_data(aws_event)
+      def each_sqs_record_data(aws_event)
         aws_event['Records'].each do |aws_record|
           yield sqs_record_data(aws_record)
         end

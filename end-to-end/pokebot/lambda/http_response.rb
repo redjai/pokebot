@@ -1,5 +1,5 @@
-module Bot
-  module Aws
+module Pokebot
+  module Lambda 
     module HttpResponse 
       extend self
 

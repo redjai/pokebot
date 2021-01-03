@@ -1,4 +1,4 @@
-module Bot
+module Pokebot
   module Slack
     module Authentication
       extend self
@@ -14,7 +14,11 @@ module Bot
       end
       
       def hexdigest(timestamp, body)
-        OpenSSL::HMAC.hexdigest("SHA256", ENV['SLACK_SIGNED_SECRET'], base(timestamp, body))
+        OpenSSL::HMAC.hexdigest(
+          "SHA256", 
+          ENV['SLACK_SIGNED_SECRET'], 
+          base(timestamp, body)
+        )
       end
       
       def base(timestamp, body)

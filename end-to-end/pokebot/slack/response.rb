@@ -2,7 +2,7 @@ require 'net/http'
 require 'uri'
 require 'json'
 
-module Bot
+module Pokebot
   module Slack
     module Response
       extend self

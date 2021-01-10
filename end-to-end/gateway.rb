@@ -1,14 +1,13 @@
-require 'json'
 require 'pokebot/topic/sns'
 require 'pokebot/lambda/event'
 require 'pokebot/lambda/http_response'
 require 'pokebot/slack/authentication'
 
 def handle(event:, context:)
-  pokebot_data = Pokebot::Lambda::Event.from_slack_event(event)
+  slack_request_data = Pokebot::Lambda::Event.from_slack_event(event)
   
-  if pokebot_data['slack']['challenge']
-    return Pokebot::Lambda::HttpResponse.plain_text(pokebot_data['slack']['challenge'])
+  if slack_request_data['slack']['challenge']
+    return Pokebot::Lambda::HttpResponse.plain_text(slack_request_data['slack']['challenge'])
   end
  
   unless Pokebot::Slack::Authentication.authenticated?(
@@ -19,6 +18,10 @@ def handle(event:, context:)
     return Pokebot::Lambda::HttpResponse.plain_text('Not authorized', 401)
   end
   
-  Pokebot::Topic::Sns.topic.publish(message: pokebot_data.to_json) 
+  Pokebot::Topic::Sns.broadcast(
+    topic: :messages, 
+    event: Pokebot::Lambda::Event::MESSAGE_RECEIVED, 
+    state: slack_request_data
+  ) 
 end
 

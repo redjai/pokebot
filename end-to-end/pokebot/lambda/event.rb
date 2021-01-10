@@ -3,6 +3,9 @@ module Pokebot
     module Event 
       extend self
 
+      MESSAGE_RECEIVED = 'slack-message-received'
+      POKEBOT_RESPONSE_RECEIVED = 'pokebot-response-received'
+
       def from_slack_event(aws_event)
         { 'slack' => http_data(aws_event) }
       end
@@ -11,13 +14,13 @@ module Pokebot
         data(aws_event)
       end
 
-      def each_sqs_record_data(aws_event)
+      def each_sqs_record_pokebot_event(aws_event)
         aws_event['Records'].each do |aws_record|
-          yield sqs_record_data(aws_record)
+          yield sqs_record_pokebot_event(aws_record)
         end
       end
 
-      def sqs_record_data(aws_record)
+      def sqs_record_pokebot_event(aws_record)
         JSON.parse(data(aws_record)["Message"])
       end
 

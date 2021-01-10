@@ -38,7 +38,7 @@ functions:
           path:  /gateway
     environment:
       SLACK_SIGNED_SECRET: ${self:custom.config.slack_signed_secret}
-      TOPIC_ARN: !Ref SNSMessages
+      MESSAGES_TOPIC_ARN: !Ref SNSMessages
 
   controller:
     handler: controller.handle
@@ -49,7 +49,7 @@ functions:
              - SQSController
              - Arn  
     environment:
-      TOPIC_ARN: !Ref SNSResponses
+      RESPONSES_TOPIC_ARN: !Ref SNSResponses
 
   responder:
     handler: responder.handle

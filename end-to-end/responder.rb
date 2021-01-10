@@ -2,10 +2,12 @@ require 'pokebot/lambda/event'
 require 'pokebot/slack/response'
 
 def handle(event:, context:)
-  Pokebot::Lambda::Event.each_sqs_record_data(event) do |pokebot_data|
+  Pokebot::Lambda::Event.each_sqs_record_pokebot_event(event) do |pokebot_event|
+    puts pokebot_event
+    next unless pokebot_event['event'] == Pokebot::Lambda::Event::POKEBOT_RESPONSE_RECEIVED
     Pokebot::Slack::Response.respond(
-      channel: pokebot_data['slack']['event']['channel'], 
-      text: pokebot_data['responses']['text']
+      channel: pokebot_event['state']['slack']['event']['channel'], 
+      text: pokebot_event['state']['responses']['text']
     )
   end 
 end

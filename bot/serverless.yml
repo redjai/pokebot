@@ -1,0 +1,161 @@
+
+service: pokebot 
+
+frameworkVersion: '2'
+
+package:
+  exclude:
+    - config.*.yml
+
+provider:
+  name: aws
+  runtime: ruby2.7
+  profile: pokebot-deploy
+  stage: ${opt:stage} 
+  region: ${self:custom.config.region}
+  environment:
+    REGION: ${self:provider.region}
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "SNS:Publish"
+      Resource: !Ref SNSMessages # !Ref returns the ARN of SNSMessages in the resources element below:
+    - Effect: "Allow"
+      Action:
+        - "SNS:Publish"
+      Resource: !Ref SNSResponses # !Ref returns the ARN of SNSMessages in the resources element below:
+
+custom:
+  config: ${file(config.${self:provider.stage}.yml)}
+ 
+functions:
+  gateway:
+    handler: gateway.handle
+    events:
+      - httpApi:
+          method: POST 
+          path:  /gateway
+    environment:
+      SLACK_SIGNED_SECRET: ${self:custom.config.slack_signed_secret}
+      MESSAGES_TOPIC_ARN: !Ref SNSMessages
+
+  controller:
+    handler: controller.handle
+    events:
+      - sqs:
+         arn:
+           Fn::GetAtt:
+             - SQSController
+             - Arn  
+    environment:
+      RESPONSES_TOPIC_ARN: !Ref SNSResponses
+      SPOONACULAR_API_KEY: ${self:custom.config.spoonacular_api_key}
+      SPOONACULAR_ENDPOINT: ${self:custom.config.spoonacular_endpoint}
+
+  slack_responder:
+    handler: slack_responder.handle
+    events:
+      - sqs:
+         arn:
+           Fn::GetAtt:
+             - SQSResponder
+             - Arn
+    environment:
+      BOT_USER_OAUTH_ACCESS_TOKEN: ${file(config.${self:provider.stage}.yml):bot_user_oauth_access_token}  
+
+  interactions:
+    handler: interactions.handle
+    events:
+      - httpApi:
+          method: POST 
+          path:  /interactions
+
+resources:
+  Resources:
+
+    # Messages Topic
+    SNSMessages:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:service}-${self:provider.stage}-messages-topic
+    
+    # Controller SQS Queue
+    SQSController:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-${self:provider.stage}-controller-qu
+    MessagesQueueSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn: !Ref SNSMessages
+        Endpoint: !GetAtt
+          - SQSController
+          - Arn
+        Protocol: sqs
+      DependsOn:
+        - SNSMessages
+        - SQSController
+    SnSMessagestoSQSControllerPolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Sid: "allow-sns-messages"
+              Effect: Allow
+              Principal: "*"
+              Resource: !GetAtt
+                - SQSController 
+                - Arn
+              Action: "SQS:SendMessage"
+              Condition:
+                ArnEquals:
+                  "aws:SourceArn": !Ref SNSMessages
+        Queues:
+          - Ref: SQSController
+      DependsOn:
+        - MessagesQueueSubscription
+
+    # Responses Topic
+    SNSResponses:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:service}-${self:provider.stage}-responses-topic
+
+    # Responder Queue  
+    SQSResponder:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-${self:provider.stage}-responder-qu
+    ResponsesQueueSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn: !Ref SNSResponses
+        Endpoint: !GetAtt
+          - SQSResponder
+          - Arn
+        Protocol: sqs
+      DependsOn:
+        - SNSResponses
+        - SQSResponder
+    SnSResponsestoSQSResponderPolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Sid: "allow-sns-responses"
+              Effect: Allow
+              Principal: "*"
+              Resource: !GetAtt
+                - SQSResponder 
+                - Arn
+              Action: "SQS:SendMessage"
+              Condition:
+                ArnEquals:
+                  "aws:SourceArn": !Ref SNSResponses
+        Queues:
+          - Ref: SQSResponder
+      DependsOn:
+        - ResponsesQueueSubscription

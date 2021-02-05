@@ -1,5 +1,7 @@
 require 'pokebot/lambda/event'
 require 'pokebot/service/gateway'
+require 'net/http'
+
 
 def handle(event:, context:)
   slack_event = Pokebot::Lambda::Event.slack_api_event(event)

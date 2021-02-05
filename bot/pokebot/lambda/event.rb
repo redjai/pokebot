@@ -5,12 +5,24 @@ module Pokebot
 
       MESSAGE_RECEIVED = 'slack-message-received'
       POKEBOT_RESPONSE_RECEIVED = 'pokebot-response-received'
+      FAVOURITE_NEW = 'favourite-new'
+      FAVOURITE_CREATED = 'favourite-created'
 
       def slack_api_event(aws_event)
         { 
           'type' => 'slack_event_api_request',
           'state' => {
             'slack' => http_data(aws_event)
+          },
+          'aws_event' => aws_event
+        }
+      end
+
+      def slack_interaction_event(aws_event)
+        { 
+          'type' => 'slack_event_interaction',
+          'state' => {
+            'slack' => { 'interaction' => payload_data(aws_event) }
           },
           'aws_event' => aws_event
         }

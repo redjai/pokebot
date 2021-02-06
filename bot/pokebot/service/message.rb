@@ -4,12 +4,11 @@ require 'pokebot/slack/authentication'
 
 module Pokebot
   module Service
-    module Gateway
+    module Message 
       def self.call(slack_event)
 
         if slack_event['state']['slack']['challenge']
            slack_event['http_response'] = Pokebot::Lambda::HttpResponse.plain_text_response(slack_event['state']['slack']['challenge'])
-           puts "challenge"
            return
         end
        
@@ -19,7 +18,6 @@ module Pokebot
                  body: slack_event['aws_event']['body']
               )
           slack_event['http_response'] = Pokebot::Lambda::HttpResponse.plain_text('Not authorized', 401)
-          puts "401"
           return
         end
         

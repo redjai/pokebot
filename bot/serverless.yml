@@ -68,12 +68,12 @@ custom:
   recipe_favourites_table: ${self:service}-${self:provider.stage}-recipe-service-favourites
  
 functions:
-  gateway:
-    handler: gateway.handle
+  messages:
+    handler: messages.handle
     events:
       - httpApi:
           method: POST 
-          path:  /gateway
+          path:  /messages
     environment:
       SLACK_SIGNED_SECRET: ${self:custom.config.slack_signed_secret}
       MESSAGES_TOPIC_ARN: !Ref SNSMessagesTopic
@@ -112,8 +112,8 @@ functions:
     environment:
       INTERACTIONS_TOPIC_ARN: !Ref SNSInteractions
 
-  favourites:
-    handler: favourites.handle
+  user:
+    handler: user.handle
     events:
       - sqs:
          arn:
@@ -130,7 +130,7 @@ resources:
   Resources:
 
     #################################
-    # Gateway Service: Messages Topic
+    # Messages Service: Messages Topic
     #################################
     SNSMessagesTopic:
       Type: AWS::SNS::Topic

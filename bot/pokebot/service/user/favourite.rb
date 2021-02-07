@@ -9,18 +9,10 @@ module Pokebot
 
         @@dynamo_resource = nil 
 
-        def call(pokebot_event)
-          favourite(user_id(pokebot_event), recipe_id(pokebot_event))
-          pokebot_event['state']['favourite'] = { 'favourites' => favourites(user_id(pokebot_event)) }
-          Pokebot::Topic::Sns.broadcast(topic: :favourites, event: Pokebot::Lambda::Event::FAVOURITE_CREATED, state: pokebot_event['state'])
-        end
-
-        def recipe_id(pokebot_event)
-          pokebot_event['state']['interaction']['favourite']
-        end
-
-        def user_id(pokebot_event)
-          pokebot_event['state']['slack']['interaction']['user']['id']
+        def call(event)
+          favourite(event.user_id, event.recipe_id)
+          event.favourites = favourites(event.user_id)
+          Pokebot::Topic::Sns.broadcast(topic: :user, event: Pokebot::Lambda::Event::FAVOURITE_CREATED, state: event.state)
         end
 
         def dynamo_resource

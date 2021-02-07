@@ -8,16 +8,16 @@ module Pokebot
       extend self
 
       def call(event)
-        event['state']['spoonacular'] = recipes(event)
+        event.recipes = recipes(event.slack_text)
         Pokebot::Topic::Sns.broadcast(
           topic: :responses, 
-          event: Pokebot::Lambda::Event::POKEBOT_RESPONSE_RECEIVED,  
-          state: event['state']
+          event: Pokebot::Lambda::Event::RECIPES_FOUND,  
+          state: event.state
         )
       end
 
-      def recipes(event)
-        search_result = search(slack_text(event))
+      def recipes(text)
+        search_result = search(text)
         bulk_result = information_bulk(ids(search_result))
         {
           'search' => search_result,
@@ -31,10 +31,6 @@ module Pokebot
 
       def information_bulk(ids)
         response(bulk_recipe_uri(ids))
-      end
-
-      def slack_text(event)
-        event['state']['slack']['event']['text'].gsub(/<[^>]+>/,"").strip
       end
 
       def response(uri)

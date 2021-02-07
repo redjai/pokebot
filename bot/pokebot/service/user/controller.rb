@@ -1,3 +1,5 @@
+require_relative 'event'
+
 module Pokebot
   module Service
     module User 
@@ -5,16 +7,14 @@ module Pokebot
         extend self
 
         def call(pokebot_event)
-          favourite(pokebot_event) if favourite?(pokebot_event) 
+          event = Pokebot::Service::User::Event.new(pokebot_event)
+          favourite(event) if event.favourite? 
         end
 
-        def favourite?(pokebot_event)
-          pokebot_event['state']['interaction']['favourite']
-        end
 
-        def favourite(pokebot_event)
+        def favourite(event)
           require_relative 'favourite'
-          Pokebot::Service::User::Favourite.call(pokebot_event)
+          Pokebot::Service::User::Favourite.call(event)
         end
       end
     end

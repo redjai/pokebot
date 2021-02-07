@@ -6,10 +6,11 @@ module Pokebot
       extend self
 
       def call(interaction_event)
-        interaction_event['state']['slack']['interaction']['actions'].each do |action|
-          if action['value'] =~ /^Favourite-(.+)/
-            interaction_event['state']['interaction'] = { 'favourite' => $1 } 
-            Pokebot::Topic::Sns.broadcast(topic: :interactions, event: Pokebot::Lambda::Event::FAVOURITE_NEW, state: interaction_event['state'])
+        event = Pokebot::Service::Interaction::Event.new(interaction_event)
+        event.actions.each do |action|
+          if action.favourite?
+            event.favourite = action.id 
+            Pokebot::Topic::Sns.broadcast(topic: :interactions, event: Pokebot::Lambda::Event::FAVOURITE_NEW, state: event.state)
           end
         end
       end

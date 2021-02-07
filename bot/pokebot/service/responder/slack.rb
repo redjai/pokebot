@@ -6,11 +6,11 @@ module Pokebot
       module Slack
         extend self
         
-        def call(pokebot_event)
+        def call(event)
           Pokebot::Slack::Response.respond(
-            channel: pokebot_event['state']['slack']['event']['channel'], 
+            channel: event.channel, 
             text: 'recipes:',
-            blocks:  recipe_blocks(pokebot_event['state']['spoonacular']['information_bulk'])
+            blocks:  recipe_blocks(event.spoonacular_recipes)
           )
         end
 

@@ -4,7 +4,8 @@ module Pokebot
       extend self
 
       MESSAGE_RECEIVED = 'slack-message-received'
-      POKEBOT_RESPONSE_RECEIVED = 'pokebot-response-received'
+      RECIPE_SEARCH_REQUESTED = 'recipes-search-requested'
+      RECIPES_FOUND = 'recipes-found'
       FAVOURITE_NEW = 'favourite-new'
       FAVOURITE_CREATED = 'favourite-created'
 
@@ -42,6 +43,8 @@ module Pokebot
           pokebot_event = sqs_record_pokebot_event(aws_record)
           if accept.empty? || accept.include?(pokebot_event['event'])
             yield pokebot_event
+          else
+            puts "event #{pokebot_event['event']} not accepted"
           end
         end
       end

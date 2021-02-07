@@ -6,7 +6,7 @@ def handle(event:, context:)
   puts event
 
   Pokebot::Lambda::Event.each_sqs_record_pokebot_event(aws_event: event, accept: EVENTS) do |pokebot_event|
-    require 'pokebot/service/controller'
-    Pokebot::Service::Controller.call(pokebot_event)
+    require 'pokebot/service/intent/controller'
+    Pokebot::Service::Intent::Controller.call(pokebot_event)
   end 
 end

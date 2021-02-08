@@ -18,7 +18,11 @@ module Pokebot
 
       def recipes(text)
         search_result = search(text)
-        bulk_result = information_bulk(ids(search_result))
+        bulk_result = if search_result['totalResults'] > 0
+                        information_bulk(ids(search_result))
+                      else
+                        []
+                      end
         {
           'search' => search_result,
           'information_bulk' => bulk_result

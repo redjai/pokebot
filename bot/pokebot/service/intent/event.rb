@@ -11,6 +11,10 @@ module Pokebot
           @event['state']['slack']['event']['text'].gsub(/<[^>]+>/,"").strip
         end
 
+        def intent=(intent)
+          @event['state']['intent'] = intent
+        end
+
         def state
           @event['state']
         end

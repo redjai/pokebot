@@ -7,6 +7,21 @@ module Pokebot
         extend self
         
         def call(event)
+          if event.spoonacular_recipe_response?
+            respond_with_recipes(event)
+          else
+            respond_searching(event)
+          end
+        end
+
+        def respond_searching(event)
+          Pokebot::Slack::Response.respond(
+            channel: event.channel, 
+            text: "searching for #{event.slack_text} recipes... :male-cook: :knife_fork_plate: :female-cook:",
+          )
+        end
+
+        def respond_with_recipes(event)
           Pokebot::Slack::Response.respond(
             channel: event.channel, 
             text: 'recipes:',

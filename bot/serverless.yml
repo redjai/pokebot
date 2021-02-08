@@ -115,6 +115,11 @@ functions:
            Fn::GetAtt:
              - SQSResponder
              - Arn
+      - sqs:
+         arn:
+           Fn::GetAtt:
+             - SQSMessagesToResponder
+             - Arn
     environment:
       BOT_USER_OAUTH_ACCESS_TOKEN: ${file(config.${self:provider.stage}.yml):bot_user_oauth_access_token}  
 
@@ -295,6 +300,44 @@ resources:
         - ResponsesQueueSubscription
 
 
+    #########################################################################
+    # Responder Service: SNS Messages Topic -> SQS Responder Queue & Policy
+    #########################################################################
+    SQSMessagesToResponder:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-${self:provider.stage}-mrssages-to-responder-queue
+    MessagesToResponsesQueueSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn: !Ref SNSMessagesTopic
+        Endpoint: !GetAtt
+          - SQSMessagesToResponder
+          - Arn
+        Protocol: sqs
+      DependsOn:
+        - SNSMessagesTopic
+        - SQSMessagesToResponder
+    SnSMessagestoSQSResponderPolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Sid: "allow-sns-responses"
+              Effect: Allow
+              Principal: "*"
+              Resource: !GetAtt
+                - SQSMessagesToResponder 
+                - Arn
+              Action: "SQS:SendMessage"
+              Condition:
+                ArnEquals:
+                  "aws:SourceArn": !Ref SNSMessagesTopic
+        Queues:
+          - Ref: SQSMessagesToResponder
+      DependsOn:
+        - MessagesToResponsesQueueSubscription
 
 
 

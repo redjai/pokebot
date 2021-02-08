@@ -1,6 +1,6 @@
 require 'pokebot/lambda/event'
 
-EVENTS = [Pokebot::Lambda::Event::RECIPES_FOUND]
+EVENTS = [Pokebot::Lambda::Event::RECIPES_FOUND, Pokebot::Lambda::Event::MESSAGE_RECEIVED]
 
 def handle(event:, context:)
   puts event

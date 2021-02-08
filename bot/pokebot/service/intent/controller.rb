@@ -16,6 +16,7 @@ module Pokebot
            # do nothing for now
           else
             require_relative 'recipe_search'
+            event.intent = 'search'
             Pokebot::Service::Intent::RecipeSearch.call(event)
           end  
         end

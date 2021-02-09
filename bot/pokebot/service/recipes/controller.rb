@@ -5,9 +5,15 @@ module Pokebot
     module Recipe
       module Controller
         def self.call(pokebot_event)
-          require_relative 'spoonacular'
           event = Pokebot::Service::Recipe::Event.new(pokebot_event)
-          Pokebot::Service::Spoonacular.call(event)
+          case event.type
+          when Pokebot::Lambda::Event::RECIPE_SEARCH_REQUESTED 
+            require_relative 'spoonacular'
+            Pokebot::Service::Recipe::Spoonacular.call(event)
+          when Pokebot::Lambda::Event::FAVOURITE_CREATED
+            require_relative 'favourites'
+            Pokebot::Service::Recipe::Favourite.call(event)
+          end
         end
       end
     end

@@ -101,11 +101,16 @@ functions:
            Fn::GetAtt:
              - SQSIntentTopicToRecipeQueue
              - Arn  
+      - sqs:
+         arn:
+           Fn::GetAtt:
+             - SQSUserTopicToRecipeQueue
+             - Arn  
     environment:
       RESPONSES_TOPIC_ARN: !Ref SNSResponses
       SPOONACULAR_API_KEY: ${self:custom.config.spoonacular_api_key}
       SPOONACULAR_ENDPOINT: ${self:custom.config.spoonacular_endpoint}
-      FAVOURITES_TABLE_NAME: ${self:custom.favourites_table}
+      FAVOURITES_TABLE_NAME: ${self:custom.recipe_favourites_table}
 
   responder:
     handler: responder.handle
@@ -454,7 +459,7 @@ resources:
               Action: "SQS:SendMessage"
               Condition:
                 ArnEquals:
-                  "aws:SourceArn": !Ref SNSMessagesTopic
+                  "aws:SourceArn": !Ref SNSUserTopic
         Queues:
           - Ref: SQSUserTopicToRecipeQueue
       DependsOn:

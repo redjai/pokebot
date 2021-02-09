@@ -10,9 +10,10 @@ module Pokebot
         @@dynamo_resource = nil 
 
         def call(event)
-          favourite(event.user_id, event.recipe_id)
-          event.favourites = favourites(event.user_id)
-          Pokebot::Topic::Sns.broadcast(topic: :user, event: Pokebot::Lambda::Event::FAVOURITE_CREATED, state: event.state)
+          if favourite(event.user_id, event.recipe_id) 
+            event.favourites = favourites(event.user_id) # only update if favourite is new
+            Pokebot::Topic::Sns.broadcast(topic: :user, event: Pokebot::Lambda::Event::FAVOURITE_CREATED, state: event.state)
+          end
         end
 
         def dynamo_resource
@@ -25,8 +26,9 @@ module Pokebot
               "user_id" => user_id, 
               "recipe_id" => recipe_id, 
             },  
-            table_name: ENV['FAVOURITES_TABLE_NAME'] 
-          })
+            table_name: ENV['FAVOURITES_TABLE_NAME'],
+            return_values: 'ALL_OLD'
+          })[:attributes] == nil
         end
 
         def favourites(user_id)

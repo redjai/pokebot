@@ -28,7 +28,7 @@ module Pokebot
             },  
             table_name: ENV['FAVOURITES_TABLE_NAME'],
             return_values: 'ALL_OLD'
-          })[:attributes] == nil
+          })[:attributes] == nil # return true if no attributes as ALL_OLD => nil indicates a new value
         end
 
         def favourites(user_id)

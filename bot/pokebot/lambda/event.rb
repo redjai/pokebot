@@ -5,7 +5,7 @@ module Pokebot
 
       MESSAGE_RECEIVED = 'slack-message-received'
       RECIPE_SEARCH_REQUESTED = 'recipes-search-requested'
-      RECIPE_SEARCH_BY_IDS_REQUESTED = 'recipes-search-by-ids-requested'
+      RECIPE_IDS_SEARCH_REQUESTED = 'recipes-ids-search-requested'
       RECIPES_FOUND = 'recipes-found'
       FAVOURITE_NEW = 'favourite-new'
       FAVOURITE_CREATED = 'favourite-created'

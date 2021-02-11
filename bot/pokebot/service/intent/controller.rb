@@ -14,9 +14,13 @@ module Pokebot
             # do nothing now
           when /dislike/
            # do nothing for now
+          when /favourite/
+            require_relative 'recipe_ids_search'
+            event.intent = 'ids_search'
+            Pokebot::Service::Intent::RecipeIdsSearch.call(event)
           else
             require_relative 'recipe_search'
-            event.intent = 'search'
+            event.intent = 'text_search'
             Pokebot::Service::Intent::RecipeSearch.call(event)
           end  
         end

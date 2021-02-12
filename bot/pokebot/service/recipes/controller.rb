@@ -12,7 +12,7 @@ module Pokebot
             Pokebot::Service::Recipe::Spoonacular::FreeTextSearch.call(event)
           when Pokebot::Lambda::Event::RECIPE_IDS_SEARCH_REQUESTED 
             require_relative 'spoonacular/ids_search'
-            Pokebot::Service::Recipe::Spoonacular::FreeTextSearch.call(event)
+            Pokebot::Service::Recipe::Spoonacular::IdsSearch.call(event)
           when Pokebot::Lambda::Event::FAVOURITE_CREATED
             require_relative 'favourites'
             Pokebot::Service::Recipe::Favourite.call(event)

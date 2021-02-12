@@ -409,7 +409,7 @@ resources:
             AttributeType: S
           -
             AttributeName: recipe_id
-            AttributeType: S
+            AttributeType: N 
         KeySchema:
           - AttributeName: user_id
             KeyType: HASH 
@@ -478,7 +478,7 @@ resources:
             AttributeType: S
           -
             AttributeName: recipe_id
-            AttributeType: S
+            AttributeType: N 
         KeySchema:
           - AttributeName: user_id
             KeyType: HASH 

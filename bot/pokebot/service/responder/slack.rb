@@ -25,65 +25,78 @@ module Pokebot
           Pokebot::Slack::Response.respond(
             channel: event.channel, 
             text: 'recipes:',
-            blocks:  recipe_blocks(event.spoonacular_recipes)
+            blocks:  RecipeBlocks.new(event).recipe_blocks
           )
         end
 
-        def recipe_blocks(information_bulk)
-          information_bulk.collect do |recipe|
-            [recipe_block(recipe), button_block(recipe)]
-          end.flatten
-        end
+        class RecipeBlocks
 
-        def recipe_block(recipe)
-          {
-            type: "section",
-            text: {
-              type: "mrkdwn",
-              text: "*#{recipe['title']}*\n#{recipe['extendedIngredients'].collect{|ing| ing['name']}.join(", ")}\n_ready in #{recipe["readyInMinutes"]} minutes_"
-            },
-            accessory: {
-              type: "image",
-              image_url: recipe['image'],
-              alt_text: recipe['title']
-            }
-          }
-        end
+          def initialize(event)
+            @event = event
+          end
 
-        def button_block(recipe)
-          {
-            "type": "actions",
-            "elements": [
-              {
-                "type": "button",
-                "text": {
-                  "type": "plain_text",
-                  "text": "View",
-                  "emoji": true
-                },
-                "value": "click_me_123",
-                "url": recipe['sourceUrl'] 
+          def recipe_blocks
+            @event.spoonacular_recipes.collect do |recipe|
+              [recipe_block(recipe), button_block(recipe)]
+            end.flatten
+          end
+
+          def recipe_block(recipe)
+            {
+              type: "section",
+              text: {
+                type: "mrkdwn",
+                text: "*#{recipe['title']}* #{favourite?(recipe['id'])}\n#{recipe['extendedIngredients'].collect{|ing| ing['name']}.join(", ")}\n_ready in #{recipe["readyInMinutes"]} minutes_"
               },
-              {
-                "type": "button",
-                "text": {
-                  "type": "plain_text",
-                  "text": "Favourite",
-                  "emoji": true
-                },
-                "value": "Favourite-#{recipe['id']}",
-              },
-              {
-                "type": "button",
-                "text": {
-                  "type": "plain_text",
-                  "text": "Email me Ingredients",
-                  "emoji": true
-                },
-                "value": "email-#{recipe['id']}",
+              accessory: {
+                type: "image",
+                image_url: recipe['image'],
+                alt_text: recipe['title']
               }
-            ]
-          }
+            }
+          end
+
+          def favourite?(recipe_id)
+            if @event.spoonacular_favourite_recipe_ids.include?(recipe_id)
+              ':star:'  
+            end
+          end
+
+          def button_block(recipe)
+            {
+              "type": "actions",
+              "elements": [
+                {
+                  "type": "button",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "View",
+                    "emoji": true
+                  },
+                  "value": "click_me_123",
+                  "url": recipe['sourceUrl'] 
+                },
+                {
+                  "type": "button",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Favourite",
+                    "emoji": true
+                  },
+                  "value": "Favourite-#{recipe['id']}",
+                },
+                {
+                  "type": "button",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Email me Ingredients",
+                    "emoji": true
+                  },
+                  "value": "email-#{recipe['id']}",
+                }
+              ]
+            }
+          end
         end
       end
     end

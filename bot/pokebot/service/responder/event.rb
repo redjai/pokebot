@@ -14,6 +14,10 @@ module Pokebot
         def spoonacular_recipes
           @event['state'].fetch('recipes',{}).fetch('spoonacular',{})['information_bulk']
         end
+        
+        def spoonacular_favourite_recipe_ids
+          @event['state'].fetch('recipes',{}).fetch('spoonacular',{}).fetch('favourite_recipe_ids',[])
+        end
 
         def spoonacular_recipe_response?
           spoonacular_recipes

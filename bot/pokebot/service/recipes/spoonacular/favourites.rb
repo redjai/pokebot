@@ -5,7 +5,7 @@ module Pokebot
         module Favourites
 
           def favourite_ids(user_id)
-            favourites(user_id).collect{ |item| item["recipe_id"]  }
+            favourites(user_id).collect{ |item| item["recipe_id"].to_i }
           end
 
           def favourites(user_id)

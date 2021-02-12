@@ -3,7 +3,7 @@ require 'pokebot/topic/sns'
 module Pokebot
   module Service
     module Intent
-      module RecipeIdsSearch
+      module FavouritesSearch
         extend self
         
         def call(event)

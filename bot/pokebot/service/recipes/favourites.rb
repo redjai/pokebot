@@ -20,7 +20,7 @@ module Pokebot
           dynamo_resource.client.update_item({
             key: {
               "user_id" => user_id, 
-              "recipe_id" => recipe_id, 
+              "recipe_id" => recipe_id.to_i, 
             },  
             table_name: ENV['FAVOURITES_TABLE_NAME'] 
           })

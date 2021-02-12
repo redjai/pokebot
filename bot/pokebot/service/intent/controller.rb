@@ -17,7 +17,7 @@ module Pokebot
           when /favourite/
             require_relative 'recipe_ids_search'
             event.intent = 'ids_search'
-            Pokebot::Service::Intent::RecipeIdsSearch.call(event)
+            Pokebot::Service::Intent::FavouritesSearch.call(event)
           else
             require_relative 'recipe_search'
             event.intent = 'text_search'

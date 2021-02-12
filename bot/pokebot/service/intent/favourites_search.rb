@@ -9,7 +9,7 @@ module Pokebot
         def call(event)
           Pokebot::Topic::Sns.broadcast(
             topic: :intent, 
-            event: Pokebot::Lambda::Event::RECIPE_IDS_SEARCH_REQUESTED, 
+            event: Pokebot::Lambda::Event::FAVOURITES_SEARCH_REQUESTED, 
             state: event.state
           )
         end 

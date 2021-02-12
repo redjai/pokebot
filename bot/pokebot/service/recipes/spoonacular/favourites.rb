@@ -4,7 +4,7 @@ module Pokebot
       module Spoonacular 
         module Favourites
 
-          def ids(user_id)
+          def favourite_ids(user_id)
             favourites(user_id).collect{ |item| item["recipe_id"]  }
           end
 

@@ -1,6 +1,6 @@
 require 'pokebot/lambda/event'
 
-EVENTS = [ Pokebot::Lambda::Event::RECIPE_IDS_SEARCH_REQUESTED, 
+EVENTS = [ Pokebot::Lambda::Event::FAVOURITES_SEARCH_REQUESTED, 
            Pokebot::Lambda::Event::RECIPE_SEARCH_REQUESTED,
            Pokebot::Lambda::Event::FAVOURITE_CREATED ] 
 

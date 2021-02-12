@@ -1,5 +1,4 @@
 require 'pokebot/topic/sns'
-require 'aws-sdk-dynamodb'
 require_relative 'complex_search'
 require_relative 'information_bulk_search'
 require_relative 'favourites'
@@ -9,14 +8,14 @@ module Pokebot
   module Service
     module Recipe
       module Spoonacular 
-        module IdsSearch
+        module FavouritesSearch
           extend self
           extend Pokebot::Service::Recipe::Spoonacular::InformationBulkSearch
           extend Pokebot::Service::Recipe::Spoonacular::Favourites
           extend Pokebot::Service::Recipe::Spoonacular::Base
 
           def call(event)
-            event.recipes = recipes(ids(event.user_id))
+            event.recipes = recipes(favourite_ids(event.user_id))
             Pokebot::Topic::Sns.broadcast(
               topic: :responses, 
               event: Pokebot::Lambda::Event::RECIPES_FOUND,  

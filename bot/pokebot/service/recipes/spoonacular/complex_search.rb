@@ -14,7 +14,7 @@ module Pokebot
             uri('https://api.spoonacular.com/recipes/complexSearch', params)
           end
           
-          def ids(complex_search_result)
+          def ids_from_complex_search(complex_search_result)
             complex_search_result['results'].collect do |result|
               result['id']
             end

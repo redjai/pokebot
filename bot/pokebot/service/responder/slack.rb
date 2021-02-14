@@ -93,7 +93,7 @@ module Pokebot
           end
           
           def favourite?(recipe_id)
-            if @event.spoonacular_favourite_recipe_ids.include?(recipe_id)
+            if @event.spoonacular_favourite_recipe_ids.include?(recipe_id.to_s)
               ':star:'  
             end
           end

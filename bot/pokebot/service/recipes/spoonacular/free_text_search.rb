@@ -31,7 +31,7 @@ module Pokebot
                           else
                             []
                           end
-            recipe_ids = favourite_ids(user_id)
+            recipe_ids = favourites(user_id)
             {
               'search' => search_result,
               'information_bulk' => bulk_result,

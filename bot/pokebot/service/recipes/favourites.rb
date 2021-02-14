@@ -16,6 +16,7 @@ module Pokebot
           @@dynamo_resource = Aws::DynamoDB::Resource.new(region: ENV['REGION'])
         end
 
+        # we don't have to worry about duplicates assume the user service gatekeeps that for us
         def favourite(user_id, favourites)
           dynamo_resource.client.update_item({
             key: {

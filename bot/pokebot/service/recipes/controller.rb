@@ -13,7 +13,7 @@ module Pokebot
           when Pokebot::Lambda::Event::FAVOURITES_SEARCH_REQUESTED 
             require_relative 'spoonacular/favourites_search'
             Pokebot::Service::Recipe::Spoonacular::FavouritesSearch.call(event)
-          when Pokebot::Lambda::Event::FAVOURITE_CREATED
+          when Pokebot::Lambda::Event::USER_FAVOURITES_UPDATED
             require_relative 'favourites'
             Pokebot::Service::Recipe::Favourite.call(event)
           end

@@ -56,12 +56,6 @@ module Pokebot
             }
           end
 
-          def favourite?(recipe_id)
-            if @event.spoonacular_favourite_recipe_ids.include?(recipe_id)
-              ':star:'  
-            end
-          end
-
           def button_block(recipe)
             {
               "type": "actions",
@@ -97,6 +91,13 @@ module Pokebot
               ]
             }
           end
+          
+          def favourite?(recipe_id)
+            if @event.spoonacular_favourite_recipe_ids.include?(recipe_id)
+              ':star:'  
+            end
+          end
+
         end
       end
     end

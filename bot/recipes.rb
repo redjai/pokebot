@@ -2,7 +2,7 @@ require 'pokebot/lambda/event'
 
 EVENTS = [ Pokebot::Lambda::Event::FAVOURITES_SEARCH_REQUESTED, 
            Pokebot::Lambda::Event::RECIPE_SEARCH_REQUESTED,
-           Pokebot::Lambda::Event::FAVOURITE_CREATED ] 
+           Pokebot::Lambda::Event::USER_FAVOURITES_UPDATED ] 
 
 def handle(event:, context:)
   puts event

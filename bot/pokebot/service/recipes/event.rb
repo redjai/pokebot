@@ -45,8 +45,8 @@ module Pokebot
           end
         end
         
-        def recipe_id
-          @event['state']['interaction']['favourite']
+        def favourites 
+          @event['state']['user']['favourites']
         end
       end
     end

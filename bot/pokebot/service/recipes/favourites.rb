@@ -9,19 +9,25 @@ module Pokebot
         @@dynamo_resource = nil 
 
         def call(event)
-          favourite(event.user_id, event.recipe_id)
+          favourite(event.user_id, event.favourites)
         end
 
         def dynamo_resource
           @@dynamo_resource = Aws::DynamoDB::Resource.new(region: ENV['REGION'])
         end
 
-        def favourite(user_id, recipe_id)
+        def favourite(user_id, favourites)
           dynamo_resource.client.update_item({
             key: {
               "user_id" => user_id, 
-              "recipe_id" => recipe_id.to_i, 
             },  
+            update_expression: 'set #favourites = :favourites',
+            expression_attribute_names: {
+              '#favourites': 'favourites'
+            },
+            expression_attribute_values: {
+              ':favourites': favourites
+            },
             table_name: ENV['FAVOURITES_TABLE_NAME'] 
           })
         end

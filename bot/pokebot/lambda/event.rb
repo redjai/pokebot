@@ -8,7 +8,7 @@ module Pokebot
       FAVOURITES_SEARCH_REQUESTED = 'favourites-search-requested'
       RECIPES_FOUND = 'recipes-found'
       FAVOURITE_NEW = 'favourite-new'
-      FAVOURITE_CREATED = 'favourite-created'
+      USER_FAVOURITES_UPDATED = 'user-favourites-updated'
 
       def slack_api_event(aws_event)
         { 

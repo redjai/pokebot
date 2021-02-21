@@ -1,4 +1,4 @@
-require 'pokebot/lambda/event'
+require 'lambda/event'
 
 EVENTS = [ Bot::Event::FAVOURITES_SEARCH_REQUESTED, 
            Bot::Event::RECIPE_SEARCH_REQUESTED,
@@ -7,8 +7,8 @@ EVENTS = [ Bot::Event::FAVOURITES_SEARCH_REQUESTED,
 def handle(event:, context:)
   puts event
 
-  Pokebot::Lambda::Event.each_sqs_record_bot_event(aws_event: event, accept: EVENTS) do |pokebot_event|
-    require 'pokebot/service/recipes/controller'
-    Pokebot::Service::Recipe::Controller.call(pokebot_event)
+  Lambda::Event.each_sqs_record_bot_event(aws_event: event, accept: EVENTS) do |bot_event|
+    require 'service/recipes/controller'
+    Service::Recipe::Controller.call(bot_event)
   end 
 end

@@ -10,7 +10,7 @@ module Pokebot
           Pokebot::Topic::Sns.broadcast(
             topic: :intent, 
             source: :intent,
-            name: Pokebot::Lambda::Event::FAVOURITES_SEARCH_REQUESTED, 
+            name: Bot::Event::FAVOURITES_SEARCH_REQUESTED, 
             version: 1.0,
             event: event,
             data: { user: event.data['user'] }

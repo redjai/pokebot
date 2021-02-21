@@ -10,7 +10,7 @@ module Pokebot
       @@topics = {}
 
       def broadcast(topic:, source:, name:, version:, event:, data: {})
-        record = Pokebot::Lambda::Event::BotEventRecord.new(  name: name,
+        record = Bot::EventRecord.new(  name: name,
                                     source: source,
                                    version: version,
                                       data: data )

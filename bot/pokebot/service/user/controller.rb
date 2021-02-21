@@ -8,7 +8,7 @@ module Pokebot
 
         def call(bot_event)
           case bot_event.name
-          when Pokebot::Lambda::Event::FAVOURITE_NEW
+          when Bot::Event::FAVOURITE_NEW
             favourite(bot_event)
           end
         end

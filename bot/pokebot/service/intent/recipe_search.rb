@@ -10,7 +10,7 @@ module Pokebot
           Pokebot::Topic::Sns.broadcast(
              topic: :intent, 
             source: :recipes,
-              name: Pokebot::Lambda::Event::RECIPE_SEARCH_REQUESTED, 
+              name: Bot::Event::RECIPE_SEARCH_REQUESTED, 
            version: 1.0,
              event: event,
               data: { 

@@ -1,6 +1,6 @@
 require 'pokebot/lambda/event'
 
-EVENTS = [Pokebot::Lambda::Event::FAVOURITE_NEW] 
+EVENTS = [Bot::Event::FAVOURITE_NEW] 
 
 def handle(event:, context:)
   puts event

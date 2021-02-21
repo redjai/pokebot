@@ -15,7 +15,7 @@ module Pokebot
             Pokebot::Topic::Sns.broadcast(
                                             topic: :user,
                                             source: :user,
-                                            name: Pokebot::Lambda::Event::USER_FAVOURITES_UPDATED, 
+                                            name: Bot::Event::USER_FAVOURITES_UPDATED, 
                                             version: 1.0,
                                             event: bot_event,
                                             data: { favourites: updates['attributes']['favourites'].collect{|id| id.to_i }, user: bot_event.data['user'] } #favourites is a Set

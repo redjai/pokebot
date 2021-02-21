@@ -8,9 +8,9 @@ module Pokebot
         
         def call(bot_event)
           case bot_event.name
-          when Pokebot::Lambda::Event::RECIPES_FOUND
+          when Bot::Event::RECIPES_FOUND
             respond_with_recipes(bot_event)
-          when Pokebot::Lambda::Event::MESSAGE_RECEIVED
+          when Bot::Event::MESSAGE_RECEIVED
             respond_searching(bot_event)
           else
             raise "unexpected event name #{bot_event.name}"

@@ -10,7 +10,7 @@ module Pokebot
           Pokebot::Topic::Sns.broadcast(
               topic: :messages,
              source: :messages,
-               name: Pokebot::Lambda::Event::MESSAGE_RECEIVED,
+               name: Bot::Event::MESSAGE_RECEIVED,
             version: 1.0, 
               event: bot_event,
                data: data(bot_event)

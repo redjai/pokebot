@@ -14,7 +14,7 @@ module Pokebot
             Pokebot::Topic::Sns.broadcast(
               topic: :responses, 
               source: :recipes,
-              name: Pokebot::Lambda::Event::RECIPES_FOUND,  
+              name: Bot::Event::RECIPES_FOUND,  
               version: 1.0,
               event: bot_event,
               data: { 

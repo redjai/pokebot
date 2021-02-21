@@ -1,5 +1,4 @@
 require 'pokebot/topic/sns'
-require_relative 'event'
 
 module Pokebot
   module Service
@@ -7,12 +6,22 @@ module Pokebot
       module Controller
         extend self
 
-        def call(interaction_event)
-          event = Pokebot::Service::Interaction::Event.new(interaction_event)
-          event.actions.each do |action|
-            if action.favourite?
-              event.favourite = action.id 
-              Pokebot::Topic::Sns.broadcast(topic: :interactions, event: Pokebot::Lambda::Event::FAVOURITE_NEW, state: event.state)
+        def call(bot_event)
+          bot_event.data['actions'].each do |action|
+            value = JSON.parse(action['value'])
+            case value['interaction']
+            when 'favourite'
+              Pokebot::Topic::Sns.broadcast(
+                                             topic: :interactions, 
+                                             source: :interaction,
+                                             name: Pokebot::Lambda::Event::FAVOURITE_NEW,
+                                             version: 1.0,
+                                             event: bot_event,
+                                             data: { favourite_id: value['data'], user: { slack_id: bot_event.data['user']['id'], channel: bot_event.data['container']['channel_id'] } }
+                                           )
+            else
+              puts "unknown interaction"
+              puts action.inspect
             end
           end
         end

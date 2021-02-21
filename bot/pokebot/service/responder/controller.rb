@@ -1,5 +1,4 @@
 require 'pokebot/slack/response'
-require_relative 'event'
 
 module Pokebot
   module Service
@@ -7,14 +6,13 @@ module Pokebot
       module Controller
         extend self
         
-        def call(pokebot_event)
-          event = Pokebot::Service::Responder::Event.new(pokebot_event)
-          respond_to_slack(event)
+        def call(bot_event)
+          respond_to_slack(bot_event)
         end
 
-        def respond_to_slack(event)
+        def respond_to_slack(bot_event)
           require_relative 'slack'
-          Pokebot::Service::Responder::Slack.call(event)
+          Pokebot::Service::Responder::Slack.call(bot_event)
         end
       end
     end

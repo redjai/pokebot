@@ -3,10 +3,13 @@ module Pokebot
     module Recipe
       module Spoonacular 
         module Favourites
+          extend self
 
-          def favourites(user_id)
+          @@dynamo_resource = nil 
+          
+          def recipe_ids(user_id)
             user = user(user_id)
-            user.nil? ? [] : user['favourites']
+            user.nil? ? [] : user['favourites'].collect{ |id| id.to_i }
           end
 
           def user(user_id)
@@ -18,6 +21,10 @@ module Pokebot
               table_name: ENV['FAVOURITES_TABLE_NAME'],
               select: "ALL_ATTRIBUTES"
             }).items.first
+          end
+          
+          def dynamo_resource
+            @@dynamo_resource = Aws::DynamoDB::Resource.new(region: ENV['REGION'])
           end
         end
       end

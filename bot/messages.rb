@@ -4,9 +4,18 @@ require 'net/http'
 
 
 def handle(event:, context:)
-  slack_event = Pokebot::Lambda::Event.slack_api_event(event)
+  bot_event = Pokebot::Lambda::Event.slack_api_event(event)
 
-  Pokebot::Service::Message::Controller.call(slack_event)
+  if bot_event.current['challenge']
+    return Pokebot::Lambda::HttpResponse.plain_text_response(bot_event.current['challenge'])
+  end
 
-  return slack_event['http_response']
+  unless Pokebot::Slack::Authentication.authenticated?(
+    timestamp: event['headers']['x-slack-request-timestamp'],
+    signature: event['headers']['x-slack-signature'],
+         body: event['body'])
+    return Pokebot::Lambda::HttpResponse.plain_text('Not authorized', 401)
+  end
+
+  Pokebot::Service::Message::Controller.call(bot_event)
 end

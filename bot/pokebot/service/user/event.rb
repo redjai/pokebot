@@ -8,7 +8,7 @@ module Pokebot
         end
 
         def recipe_id
-          @event['state']['interaction']['favourite']
+          @event['state']['interaction']['favourite'].to_s
         end
 
         def user_id

@@ -15,6 +15,7 @@ module Pokebot
         data = { channel: channel, text: text }
         data[:blocks] = blocks if blocks
         result = JSON.parse(Net::HTTP.post(POST_MESSAGE_URI, data.to_json , header).body)
+        puts result
         raise Failure, result['error'] unless result['ok']
       end
 

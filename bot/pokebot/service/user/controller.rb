@@ -6,15 +6,17 @@ module Pokebot
       module Controller
         extend self
 
-        def call(pokebot_event)
-          event = Pokebot::Service::User::Event.new(pokebot_event)
-          favourite(event) if event.favourite? 
+        def call(bot_event)
+          case bot_event.name
+          when Pokebot::Lambda::Event::FAVOURITE_NEW
+            favourite(bot_event)
+          end
         end
 
 
-        def favourite(event)
+        def favourite(bot_event)
           require_relative 'favourite'
-          Pokebot::Service::User::Favourite.call(event)
+          Pokebot::Service::User::Favourite.call(bot_event)
         end
       end
     end

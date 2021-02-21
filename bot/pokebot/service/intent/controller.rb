@@ -1,27 +1,22 @@
-require_relative 'event'
-
 module Pokebot
   module Service
     module Intent
       module Controller
         extend self
 
-        def call(pokebot_event)
-          event = Pokebot::Service::Intent::Event.new(pokebot_event)
+        def call(bot_event)
 
-          case event.slack_text
+          case bot_event.current['data']['text']
           when /like/
             # do nothing now
           when /dislike/
            # do nothing for now
           when /favourite/
             require_relative 'favourites_search'
-            event.intent = 'ids_search'
-            Pokebot::Service::Intent::FavouritesSearch.call(event)
+            Pokebot::Service::Intent::FavouritesSearch.call(bot_event)
           else
             require_relative 'recipe_search'
-            event.intent = 'text_search'
-            Pokebot::Service::Intent::RecipeSearch.call(event)
+            Pokebot::Service::Intent::RecipeSearch.call(bot_event)
           end  
         end
       end

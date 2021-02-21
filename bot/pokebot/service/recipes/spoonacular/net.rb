@@ -8,6 +8,12 @@ module Pokebot
       module Spoonacular 
         module Base
           extend self
+          
+          @@dynamo_resource = nil 
+          
+          def dynamo_resource
+            @@dynamo_resource = Aws::DynamoDB::Resource.new(region: ENV['REGION'])
+          end
 
           def uri(endpoint, params)
             uri = URI(endpoint)

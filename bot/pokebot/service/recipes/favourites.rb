@@ -8,8 +8,8 @@ module Pokebot
 
         @@dynamo_resource = nil 
 
-        def call(event)
-          favourite(event.user_id, event.favourites)
+        def call(bot_event)
+          favourite(bot_event.data['user']['slack_id'], bot_event.data['favourites'])
         end
 
         def dynamo_resource
@@ -31,17 +31,6 @@ module Pokebot
             },
             table_name: ENV['FAVOURITES_TABLE_NAME'] 
           })
-        end
-
-        def favourites(user_id)
-          dynamo_resource.client.query({
-            expression_attribute_values: {
-              ":u1" => user_id
-            },
-            key_condition_expression: "user_id = :u1", 
-            table_name: ENV['FAVOURITES_TABLE_NAME'],
-            select: "ALL_ATTRIBUTES"
-          }).items
         end
       end
     end

@@ -8,9 +8,15 @@ module Pokebot
         
         def call(event)
           Pokebot::Topic::Sns.broadcast(
-            topic: :intent, 
-            event: Pokebot::Lambda::Event::RECIPE_SEARCH_REQUESTED, 
-            state: event.state
+             topic: :intent, 
+            source: :recipes,
+              name: Pokebot::Lambda::Event::RECIPE_SEARCH_REQUESTED, 
+           version: 1.0,
+             event: event,
+              data: { 
+                    query: event.data['text'],
+                    user: event.data['user'] 
+                  }
           )
         end 
 

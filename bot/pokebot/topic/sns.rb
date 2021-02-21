@@ -1,3 +1,4 @@
+require 'pokebot/lambda/event'
 require 'aws-sdk-sns'
 require 'json'
 
@@ -8,8 +9,15 @@ module Pokebot
 
       @@topics = {}
 
-      def broadcast(topic:, event:, state:)
-        topic(topic: topic).publish(message: {event: event, state: state}.to_json)
+      def broadcast(topic:, source:, name:, version:, event:, data: {})
+        record = Pokebot::Lambda::Event::BotEventRecord.new(  name: name,
+                                    source: source,
+                                   version: version,
+                                      data: data )
+        event.current = record
+        puts "out:"
+        puts event.to_json
+        topic(topic: topic).publish( message: event.to_json )
       end
 
       private

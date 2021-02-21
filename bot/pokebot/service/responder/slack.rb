@@ -6,39 +6,42 @@ module Pokebot
       module Slack
         extend self
         
-        def call(event)
-          if event.spoonacular_recipe_response?
-            respond_with_recipes(event)
+        def call(bot_event)
+          case bot_event.name
+          when Pokebot::Lambda::Event::RECIPES_FOUND
+            respond_with_recipes(bot_event)
+          when Pokebot::Lambda::Event::MESSAGE_RECEIVED
+            respond_searching(bot_event)
           else
-            respond_searching(event)
+            raise "unexpected event name #{bot_event.name}"
           end
         end
 
-        def respond_searching(event)
+        def respond_searching(bot_event)
           Pokebot::Slack::Response.respond(
-            channel: event.channel, 
-            text: "searching for #{event.slack_text} recipes... :male-cook: :knife_fork_plate: :female-cook:",
+            channel: bot_event.data['user']['channel'], 
+            text: "searching for #{bot_event.data['text']} recipes... :male-cook: :knife_fork_plate: :female-cook:",
           )
         end
 
-        def respond_with_recipes(event)
+        def respond_with_recipes(bot_event)
           Pokebot::Slack::Response.respond(
-            channel: event.channel, 
+            channel: bot_event.data['user']['channel'], 
             text: 'recipes:',
-            blocks:  RecipeBlocks.new(event).recipe_blocks
+            blocks:  RecipeBlocks.new(bot_event).recipe_blocks
           )
         end
 
         class RecipeBlocks
 
-          def initialize(event)
-            @event = event
+          def initialize(bot_event)
+            @bot_event = bot_event
           end
 
           def recipe_blocks
-            @event.spoonacular_recipes.collect do |recipe|
+            @bot_event.data['recipes']['information_bulk'].collect do |recipe|
               [recipe_block(recipe), button_block(recipe)]
-            end.flatten
+            end.push(divider_block).push(nav_block(@bot_event.data['query'])).flatten
           end
 
           def recipe_block(recipe)
@@ -77,7 +80,7 @@ module Pokebot
                     "text": "Favourite",
                     "emoji": true
                   },
-                  "value": "Favourite-#{recipe['id']}",
+                  "value": { interaction: 'favourite', data: recipe['id'] }.to_json,
                 },
                 {
                   "type": "button",
@@ -91,9 +94,32 @@ module Pokebot
               ]
             }
           end
+
+          def divider_block
+            {
+			        "type": "divider"
+		        }
+          end
+
+          def nav_block(query)
+            {
+              "type": "actions",
+              "elements": [
+                {
+                  "type": "button",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "More",
+                    "emoji": true
+                  },
+                  "value": { interaction: 'next-recipes', data: query }.to_json,
+                }
+              ]
+            }
+          end
           
           def favourite?(recipe_id)
-            if @event.spoonacular_favourite_recipe_ids.include?(recipe_id.to_s)
+            if @bot_event.data['recipes']['favourite_recipe_ids'].include?(recipe_id)
               ':star:'  
             end
           end

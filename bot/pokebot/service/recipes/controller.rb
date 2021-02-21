@@ -1,21 +1,20 @@
-require_relative 'event'
-
 module Pokebot
   module Service
     module Recipe
       module Controller
-        def self.call(pokebot_event)
-          event = Pokebot::Service::Recipe::Event.new(pokebot_event)
-          case event.type
+        def self.call(bot_event)
+          case bot_event.name
           when Pokebot::Lambda::Event::RECIPE_SEARCH_REQUESTED 
             require_relative 'spoonacular/free_text_search'
-            Pokebot::Service::Recipe::Spoonacular::FreeTextSearch.call(event)
+            Pokebot::Service::Recipe::Spoonacular::FreeTextSearch.call(bot_event)
           when Pokebot::Lambda::Event::FAVOURITES_SEARCH_REQUESTED 
             require_relative 'spoonacular/favourites_search'
-            Pokebot::Service::Recipe::Spoonacular::FavouritesSearch.call(event)
+            Pokebot::Service::Recipe::Spoonacular::FavouritesSearch.call(bot_event)
           when Pokebot::Lambda::Event::USER_FAVOURITES_UPDATED
             require_relative 'favourites'
-            Pokebot::Service::Recipe::Favourite.call(event)
+            Pokebot::Service::Recipe::Favourite.call(bot_event)
+          else
+            raise "unexpected event name #{bot_event.name}"
           end
         end
       end

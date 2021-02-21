@@ -1,8 +1,6 @@
 require 'pokebot/topic/sns'
-require_relative 'complex_search'
 require_relative 'information_bulk_search'
 require_relative 'favourites'
-require_relative 'base'
 
 module Pokebot
   module Service
@@ -10,27 +8,31 @@ module Pokebot
       module Spoonacular 
         module FavouritesSearch
           extend self
-          extend Pokebot::Service::Recipe::Spoonacular::InformationBulkSearch
-          extend Pokebot::Service::Recipe::Spoonacular::Favourites
-          extend Pokebot::Service::Recipe::Spoonacular::Base
-
-          def call(event)
-            event.recipes = recipes(favourite_ids(event.user_id))
+          
+          def call(bot_event)
             Pokebot::Topic::Sns.broadcast(
               topic: :responses, 
-              event: Pokebot::Lambda::Event::RECIPES_FOUND,  
-              state: event.state
+              source: :recipes_favourites_search,
+              name: Pokebot::Lambda::Event::RECIPES_FOUND,  
+              version: 1.0,
+              event: bot_event,
+              data: { 
+                      recipes: recipes(bot_event.data['user']['slack_id']),
+                      user: bot_event.data['user']
+                    }
             )
           end
           
-          def recipes(ids)
-            bulk_result = if ids.count > 0
-                            information_bulk(ids)
+          def recipes(user_id)
+            recipe_ids = Pokebot::Service::Recipe::Spoonacular::Favourites.recipe_ids(user_id)
+            bulk_result = if recipe_ids.count > 0
+                            Pokebot::Service::Recipe::Spoonacular::InformationBulkSearch.search_by_ids(recipe_ids)
                           else
                             []
                           end
             {
-              'information_bulk' => bulk_result
+              'information_bulk' => bulk_result,
+              'favourite_recipe_ids' => recipe_ids,
             }
           end
         end

@@ -38,9 +38,16 @@ module Service
         end
 
         def recipe_blocks
+          
+          puts @bot_event.data['recipes']['complex_search'].inspect
           @bot_event.data['recipes']['information_bulk'].collect do |recipe|
             [recipe_block(recipe), button_block(recipe)]
-          end.push(divider_block).push(nav_block(@bot_event.data['query'])).flatten
+          end
+          .push(divider_block)
+          .push(nav_block(@bot_event.data['recipes']['complex_search']['totalResults'],
+                          @bot_event.data['recipes']['complex_search']['number'], 
+                          @bot_event.data['recipes']['query']))
+            .flatten.compact
         end
 
         def recipe_block(recipe)
@@ -100,20 +107,41 @@ module Service
           }
         end
 
-        def nav_block(query)
+        def nav_block(total_results, number, query)
+          elements = []
+
+          if less?(query['offset'], number)
+            elements << nav_block_button("back", query.merge({ offset: query['offset'] - number })) 
+          end
+
+          if more?(query['offset'], number, total_results)
+            elements << nav_block_button("more", query.merge({ offset: query['offset'] + number })) 
+          end
+          if elements.size > 0
+            {
+              "type": "actions",
+              "elements": elements
+            }
+          end
+        end
+
+        def less?(offset, number)
+          offset - number > 1
+        end
+
+        def more?(offset, number, total_results)
+          offset + number < total_results
+        end
+
+        def nav_block_button(text, data)
           {
-            "type": "actions",
-            "elements": [
-              {
-                "type": "button",
-                "text": {
-                  "type": "plain_text",
-                  "text": "More",
-                  "emoji": true
-                },
-                "value": { interaction: 'next-recipes', data: query }.to_json,
-              }
-            ]
+            "type": "button",
+            "text": {
+              "type": "plain_text",
+              "text": text,
+              "emoji": true
+            },
+            "value": { interaction: 'next-recipes', data: data }.to_json,
           }
         end
         

@@ -111,12 +111,13 @@ module Service
           elements = []
 
           if less?(query['offset'], number)
-            elements << nav_block_button("back", query.merge({ offset: query['offset'] - number })) 
+            elements << nav_block_button("back", query.merge({ 'offset' => query['offset'] - number })) 
           end
 
           if more?(query['offset'], number, total_results)
-            elements << nav_block_button("more", query.merge({ offset: query['offset'] + number })) 
+            elements << nav_block_button("more", query.merge({ 'offset' => query['offset'] + number })) 
           end
+
           if elements.size > 0
             {
               "type": "actions",

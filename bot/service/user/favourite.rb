@@ -17,13 +17,15 @@ module Service
                                           name: Bot::Event::USER_FAVOURITES_UPDATED, 
                                           version: 1.0,
                                           event: bot_event,
-                                          data: { favourites: updates['attributes']['favourites'].collect{|id| id.to_i }, user: bot_event.data['user'] } #favourites is a Set
+                                          data: { favourites: updates['attributes']['favourites'].collect{|id| id }, user: bot_event.data['user'] } #favourites is a Set
                                        )
         end
       end
 
+      private
+  
       def dynamo_resource
-        @@dynamo_resource = Aws::DynamoDB::Resource.new(region: ENV['REGION'])
+        @@dynamo_resource = Aws::DynamoDB::Resource.new(options)
       end
 
       def favourite(user_id, recipe_id)
@@ -46,7 +48,7 @@ module Service
           },
           condition_expression: 'attribute_not_exists(#favourites) OR not contains(#favourites, :recipe_id)',
           expression_attribute_values: {
-            ':empty_set': Set.new([recipe_id]),
+            ':empty_set': Set.new([recipe_id.to_s]),
             ':recipe_id': recipe_id
           },
           table_name: ENV['FAVOURITES_TABLE_NAME'],
@@ -63,6 +65,13 @@ module Service
           table_name: ENV['FAVOURITES_TABLE_NAME'],
           select: "ALL_ATTRIBUTES"
         }).items
+      end
+
+      def options
+        { region: ENV['REGION'] }.tap do |opts|
+          opts[:endpoint] = ENV['DYNAMO_ENDPOINT'] if ENV['DYNAMO_ENDPOINT'] 
+          opts[:ssl_verify_peer] = (ENV['VERIFY_SSL_PEER'].to_s.downcase != 'false')
+        end
       end
     end
   end

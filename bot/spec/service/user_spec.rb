@@ -11,7 +11,7 @@ describe Service::User::Controller do
     DbSpec.delete_table(table)
   end
 
-  let(:in_event){ build(:bot_event, current: build(:bot_event_record, :favourite_new, favourite: favourite)) }
+  let(:in_event){  current: build(:bot_event_record, :favourite_new, favourite: favourite)) }
   let(:table){ 'test-user-table' } 
   let(:favourite){ 234567 }
 
@@ -24,7 +24,7 @@ describe Service::User::Controller do
     it 'should create a new user item' do
       expect {
         subject.call(in_event)
-      }.to change{DbSpec.count('test-user-table')}.by(1)
+      }.to change{ DbSpec.count('test-user-table') }.by(1)
     end
     
     context 'user item' do

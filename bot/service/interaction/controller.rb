@@ -11,20 +11,16 @@ module Service
           value = JSON.parse(action['value'])
           case value['interaction']
           when 'favourite'
-            Topic::Sns.broadcast(
-                                   topic: :interactions, 
-                                   source: :interaction,
-                                   name: Bot::Event::FAVOURITE_NEW,
-                                   version: 1.0,
-                                   event: bot_event,
-                                   data: { 
-                                     favourite_id: value['data'], 
-                                     user: { 
-                                       slack_id: bot_event.data['user']['id'], 
-                                       channel: bot_event.data['container']['channel_id'] 
-                                     } 
-                                   }
-                                 )
+            bot_event.current = Bot::EventRecord.favourite_new(   
+                                                                  source: :interaction, 
+                                                               recipe_id: value['data'].to_s, 
+                                                                    user: { 
+                                                                      slack_id: bot_event.data['user']['id'], 
+                                                                       channel: bot_event.data['container']['channel_id']
+                                                                   } 
+                                                              ) 
+
+            Topic::Sns.broadcast(topic: :interactions, event: bot_event)
           else
             Topic::Sns.broadcast(
                                    topic: :interactions, 

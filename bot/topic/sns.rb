@@ -8,12 +8,7 @@ module Topic
 
     @@topics = {}
 
-    def broadcast(topic:, source:, name:, version:, event:, data: {})
-      record = Bot::EventRecord.new(  name: name,
-                                  source: source,
-                                 version: version,
-                                    data: data )
-      event.current = record
+    def broadcast(topic:, event:)
       puts "out:"
       puts event.to_json
       topic(topic: topic).publish( message: event.to_json )

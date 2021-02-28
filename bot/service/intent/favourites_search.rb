@@ -5,14 +5,11 @@ module Service
     module FavouritesSearch
       extend self
       
-      def call(event)
+      def call(bot_event)
+        bot_event.current = Bot::EventBuilders.favourite_search_requested(source: :intent)
         Topic::Sns.broadcast(
-          topic: :intent, 
-          source: :intent,
-          name: Bot::Event::FAVOURITES_SEARCH_REQUESTED, 
-          version: 1.0,
-          event: event,
-          data: { user: event.data['user'] }
+          topic: :intent,
+          event: bot_event 
         )
       end 
 

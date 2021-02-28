@@ -23,19 +23,18 @@ module Bot
       Bot::EventRecord.new(source: source, name: FAVOURITES_SEARCH_REQUESTED, version: 1.0, data: data)      
     end
     
-    def favourite_new(source:, recipe_id:)
+    def favourite_new(source:, favourite_recipe_id:)
       data = {
-        recipe_id: recipe_id
+        'favourite_recipe_id' => favourite_recipe_id
       }
       Bot::EventRecord.new(source: source, name: USER_FAVOURITE_NEW , version: 1.0, data: data)      
     end
 
-    def favourites_updated(source:, recipe_ids:, user:)
+    def favourites_updated(source:, favourite_recipe_ids:)
       data = {
-        recipe_ids: recipe_ids,
-        user: user
+        'favourite_recipe_ids' => favourite_recipe_ids,
       }
-      Bot::EventRecord.new(source: source, name: FAVOURITES_UPDATED, version: 1.0, data: data)      
+      Bot::EventRecord.new(source: source, name: USER_FAVOURITES_UPDATED, version: 1.0, data: data)      
     end
 
     def slack_api_event(aws_event)

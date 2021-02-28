@@ -9,16 +9,14 @@ module Service
       @@dynamo_resource = nil 
 
       def call(bot_event)
-        updates = favourite(bot_event.data['user']['slack_id'], bot_event.data['favourite_id']) 
+        updates = favourite(bot_event.slack_user['slack_id'], bot_event.data['favourite_recipe_id']) 
         if updates
+          bot_event.current = Bot::EventBuilders.favourites_updated(source: :user, 
+                                                     favourite_recipe_ids: updates['attributes']['favourites'].collect{|id| id })
           Topic::Sns.broadcast(
-                                          topic: :user,
-                                          source: :user,
-                                          name: Bot::Event::USER_FAVOURITES_UPDATED, 
-                                          version: 1.0,
-                                          event: bot_event,
-                                          data: { favourites: updates['attributes']['favourites'].collect{|id| id }, user: bot_event.data['user'] } #favourites is a Set
-                                       )
+                                topic: :user,
+                                event: bot_event
+                              )
         end
       end
 

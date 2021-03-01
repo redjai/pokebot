@@ -34,7 +34,7 @@ describe Service::Recipe::Controller do
 
       around do |example|
         DbSpec.create_table(table) 
-        ClimateControl.modify FAVOURITES_TABLE_NAME: table do
+        ClimateControl.modify FAVOURITES_TABLE_NAME: table, SPOONACULAR_API_KEY: api_key do
           example.run
         end
         DbSpec.delete_table(table)
@@ -47,17 +47,13 @@ describe Service::Recipe::Controller do
       end
 
       it 'should set the complex_search data in the event' do
-        ClimateControl.modify SPOONACULAR_API_KEY: api_key do 
           subject.call(bot_event) 
           expect(bot_event.data['complex_search']).to eq complex_search_response
-        end
       end
       
       it 'should set the information_bulk data in the event' do
-        ClimateControl.modify SPOONACULAR_API_KEY: api_key do 
           subject.call(bot_event) 
           expect(bot_event.data['information_bulk']).to eq information_bulk_response
-        end
       end
 
       context 'favourites' do
@@ -66,28 +62,22 @@ describe Service::Recipe::Controller do
         let(:favourites){ ['123','456'] }
 
         it 'should return an empty list where the user does not exist' do
-          ClimateControl.modify SPOONACULAR_API_KEY: api_key do 
             subject.call(bot_event) 
             expect(bot_event.data['favourite_recipe_ids']).to eq []
-          end
         end
 
         it 'should return the favourites as a list when the user does exist' do
-          ClimateControl.modify SPOONACULAR_API_KEY: api_key do 
             Service::Recipe::User.upsert(user_id, favourites)
             subject.call(bot_event) 
             expect(bot_event.data['favourite_recipe_ids']).to eq favourites
-          end
         end
       end
 
       context 'query' do
         
         it 'should assign the query' do
-           ClimateControl.modify SPOONACULAR_API_KEY: api_key do 
              subject.call(bot_event) 
              expect(bot_event.data['query']).to eq({:offset=>0, :query=>"beef rendang"}) 
-           end
          end
 
       end

@@ -7,6 +7,8 @@ GEM
       minitest (>= 5.1)
       tzinfo (~> 2.0)
       zeitwerk (~> 2.3)
+    addressable (2.7.0)
+      public_suffix (>= 2.0.2, < 5.0)
     aws-eventstream (1.1.0)
     aws-partitions (1.429.0)
     aws-sdk-core (3.112.0)
@@ -24,13 +26,18 @@ GEM
       aws-eventstream (~> 1, >= 1.0.2)
     climate_control (0.2.0)
     concurrent-ruby (1.1.8)
+    crack (0.4.5)
+      rexml
     diff-lcs (1.4.4)
     factory_bot (6.1.0)
       activesupport (>= 5.0.0)
+    hashdiff (1.0.1)
     i18n (1.8.9)
       concurrent-ruby (~> 1.0)
     jmespath (1.4.0)
     minitest (5.14.3)
+    public_suffix (4.0.6)
+    rexml (3.2.4)
     rspec (3.10.0)
       rspec-core (~> 3.10.0)
       rspec-expectations (~> 3.10.0)
@@ -46,6 +53,10 @@ GEM
     rspec-support (3.10.2)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
+    webmock (3.12.0)
+      addressable (>= 2.3.6)
+      crack (>= 0.3.2)
+      hashdiff (>= 0.4.0, < 2.0.0)
     zeitwerk (2.4.2)
 
 PLATFORMS
@@ -57,6 +68,7 @@ DEPENDENCIES
   climate_control
   factory_bot
   rspec
+  webmock
 
 BUNDLED WITH
    2.1.4

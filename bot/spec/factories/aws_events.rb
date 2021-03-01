@@ -12,7 +12,6 @@ FactoryBot.define do
 end
  
 def slack_aws_event(**args)
-  puts args.inspect
   {
     'body' => {
        event: {

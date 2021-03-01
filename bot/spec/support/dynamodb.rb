@@ -27,11 +27,30 @@ module DbSpec
   def item(table, key)
     @@resource.table(table).get_item(key: key).item
   end
-
+  
   def user_table_definitions
     {
       'test-user-table' => {
         table_name: 'test-user-table',
+        key_schema: [
+          {
+            attribute_name: 'user_id',
+            key_type: 'HASH'  # Partition key.
+          }
+        ],
+        attribute_definitions: [
+          {
+            attribute_name: 'user_id',
+            attribute_type: 'S'
+          }
+        ],
+        provisioned_throughput: {
+          read_capacity_units: 10,
+          write_capacity_units: 10
+        }
+      },
+      'test-recipe-user-table' => {
+        table_name: 'test-recipe-user-table',
         key_schema: [
           {
             attribute_name: 'user_id',

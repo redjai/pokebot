@@ -13,7 +13,7 @@ describe Service::Intent::Controller do
       allow(Topic::Sns).to receive(:broadcast).with(topic: :intent, event: bot_event)
       expect{ 
         subject.call(bot_event)
-      }.to change { bot_event.data }.from(bot_event.data).to({"query"=>"beef rendang"})
+      }.to change { bot_event.data }.from(bot_event.data).to({"query"=>"beef rendang", "offset" => 0})
     end
 
     it 'set the correct event type' do

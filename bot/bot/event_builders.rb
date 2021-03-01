@@ -11,8 +11,19 @@ module Bot
       Bot::EventRecord.new(source: source, name: MESSAGE_RECEIVED, version: 1.0, data: data)      
     end
 
-    def recipe_search_requested(source:, query:)
+    def recipe_search_requested(source:, query:, offset: 0)
       data = {
+        'query' => query,
+        'offset' => offset 
+      }
+      Bot::EventRecord.new(source: source, name: RECIPE_SEARCH_REQUESTED, version: 1.0, data: data)      
+    end
+
+    def recipe_search(source:, complex_search:, information_bulk:, favourite_recipe_ids:, query:)
+      data = {
+        'complex_search' => complex_search,
+        'information_bulk' => information_bulk,
+        'favourite_recipe_ids' => favourite_recipe_ids,
         'query' => query 
       }
       Bot::EventRecord.new(source: source, name: RECIPE_SEARCH_REQUESTED, version: 1.0, data: data)      

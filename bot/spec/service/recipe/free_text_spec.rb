@@ -32,12 +32,12 @@ describe Service::Recipe::Controller do
       let(:information_bulk_uri){ 'https://api.spoonacular.com/recipes/informationBulk' }
       let(:table) { 'test-recipe-user-table' }
 
+      table!('test-recipe-user-table')
+
       around do |example|
-        DbSpec.create_table(table) 
-        ClimateControl.modify FAVOURITES_TABLE_NAME: table, SPOONACULAR_API_KEY: api_key do
+        ClimateControl.modify SPOONACULAR_API_KEY: api_key do
           example.run
-        end
-        DbSpec.delete_table(table)
+        end 
       end
 
       before do

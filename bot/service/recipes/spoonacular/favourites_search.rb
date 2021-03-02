@@ -1,5 +1,5 @@
 require 'topic/sns'
-require_relative 'information_bulk_search'
+require_relative 'api/information_bulk_search'
 require_relative '../user'
 require 'bot/event_builders'
 

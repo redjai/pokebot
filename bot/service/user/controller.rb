@@ -1,5 +1,3 @@
-require_relative 'event'
-
 module Service
   module User 
     module Controller

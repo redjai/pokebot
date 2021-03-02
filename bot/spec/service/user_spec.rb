@@ -4,17 +4,12 @@ require 'topic/sns'
 
 describe Service::User::Controller do
 
-  around do |example|
-    DbSpec.create_table(table) 
-    ClimateControl.modify FAVOURITES_TABLE_NAME: table, USER_TOPIC_ARN: 'abc-123' do
-      example.run
-    end
-    DbSpec.delete_table(table)
-  end
-
   let(:bot_event){ build(:bot_event, current: Bot::EventBuilders.favourite_new(source: :interactions, favourite_recipe_id:  favourite)) }
   let(:table){ 'test-user-table' } 
   let(:favourite){ "234567" }
+  let(:item){ Service::User::User.read bot_event.slack_user['slack_id'] } 
+  
+  table!('test-user-table')
 
   context 'user does not exist' do
     
@@ -22,7 +17,6 @@ describe Service::User::Controller do
       allow(Topic::Sns).to receive(:broadcast)
     end
     
-    let(:item){ DbSpec.item(table, { user_id: bot_event.slack_user['slack_id']} ) } 
     
     it 'should create a new user item' do
       expect {
@@ -46,8 +40,6 @@ describe Service::User::Controller do
         subject.call(bot_event)
       end
 
-      let(:item){ DbSpec.item(table, { user_id: bot_event.slack_user['slack_id']} ) } 
-
       it 'set the slack_id as key' do
         expect(item['user_id']).to eq bot_event.slack_user['slack_id'] 
       end
@@ -64,7 +56,6 @@ describe Service::User::Controller do
 
     let(:existing_favourite){ "987654" }
     let(:previous_bot_event){ build(:bot_event, current: Bot::EventBuilders.favourite_new(source: :interactions, favourite_recipe_id:  existing_favourite)) }
-    let(:item){ DbSpec.item(table, { user_id: bot_event.slack_user['slack_id']} ) } 
     
     before(:each) do
       allow(Topic::Sns).to receive(:broadcast)

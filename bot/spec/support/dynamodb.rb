@@ -3,10 +3,21 @@ require 'aws-sdk-dynamodb'
 ENV['DYNAMO_ENDPOINT'] = 'https://localhost:4566' 
 ENV['VERIFY_SSL_PEER'] = 'false'
 
+def table!(table)
+  around do |example|
+    DbSpec.create_table(table) 
+    ClimateControl.modify FAVOURITES_TABLE_NAME: table do
+      example.run
+    end
+    DbSpec.delete_table(table)
+  end
+end
+
 module DbSpec
   extend self
   
   @@resource = Aws::DynamoDB::Resource.new(region: ENV['REGION'], endpoint: 'https://localhost:4566', ssl_verify_peer: false)
+
 
   def table_exists?(name)
     !@@resource.tables.select{|t| t.name == name }.empty?
@@ -17,6 +28,7 @@ module DbSpec
   end
 
   def create_table(name)
+    delete_table(name)
     @@resource.create_table(user_table_definitions[name]) unless table_exists?(name)
   end
 

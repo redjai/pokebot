@@ -29,9 +29,17 @@ module Bot
       Bot::EventRecord.new(source: source, name: RECIPE_SEARCH_REQUESTED, version: 1.0, data: data)      
     end
 
-    def favourite_search_requested(source:)
-      data = {}
+    def favourite_search_requested(source:, offset: 0)
+      data = { offset: offset }
       Bot::EventRecord.new(source: source, name: FAVOURITES_SEARCH_REQUESTED, version: 1.0, data: data)      
+    end
+    
+    def favourites_search(source:, information_bulk:, favourite_recipe_ids:)
+      data = {
+        'information_bulk' => information_bulk,
+        'favourite_recipe_ids' => favourite_recipe_ids,
+      }
+      Bot::EventRecord.new(source: source, name: RECIPES_FOUND, version: 1.0, data: data)      
     end
     
     def favourite_new(source:, favourite_recipe_id:)

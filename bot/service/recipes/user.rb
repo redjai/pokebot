@@ -7,7 +7,7 @@ module Service
       
       def recipe_ids(user_id)
         user = read(user_id)
-        user.nil? ? [] : user['favourites']
+        user.nil? ? [] : user['favourites'].collect{|id| id.to_s }
       end
 
       def read(user_id)

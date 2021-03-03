@@ -43,8 +43,8 @@ describe Service::Recipe::Controller do
 
   context 'user exists' do
 
-    let(:existing_favourite){ ["987654"] }
-    let(:previous_bot_event){ build(:bot_event, current: Bot::EventBuilders.favourites_updated(source: :user, favourite_recipe_ids:  existing_favourite)) }
+    let(:existing_favourites){ ["987654"] }
+    let(:previous_bot_event){ build(:bot_event, current: Bot::EventBuilders.favourites_updated(source: :user, favourite_recipe_ids:  existing_favourites)) }
     
     before(:each) do
       subject.call(previous_bot_event) # set up the user with a favourite
@@ -60,8 +60,9 @@ describe Service::Recipe::Controller do
     context 'favourites existing' do
 
       it 'should overwrite existing favourite with the updated list' do
-        subject.call(bot_event)
-        expect(item['favourites']).to eq favourites
+        expect{
+          subject.call(bot_event)
+        }.to change { Service::Recipe::User.read(bot_event.slack_user['slack_id'])['favourites']  }.from(existing_favourites).to(favourites)
       end
 
     end

@@ -56,6 +56,15 @@ module Bot
       Bot::EventRecord.new(source: source, name: USER_FAVOURITES_UPDATED, version: 1.0, data: data)      
     end
 
+    def more_search_results_requested(source:, query:, ts:, offset: 0)
+      data = { 
+        query: query,
+        offset: offset,
+        ts: ts,
+      }
+      Bot::EventRecord.new(source: source, name: RECIPE_SEARCH_NEXT_PAGE, version: 1.0, data: data)      
+    end 
+
     def slack_api_event(aws_event)
       slack_data = http_data(aws_event)
 
@@ -75,8 +84,9 @@ module Bot
       record = Bot::EventRecord.new(  name: 'slack-interaction-api-request',
                          source: 'slack-interaction-api',
                         version: 1.0,
-                           data: payload_data(aws_event))   
-      Bot::Event.new current: record
+                           data: payload_data(aws_event))
+      user = {'slack_id' => record.record['data']['user']['id'], 'channel' => record.record['data']['container']['channel_id']}   
+      Bot::Event.new slack_user: user, current: record
     end
 
     private
@@ -87,10 +97,11 @@ module Bot
 
     def payload_data(aws_event)
       require 'uri'
-      JSON.parse(URI.decode(body(aws_event).gsub(/^payload=/,"")))
+      JSON.parse(CGI.unescape(body(aws_event).gsub(/^payload=/,"")))
     end
 
     def data(aws_event)
+      puts body(aws_event)
       JSON.parse(body(aws_event))
     end
 

@@ -7,7 +7,7 @@ module Service
       extend self
 
       def call(bot_event)
-        Service::Recipe::User.upsert(bot_event.data['user']['slack_id'], bot_event.data['favourites'])
+        Service::Recipe::User.upsert(bot_event.slack_user['slack_id'], bot_event.data['favourite_recipe_ids'])
       end
 
     end

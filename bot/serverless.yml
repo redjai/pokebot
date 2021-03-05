@@ -73,7 +73,7 @@ custom:
  
 functions:
   messages:
-    handler: messages.handle
+    handler: handlers/messages.handle
     events:
       - httpApi:
           method: POST 
@@ -83,7 +83,7 @@ functions:
       MESSAGES_TOPIC_ARN: !Ref SNSMessagesTopic
 
   intent:
-    handler: intent.handle
+    handler: handlers/intent.handle
     events:    
       - sqs:
          arn:
@@ -94,7 +94,7 @@ functions:
       INTENT_TOPIC_ARN: !Ref SNSIntentTopic
 
   recipe:
-    handler: recipes.handle
+    handler: handlers/recipes.handle
     events:
       - sqs:
          arn:
@@ -113,7 +113,7 @@ functions:
       FAVOURITES_TABLE_NAME: ${self:custom.recipe_favourites_table}
 
   responder:
-    handler: responder.handle
+    handler: handlers/responder.handle
     events:
       - sqs:
          arn:
@@ -129,7 +129,7 @@ functions:
       BOT_USER_OAUTH_ACCESS_TOKEN: ${file(config.${self:provider.stage}.yml):bot_user_oauth_access_token}  
 
   interactions:
-    handler: interactions.handle
+    handler: handlers/interactions.handle
     events:
       - httpApi:
           method: POST 
@@ -138,7 +138,7 @@ functions:
       INTERACTIONS_TOPIC_ARN: !Ref SNSInteractions
 
   user:
-    handler: user.handle
+    handler: handlers/user.handle
     events:
       - sqs:
          arn:

@@ -13,14 +13,15 @@ module Lambda
         if accept.empty? || accept.include?(bot_event.current['name'])
           yield bot_event
         else
-          puts "event #{bot_event['name']} not accepted"
+          puts "event #{bot_event.name} not accepted by this service"
         end
       end
     end
 
     def sqs_record_bot_event(aws_record)
-      event = JSON.parse(data(aws_record)["Message"])
-      Bot::Event.new user: event['user'], current: event['current'], trail: event['trail']
+      record = data(aws_record)
+      event = JSON.parse(record["Message"])
+      Bot::Event.new slack_user: event['slack_user'], current: event['current'], trail: event['trail']
     end
 
     private

@@ -101,7 +101,6 @@ module Bot
     end
 
     def data(aws_event)
-      puts body(aws_event)
       JSON.parse(body(aws_event))
     end
 

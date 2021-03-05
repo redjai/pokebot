@@ -2,6 +2,20 @@ require_relative 'slack_events/favourites_interaction_aws_event'
 require_relative 'slack_events/more_results_interaction_event'
 
 FactoryBot.define do
+  
+  factory :aws_event, class: Hash do
+    transient do
+      bot_event { build(:bot_event) }
+    end
+    body { { "Records" => [
+                            { 
+                              "body" => {
+                                'Message' => bot_event.to_json
+                              }.to_json
+                            }
+                           ] } }
+    initialize_with {  body  }
+  end
 
   factory :slack_api_request_aws_event, class: Hash do
     user { 'U-SLACK-TEST-USER123' }

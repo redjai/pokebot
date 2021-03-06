@@ -1,8 +1,8 @@
 require 'lambda/event'
 
-EVENTS = [ Bot::Event::FAVOURITES_SEARCH_REQUESTED, 
-           Bot::Event::RECIPE_SEARCH_REQUESTED,
-           Bot::Event::USER_FAVOURITES_UPDATED ] 
+EVENTS = [ Bot::FAVOURITES_SEARCH_REQUESTED, 
+           Bot::RECIPE_SEARCH_REQUESTED,
+           Bot::USER_FAVOURITES_UPDATED ] 
 
 def handle(event:, context:)
   puts event

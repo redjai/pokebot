@@ -1,6 +1,6 @@
 require 'bot/event_builders'
 require 'service/user/controller'
-require 'topic/sns'
+require 'bot/topic/sns'
 
 describe Service::User::Controller do
 

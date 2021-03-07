@@ -1,5 +1,5 @@
 require 'service/interaction/controller'
-require 'topic/sns'
+require 'bot/topic/sns'
 require 'bot/event_builders'
 require 'bot/event'
 

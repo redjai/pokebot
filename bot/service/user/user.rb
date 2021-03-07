@@ -1,5 +1,5 @@
 require 'aws-sdk-dynamodb'
-require 'topic/sns'
+require 'bot/topic/sns'
 
 module Service
   module User

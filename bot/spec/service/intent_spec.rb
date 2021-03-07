@@ -1,5 +1,5 @@
 require 'service/intent/controller'
-require 'topic/sns'
+require 'bot/topic/sns'
 require 'bot/event'
 require 'bot/event_builders'
 

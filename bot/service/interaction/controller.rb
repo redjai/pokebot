@@ -1,4 +1,4 @@
-require 'topic/sns'
+require 'bot/topic/sns'
 require 'bot/event_builders'
 
 module Service

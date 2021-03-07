@@ -1,6 +1,6 @@
 require 'service/recipes/controller'
 require 'json'
-require 'topic/sns'
+require 'bot/topic/sns'
 
 describe Service::Recipe::Controller do
 

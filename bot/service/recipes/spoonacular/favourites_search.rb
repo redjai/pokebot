@@ -1,4 +1,4 @@
-require 'topic/sns'
+require 'bot/topic/sns'
 require_relative 'api/information_bulk_search'
 require_relative '../user'
 require 'bot/event_builders'

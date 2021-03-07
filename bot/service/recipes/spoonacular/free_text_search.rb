@@ -10,16 +10,16 @@ module Service
       module FreeTextSearch
         extend self
 
-        def call(bot_event)
-          complex_search = Service::Recipe::Spoonacular::ComplexSearch.search_free_text(bot_event.data['query'])
-          bot_event.current = Bot::EventBuilders::recipes_found(
+        def call(bot_request)
+          complex_search = Service::Recipe::Spoonacular::ComplexSearch.search_free_text(bot_request.data['query'])
+          bot_request.current = Bot::EventBuilders::recipes_found(
                           source: :recipes,
                   complex_search: complex_search,
                 information_bulk: information_bulk_result(complex_search),
-                favourite_recipe_ids: Service::Recipe::User.recipe_ids(bot_event.slack_user['slack_id']),
-                query: Service::Recipe::Spoonacular::ComplexSearch.params(bot_event.data['query'], bot_event.data['offset'])
+                favourite_recipe_ids: Service::Recipe::User.recipe_ids(bot_request.slack_user['slack_id']),
+                query: Service::Recipe::Spoonacular::ComplexSearch.params(bot_request.data['query'], bot_request.data['offset'])
           )
-          Topic::Sns.broadcast(topic: :recipes, event: bot_event)
+          Topic::Sns.broadcast(topic: :recipes, event: bot_request)
         end
 
         def information_bulk_result(search_result)

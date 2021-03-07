@@ -10,7 +10,7 @@ describe Service::Recipe::Controller do
 
     context 'recipes found' do
 
-      let(:bot_event){ build(:bot_event, current: Bot::EventBuilders.favourite_search_requested(source: 'intent')) }
+      let(:bot_request){ build(:bot_request, current: Bot::EventBuilders.favourite_search_requested(source: 'intent')) }
       let(:offset){ 0 }
       let(:api_key){ 'mock-spoonacular-api-key' }
       let(:recipe_1){ '123' }
@@ -33,7 +33,7 @@ describe Service::Recipe::Controller do
       end
 
       before do
-        allow(Topic::Sns).to receive(:broadcast).with(topic: :recipes, event: bot_event) 
+        allow(Topic::Sns).to receive(:broadcast).with(topic: :recipes, event: bot_request) 
         stub_request(:get, information_bulk_uri).with(query: { "apiKey" => api_key , "ids" => ids }).and_return(body: information_bulk_response.to_json)
       end
 
@@ -41,7 +41,7 @@ describe Service::Recipe::Controller do
      
         context 'user favourites exist' do
           
-          let(:user_id){ bot_event.slack_user['slack_id'] }
+          let(:user_id){ bot_request.slack_user['slack_id'] }
           let(:favourites){ [recipe_1, recipe_2] }
 
           before do
@@ -49,13 +49,13 @@ describe Service::Recipe::Controller do
           end
 
           it 'should set the information_bulk data in the event' do
-              subject.call(bot_event) 
-              expect(bot_event.data['information_bulk']).to eq information_bulk_response
+              subject.call(bot_request) 
+              expect(bot_request.data['information_bulk']).to eq information_bulk_response
           end
           
           it 'should set teh recipe_ids list' do
-              subject.call(bot_event) 
-              expect(bot_event.data['favourite_recipe_ids']).to eq favourites
+              subject.call(bot_request) 
+              expect(bot_request.data['favourite_recipe_ids']).to eq favourites
           end
         end
       end
@@ -63,13 +63,13 @@ describe Service::Recipe::Controller do
       context 'no favourites exist' do
 
         it 'should set the information_bulk as an empty list' do
-            subject.call(bot_event) 
-            expect(bot_event.data['information_bulk']).to eq []
+            subject.call(bot_request) 
+            expect(bot_request.data['information_bulk']).to eq []
         end
 
         it 'should return an empty list where the user does not exist' do
-            subject.call(bot_event) 
-            expect(bot_event.data['favourite_recipe_ids']).to eq []
+            subject.call(bot_request) 
+            expect(bot_request.data['favourite_recipe_ids']).to eq []
         end
 
       end

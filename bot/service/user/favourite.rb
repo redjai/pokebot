@@ -7,14 +7,14 @@ module Service
     module Favourite 
       extend self
 
-      def call(bot_event)
-        updates = Service::User::User.upsert(bot_event.slack_user['slack_id'], bot_event.data['favourite_recipe_id']) 
+      def call(bot_request)
+        updates = Service::User::User.upsert(bot_request.slack_user['slack_id'], bot_request.data['favourite_recipe_id']) 
         if updates
-          bot_event.current = Bot::EventBuilders.favourites_updated(source: :user, 
+          bot_request.current = Bot::EventBuilders.favourites_updated(source: :user, 
                                                      favourite_recipe_ids: updates['attributes']['favourites'].collect{|id| id })
           Topic::Sns.broadcast(
                                 topic: :user,
-                                event: bot_event
+                                event: bot_request
                               )
         end
       end

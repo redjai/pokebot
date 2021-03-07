@@ -6,8 +6,8 @@ module Service
     module Favourite 
       extend self
 
-      def call(bot_event)
-        Service::Recipe::User.upsert(bot_event.slack_user['slack_id'], bot_event.data['favourite_recipe_ids'])
+      def call(bot_request)
+        Service::Recipe::User.upsert(bot_request.slack_user['slack_id'], bot_request.data['favourite_recipe_ids'])
       end
 
     end

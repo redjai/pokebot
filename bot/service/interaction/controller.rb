@@ -6,21 +6,21 @@ module Service
     module Controller
       extend self
 
-      def call(bot_event)
-        bot_event.data['actions'].each do |action|
+      def call(bot_request)
+        bot_request.data['actions'].each do |action|
           value = JSON.parse(action['value'])
           case value['interaction']
           when 'favourite'
-            bot_event.current = Bot::EventBuilders.favourite_search_requested(source: :interaction) 
+            bot_request.current = Bot::EventBuilders.favourite_search_requested(source: :interaction) 
 
-            Topic::Sns.broadcast(topic: :interactions, event: bot_event)
+            Topic::Sns.broadcast(topic: :interactions, event: bot_request)
           else
-            bot_event.current = Bot::EventBuilders.more_search_results_requested(source: :interaction, 
+            bot_request.current = Bot::EventBuilders.more_search_results_requested(source: :interaction, 
                                                                                  query: value['data']['query'],
-                                                                                    ts: bot_event.data['container']['message_ts'])
+                                                                                    ts: bot_request.data['container']['message_ts'])
             Topic::Sns.broadcast(
                                    topic: :interactions, 
-                                   event: bot_event
+                                   event: bot_request
                                  )
 
           end

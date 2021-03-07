@@ -5,8 +5,8 @@ require_relative 'search'
 module Service
   module Message 
     module Controller
-      def self.call(bot_event)
-        Service::Message::Search.call(bot_event)
+      def self.call(bot_request)
+        Service::Message::Search.call(bot_request)
       end
     end
   end

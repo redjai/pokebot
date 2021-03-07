@@ -4,24 +4,24 @@ module Lambda
   module Event 
     extend self
     
-    def each_sqs_record_bot_event(aws_event:, accept: [])
+    def each_sqs_record_bot_request(aws_event:, accept: [])
       puts accept.inspect
       aws_event['Records'].each do |aws_record|
-        bot_event = sqs_record_bot_event(aws_record)
+        bot_request = sqs_record_bot_request(aws_record)
         puts "Record in:"
-        puts bot_event.to_json
-        if accept.empty? || accept.include?(bot_event.current['name'])
-          yield bot_event
+        puts bot_request.to_json
+        if accept.empty? || accept.include?(bot_request.current['name'])
+          yield bot_request
         else
-          puts "event #{bot_event.name} not accepted by this service. expected #{accept}"
+          puts "event #{bot_request.name} not accepted by this service. expected #{accept}"
         end
       end
     end
 
-    def sqs_record_bot_event(aws_record)
+    def sqs_record_bot_request(aws_record)
       record = data(aws_record)
       event = JSON.parse(record["Message"])
-      Bot::Event.new slack_user: event['slack_user'], current: event['current'], trail: event['trail']
+      Bot::Request.new slack_user: event['slack_user'], current: event['current'], trail: event['trail']
     end
 
     private

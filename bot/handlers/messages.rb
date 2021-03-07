@@ -6,9 +6,9 @@ module Messages
   class Handler
     def self.handle(event:, context:)
       puts event
-      bot_event = Bot::EventBuilders.slack_api_event(event)
-      if bot_event.data['challenge']
-        return Lambda::HttpResponse.plain_text_response(bot_event.data['challenge'])
+      bot_request = Bot::EventBuilders.slack_api_event(event)
+      if bot_request.data['challenge']
+        return Lambda::HttpResponse.plain_text_response(bot_request.data['challenge'])
       end
 
       unless Slack::Authentication.authenticated?(
@@ -18,7 +18,7 @@ module Messages
         return Lambda::HttpResponse.plain_text_response('Not authorized', 401)
       end
 
-      Service::Message::Controller.call(bot_event)
+      Service::Message::Controller.call(bot_request)
     end
   end
 end

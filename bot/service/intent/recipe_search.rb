@@ -6,11 +6,11 @@ module Service
     module RecipeSearch
       extend self
       
-      def call(bot_event)
-        bot_event.current = Bot::EventBuilders.recipe_search_requested(source: :recipes, query: bot_event.data['text'])
+      def call(bot_request)
+        bot_request.current = Bot::EventBuilders.recipe_search_requested(source: :recipes, query: bot_request.data['text'])
         Topic::Sns.broadcast(
            topic: :intent,
-           event: bot_event 
+           event: bot_request 
         )
       end 
 

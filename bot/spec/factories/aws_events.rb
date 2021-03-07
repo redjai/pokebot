@@ -6,12 +6,12 @@ FactoryBot.define do
   
   factory :aws_records_event, class: Hash do
     transient do
-      bot_event { build(:bot_event) }
+      bot_request { build(:bot_request) }
     end
     body { { "Records" => [
                             { 
                               "body" => {
-                                'Message' => bot_event.to_json
+                                'Message' => bot_request.to_json
                               }.to_json
                             }
                            ] } }

@@ -6,18 +6,18 @@ require 'bot/event_builders'
 module Service
   module Message 
     module Search
-      def self.call(bot_event)
+      def self.call(bot_request)
 
-        bot_event.current = Bot::EventBuilders.message_received(source: :messages, text: text(bot_event)) 
+        bot_request.current = Bot::EventBuilders.message_received(source: :messages, text: text(bot_request)) 
 
         Topic::Sns.broadcast(
             topic: :messages,
-            event: bot_event
+            event: bot_request
         )
       end
 
-      def self.text(bot_event)
-        bot_event.current['data']['event']['text'].gsub(/<[^>]+>/,"").strip
+      def self.text(bot_request)
+        bot_request.current['data']['event']['text'].gsub(/<[^>]+>/,"").strip
       end
     end
   end

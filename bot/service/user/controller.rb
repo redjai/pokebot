@@ -3,17 +3,17 @@ module Service
     module Controller
       extend self
 
-      def call(bot_event)
-        case bot_event.name
+      def call(bot_request)
+        case bot_request.name
         when Bot::USER_FAVOURITE_NEW
-          favourite(bot_event)
+          favourite(bot_request)
         end
       end
 
 
-      def favourite(bot_event)
+      def favourite(bot_request)
         require_relative 'favourite'
-        Service::User::Favourite.call(bot_event)
+        Service::User::Favourite.call(bot_request)
       end
     end
   end

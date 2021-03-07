@@ -6,9 +6,9 @@ module User
     EVENTS = [Bot::USER_FAVOURITE_NEW] 
 
     def self.handle(event:, context:)
-      Lambda::Event.each_sqs_record_bot_event(aws_event: event, accept: EVENTS) do |pokebot_event|
+      Lambda::Event.each_sqs_record_bot_request(aws_event: event, accept: EVENTS) do |bot_request|
         require 'service/user/controller'
-        Service::User::Controller.call(pokebot_event)
+        Service::User::Controller.call(bot_request)
       end 
     end
   end

@@ -34,7 +34,7 @@ module Bot
 
   end
 
-  class Event
+  class Request 
     
     attr_reader :current, :slack_user
 

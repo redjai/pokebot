@@ -77,7 +77,7 @@ module Bot
                                   source: 'slack-event-api',
                                  version: 1.0,
                                     data: slack_data)   
-      Bot::Event.new slack_user: user, current: record
+      Bot::Request.new slack_user: user, current: record
     end
 
     def slack_interaction_event(aws_event)
@@ -86,7 +86,7 @@ module Bot
                         version: 1.0,
                            data: payload_data(aws_event))
       user = {'slack_id' => record.record['data']['user']['id'], 'channel' => record.record['data']['container']['channel_id']}   
-      Bot::Event.new slack_user: user, current: record
+      Bot::Request.new slack_user: user, current: record
     end
 
     private

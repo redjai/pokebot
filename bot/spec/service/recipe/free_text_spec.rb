@@ -9,7 +9,7 @@ describe Service::Recipe::Controller do
 
     context 'recipes found' do
 
-      let(:bot_event){ build(:bot_event, current: Bot::EventBuilders.recipe_search_requested(query: query, source: 'intent')) }
+      let(:bot_request){ build(:bot_request, current: Bot::EventBuilders.recipe_search_requested(query: query, source: 'intent')) }
       let(:complex_search_uri){ 'https://api.spoonacular.com/recipes/complexSearch' }
       let(:query){ 'beef rendang' }
       let(:offset){ 0 }
@@ -40,43 +40,43 @@ describe Service::Recipe::Controller do
       end
 
       before do
-        allow(Topic::Sns).to receive(:broadcast).with(topic: :recipes, event: bot_event) 
+        allow(Topic::Sns).to receive(:broadcast).with(topic: :recipes, event: bot_request) 
         stub_request(:get, complex_search_uri).with(query: { "apiKey" => api_key , "query" => query, "offset" => offset }).and_return(body: complex_search_response.to_json)
         stub_request(:get, information_bulk_uri).with(query: { "apiKey" => api_key , "ids" => ids }).and_return(body: information_bulk_response.to_json)
       end
 
       it 'should set the complex_search data in the event' do
-          subject.call(bot_event) 
-          expect(bot_event.data['complex_search']).to eq complex_search_response
+          subject.call(bot_request) 
+          expect(bot_request.data['complex_search']).to eq complex_search_response
       end
       
       it 'should set the information_bulk data in the event' do
-          subject.call(bot_event) 
-          expect(bot_event.data['information_bulk']).to eq information_bulk_response
+          subject.call(bot_request) 
+          expect(bot_request.data['information_bulk']).to eq information_bulk_response
       end
 
       context 'favourites' do
 
-        let(:user_id){ bot_event.slack_user['slack_id'] }
+        let(:user_id){ bot_request.slack_user['slack_id'] }
         let(:favourites){ ['123','456'] }
 
         it 'should return an empty list where the user does not exist' do
-            subject.call(bot_event) 
-            expect(bot_event.data['favourite_recipe_ids']).to eq []
+            subject.call(bot_request) 
+            expect(bot_request.data['favourite_recipe_ids']).to eq []
         end
 
         it 'should return the favourites as a list when the user does exist' do
             Service::Recipe::User.upsert(user_id, favourites)
-            subject.call(bot_event) 
-            expect(bot_event.data['favourite_recipe_ids']).to eq favourites
+            subject.call(bot_request) 
+            expect(bot_request.data['favourite_recipe_ids']).to eq favourites
         end
       end
 
       context 'query' do
         
         it 'should assign the query' do
-             subject.call(bot_event) 
-             expect(bot_event.data['query']).to eq({:offset=>0, :query=>"beef rendang"}) 
+             subject.call(bot_request) 
+             expect(bot_request.data['query']).to eq({:offset=>0, :query=>"beef rendang"}) 
          end
 
       end

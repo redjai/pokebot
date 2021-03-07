@@ -5,9 +5,9 @@ module Responder
     EVENTS = [Bot::RECIPES_FOUND, Bot::MESSAGE_RECEIVED]
 
     def self.handle(event:, context:)
-      Lambda::Event.each_sqs_record_bot_event(aws_event: event, accept: EVENTS) do |bot_event|
+      Lambda::Event.each_sqs_record_bot_request(aws_event: event, accept: EVENTS) do |bot_request|
         require 'service/responder/controller'
-        Service::Responder::Controller.call(bot_event)
+        Service::Responder::Controller.call(bot_request)
       end 
     end
   end

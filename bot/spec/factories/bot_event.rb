@@ -3,14 +3,14 @@ require 'bot/event'
 
 FactoryBot.define do
 
-  factory :bot_request_record, class: Bot::EventRecord do
+  factory :bot_request_record, class: Bot::Event do
 
     source { :test_source }
     name { 'test-event-name' }
     version { 1.0 }
     data { { 'foo' => 'bar' } }
 
-    initialize_with{ Bot::EventRecord.new(source: source, name: name, version: version, data: data) }
+    initialize_with{ Bot::Event.new(source: source, name: name, version: version, data: data) }
   end
 
   factory :bot_request, class: Bot::Request do

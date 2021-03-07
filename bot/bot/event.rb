@@ -11,7 +11,7 @@ module Bot
   USER_FAVOURITES_UPDATED = 'user-favourites-updated'
   SLACK_EVENT_API_REQUEST = 'slack-event-api-request'
   
-  class EventRecord
+  class Event
     
     attr_reader :record
 

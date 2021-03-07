@@ -8,7 +8,7 @@ module Bot
       data = {
         'text' => text
       }
-      Bot::EventRecord.new(source: source, name: MESSAGE_RECEIVED, version: 1.0, data: data)      
+      Bot::Event.new(source: source, name: MESSAGE_RECEIVED, version: 1.0, data: data)      
     end
 
     def recipe_search_requested(source:, query:, offset: 0)
@@ -16,7 +16,7 @@ module Bot
         'query' => query,
         'offset' => offset 
       }
-      Bot::EventRecord.new(source: source, name: RECIPE_SEARCH_REQUESTED, version: 1.0, data: data)      
+      Bot::Event.new(source: source, name: RECIPE_SEARCH_REQUESTED, version: 1.0, data: data)      
     end
 
     def recipes_found(source:, complex_search:, information_bulk:, favourite_recipe_ids:, query:)
@@ -26,12 +26,12 @@ module Bot
         'favourite_recipe_ids' => favourite_recipe_ids,
         'query' => query 
       }
-      Bot::EventRecord.new(source: source, name: RECIPES_FOUND, version: 1.0, data: data)      
+      Bot::Event.new(source: source, name: RECIPES_FOUND, version: 1.0, data: data)      
     end
 
     def favourite_search_requested(source:, offset: 0)
       data = { offset: offset }
-      Bot::EventRecord.new(source: source, name: FAVOURITES_SEARCH_REQUESTED, version: 1.0, data: data)      
+      Bot::Event.new(source: source, name: FAVOURITES_SEARCH_REQUESTED, version: 1.0, data: data)      
     end
     
     def favourites_search(source:, information_bulk:, favourite_recipe_ids:)
@@ -39,21 +39,21 @@ module Bot
         'information_bulk' => information_bulk,
         'favourite_recipe_ids' => favourite_recipe_ids,
       }
-      Bot::EventRecord.new(source: source, name: RECIPES_FOUND, version: 1.0, data: data)      
+      Bot::Event.new(source: source, name: RECIPES_FOUND, version: 1.0, data: data)      
     end
     
     def favourite_new(source:, favourite_recipe_id:)
       data = {
         'favourite_recipe_id' => favourite_recipe_id
       }
-      Bot::EventRecord.new(source: source, name: USER_FAVOURITE_NEW , version: 1.0, data: data)      
+      Bot::Event.new(source: source, name: USER_FAVOURITE_NEW , version: 1.0, data: data)      
     end
 
     def favourites_updated(source:, favourite_recipe_ids:)
       data = {
         'favourite_recipe_ids' => favourite_recipe_ids,
       }
-      Bot::EventRecord.new(source: source, name: USER_FAVOURITES_UPDATED, version: 1.0, data: data)      
+      Bot::Event.new(source: source, name: USER_FAVOURITES_UPDATED, version: 1.0, data: data)      
     end
 
     def more_search_results_requested(source:, query:, ts:, offset: 0)
@@ -62,7 +62,7 @@ module Bot
         offset: offset,
         ts: ts,
       }
-      Bot::EventRecord.new(source: source, name: RECIPE_SEARCH_NEXT_PAGE, version: 1.0, data: data)      
+      Bot::Event.new(source: source, name: RECIPE_SEARCH_NEXT_PAGE, version: 1.0, data: data)      
     end 
 
     def slack_api_event(aws_event)
@@ -73,7 +73,7 @@ module Bot
          channel: slack_data['event']['channel']
       }
 
-      record = Bot::EventRecord.new(name: 'slack-event-api-request',
+      record = Bot::Event.new(name: 'slack-event-api-request',
                                   source: 'slack-event-api',
                                  version: 1.0,
                                     data: slack_data)   
@@ -81,7 +81,7 @@ module Bot
     end
 
     def slack_interaction_event(aws_event)
-      record = Bot::EventRecord.new(  name: 'slack-interaction-api-request',
+      record = Bot::Event.new(  name: 'slack-interaction-api-request',
                          source: 'slack-interaction-api',
                         version: 1.0,
                            data: payload_data(aws_event))

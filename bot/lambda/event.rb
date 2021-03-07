@@ -4,8 +4,8 @@ module Lambda
   module Event 
     extend self
     
-    
     def each_sqs_record_bot_event(aws_event:, accept: [])
+      puts accept.inspect
       aws_event['Records'].each do |aws_record|
         bot_event = sqs_record_bot_event(aws_record)
         puts "Record in:"
@@ -13,7 +13,7 @@ module Lambda
         if accept.empty? || accept.include?(bot_event.current['name'])
           yield bot_event
         else
-          puts "event #{bot_event.name} not accepted by this service"
+          puts "event #{bot_event.name} not accepted by this service. expected #{accept}"
         end
       end
     end

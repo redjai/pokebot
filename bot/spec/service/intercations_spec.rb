@@ -7,8 +7,8 @@ describe Service::Interaction::Controller do
 
   context 'favourites' do
 
-    let(:aws_event){ build(:slack_favourites_interaction_event) }
-    let(:bot_event){ Bot::EventBuilders.slack_interaction_event(aws_event) }
+    let(:aws_records_event){ build(:slack_favourites_interaction_event) }
+    let(:bot_event){ Bot::EventBuilders.slack_interaction_event(aws_records_event) }
 
     it 'should broadcast to the interactions topic' do
       expect(Topic::Sns).to receive(:broadcast).with(topic: :interactions, event: bot_event)
@@ -25,8 +25,8 @@ describe Service::Interaction::Controller do
 
   context 'more results' do
 
-    let(:aws_event){ build(:slack_more_results_interaction_event) }
-    let(:bot_event){ Bot::EventBuilders.slack_interaction_event(aws_event) }
+    let(:aws_records_event){ build(:slack_more_results_interaction_event) }
+    let(:bot_event){ Bot::EventBuilders.slack_interaction_event(aws_records_event) }
 
     it 'should broadcast the  event to the interactions topic' do
       expect(Topic::Sns).to receive(:broadcast).with(topic: :interactions, event: bot_event)

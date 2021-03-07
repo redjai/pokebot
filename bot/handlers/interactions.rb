@@ -1,9 +1,13 @@
-require 'lambda/event'
+require 'bot/event_builders'
 require 'service/interaction/controller'
 
-def handle(event:, context:)
-  interaction_event = Lambda::Event.slack_interaction_event(event)
-  Service::Interaction::Controller.call(interaction_event)
-  "hello"
+module Interactions
+  class Handler
+    def self.handle(event:, context:)
+      interaction_event = Bot::EventBuilders.slack_interaction_event(event)
+      Service::Interaction::Controller.call(interaction_event)
+      "hello"
+    end
+  end
 end
 

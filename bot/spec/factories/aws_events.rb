@@ -1,9 +1,10 @@
 require_relative 'slack_events/favourites_interaction_aws_event'
 require_relative 'slack_events/more_results_interaction_event'
+require_relative 'slack_events/recipe_search_api_event'
 
 FactoryBot.define do
   
-  factory :aws_event, class: Hash do
+  factory :aws_records_event, class: Hash do
     transient do
       bot_event { build(:bot_event) }
     end
@@ -32,6 +33,29 @@ FactoryBot.define do
     initialize_with{ slack_more_results_interaction_event }
   end
 
+  factory :slack_recipe_search_event, class: Hash do
+    initialize_with{ recipe_search_api_event }
+  end
+
+  factory :slack_challenge_event, class: Hash do
+    challenge { 'slack-challenge-1234' }
+    user { 'U-SLACK-TEST-USER123' }
+    channel { 'C-SLACK-TEST-CHANNEL456' }
+    initialize_with{ slack_challenge_event(attributes) }
+  end
+end
+
+def slack_challenge_event(**args)
+  {
+    'body' => {
+      'challenge' => args[:challenge],
+       event: {
+         user: args[:user],
+         channel: args[:channel],
+         text: args[:text]
+       }
+    }.to_json
+  }
 end
  
 def slack_aws_event(**args)

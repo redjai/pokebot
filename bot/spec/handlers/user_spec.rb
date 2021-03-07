@@ -4,8 +4,8 @@ require 'bot/event_builders'
 
 describe 'handler' do
 
-  let(:bot_request_record){ Bot::EventBuilders.favourite_new(source: :interactions, favourite_recipe_id: '12345') }
-  let(:bot_request){ build(:bot_request, bot_request_record: bot_request_record) }
+  let(:bot_event){ Bot::EventBuilders.favourite_new(source: :interactions, favourite_recipe_id: '12345') }
+  let(:bot_request){ build(:bot_request, bot_event: bot_event) }
   let(:aws_records_event){ build(:aws_records_event, bot_request: bot_request) }
   let(:context){ {} }
 

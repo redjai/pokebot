@@ -3,7 +3,7 @@ require 'bot/event'
 
 FactoryBot.define do
 
-  factory :bot_request_record, class: Bot::Event do
+  factory :bot_event, class: Bot::Event do
 
     source { :test_source }
     name { 'test-event-name' }
@@ -15,7 +15,7 @@ FactoryBot.define do
 
   factory :bot_request, class: Bot::Request do
     transient do
-      bot_request_record { build(:bot_request_record) }
+      bot_event { build(:bot_event) }
     end
 
     slack_user {
@@ -24,8 +24,8 @@ FactoryBot.define do
           'channel' => 'CTESTSLACK234' 
        } 
     } 
-    current { bot_request_record } 
-    trail { [ build(:bot_request_record, data: {'fizz' => 'bang'}) ] }
+    current { bot_event } 
+    trail { [ build(:bot_event, data: {'fizz' => 'bang'}) ] }
     
     initialize_with{ Bot::Request.new(current: current, slack_user: slack_user, trail: trail) }
   end

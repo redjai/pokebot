@@ -1,5 +1,4 @@
 require 'service/recipes/controller'
-require 'bot/event_builders' 
 require 'json'
 require 'topic/sns'
 

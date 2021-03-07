@@ -1,4 +1,3 @@
-require 'bot/event_builders'
 require 'service/recipes/controller'
 
 describe Service::Recipe::Controller do

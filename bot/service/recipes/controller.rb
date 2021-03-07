@@ -1,3 +1,5 @@
+require 'bot/event_builders'
+
 module Service
   module Recipe
     module Controller

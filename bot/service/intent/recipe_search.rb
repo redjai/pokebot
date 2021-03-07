@@ -1,4 +1,5 @@
 require 'topic/sns'
+require 'bot/event_builders' 
 
 module Service
   module Intent

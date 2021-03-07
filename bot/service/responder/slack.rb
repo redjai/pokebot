@@ -7,9 +7,9 @@ module Service
       
       def call(bot_event)
         case bot_event.name
-        when Bot::Event::RECIPES_FOUND
+        when Bot::RECIPES_FOUND
           respond_with_recipes(bot_event)
-        when Bot::Event::MESSAGE_RECEIVED
+        when Bot::MESSAGE_RECEIVED
           respond_searching(bot_event)
         else
           raise "unexpected event name #{bot_event.name}"
@@ -18,14 +18,14 @@ module Service
 
       def respond_searching(bot_event)
         ::Slack::Response.respond(
-          channel: bot_event.data['user']['channel'], 
+          channel: bot_event.slack_user['channel'], 
           text: "searching for #{bot_event.data['text']} recipes... :male-cook: :knife_fork_plate: :female-cook:",
         )
       end
 
       def respond_with_recipes(bot_event)
         ::Slack::Response.respond(
-          channel: bot_event.data['user']['channel'], 
+          channel: bot_event.slack_user['channel'], 
           text: 'recipes:',
           blocks:  RecipeBlocks.new(bot_event).recipe_blocks
         )
@@ -39,14 +39,14 @@ module Service
 
         def recipe_blocks
           
-          puts @bot_event.data['recipes']['complex_search'].inspect
-          @bot_event.data['recipes']['information_bulk'].collect do |recipe|
+          puts @bot_event.data['complex_search'].inspect
+          @bot_event.data['information_bulk'].collect do |recipe|
             [recipe_block(recipe), button_block(recipe)]
           end
           .push(divider_block)
-          .push(nav_block(@bot_event.data['recipes']['complex_search']['totalResults'],
-                          @bot_event.data['recipes']['complex_search']['number'], 
-                          @bot_event.data['recipes']['query']))
+          .push(nav_block(@bot_event.data['complex_search']['totalResults'],
+                          @bot_event.data['complex_search']['number'], 
+                          @bot_event.data['query']))
             .flatten.compact
         end
 
@@ -147,7 +147,7 @@ module Service
         end
         
         def favourite?(recipe_id)
-          if @bot_event.data['recipes']['favourite_recipe_ids'].include?(recipe_id)
+          if @bot_event.data['favourite_recipe_ids'].include?(recipe_id)
             ':star:'  
           end
         end

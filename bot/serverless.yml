@@ -28,7 +28,7 @@ provider:
     - Effect: "Allow"
       Action:
         - "SNS:Publish"
-      Resource: !Ref SNSResponses # !Ref returns the ARN of SNSMessages in the resources element below:
+      Resource: !Ref SNSRecipes # !Ref returns the ARN of SNSMessages in the resources element below:
     - Effect: "Allow"
       Action:
         - "SNS:Publish"
@@ -73,7 +73,7 @@ custom:
  
 functions:
   messages:
-    handler: handlers/messages.handle
+    handler: handlers/messages.Messages::Handler.handle
     events:
       - httpApi:
           method: POST 
@@ -83,7 +83,7 @@ functions:
       MESSAGES_TOPIC_ARN: !Ref SNSMessagesTopic
 
   intent:
-    handler: handlers/intent.handle
+    handler: handlers/intent.Intent::Handler.handle
     events:    
       - sqs:
          arn:
@@ -94,7 +94,7 @@ functions:
       INTENT_TOPIC_ARN: !Ref SNSIntentTopic
 
   recipe:
-    handler: handlers/recipes.handle
+    handler: handlers/recipes.Recipes::Handler.handle
     events:
       - sqs:
          arn:
@@ -107,13 +107,13 @@ functions:
              - SQSUserTopicToRecipeQueue
              - Arn  
     environment:
-      RESPONSES_TOPIC_ARN: !Ref SNSResponses
+      RECIPES_TOPIC_ARN: !Ref SNSRecipes
       SPOONACULAR_API_KEY: ${self:custom.config.spoonacular_api_key}
       SPOONACULAR_ENDPOINT: ${self:custom.config.spoonacular_endpoint}
       FAVOURITES_TABLE_NAME: ${self:custom.recipe_favourites_table}
 
   responder:
-    handler: handlers/responder.handle
+    handler: handlers/responder.Responder::Handler.handle
     events:
       - sqs:
          arn:
@@ -138,7 +138,7 @@ functions:
       INTERACTIONS_TOPIC_ARN: !Ref SNSInteractions
 
   user:
-    handler: handlers/user.handle
+    handler: handlers/user.User::Handler.handle
     events:
       - sqs:
          arn:
@@ -170,7 +170,7 @@ resources:
     SQSMessagesTopicToIntentQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: ${self:service}-${self:provider.stage}-messages-topic-to-intent-queue
+        QueueName: ${self:service}-${self:provider.stage}-sns-messages-to-sqs-intent-queue
     MessagesTopicToIntentQueueSubscription:
       Type: AWS::SNS::Subscription
       Properties:
@@ -219,7 +219,7 @@ resources:
     SQSIntentTopicToRecipeQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: ${self:service}-${self:provider.stage}-intent-topic-to-recipe-queue
+        QueueName: ${self:service}-${self:provider.stage}-sns-intent-to-sqs-recipe-queue
     IntentTopicToRecipeQueueSubscription:
       Type: AWS::SNS::Subscription
       Properties:
@@ -253,12 +253,12 @@ resources:
         - IntentTopicToRecipeQueueSubscription
 
     #########################################   
-    # Recipe Service: SNS Responses Topic
+    # Recipe Service: SNS Recipes Topic
     ##########################################
-    SNSResponses:
+    SNSRecipes:
       Type: AWS::SNS::Topic
       Properties:
-        TopicName: ${self:service}-${self:provider.stage}-responses-topic
+        TopicName: ${self:service}-${self:provider.stage}-recipes-topic
 
 
 
@@ -266,22 +266,22 @@ resources:
 
 
     #########################################################################
-    # Responder Service: SNS Responses Topic -> SQS Responder Queue & Policy
+    # Responder Service: SNS Recipes Topic -> SQS Responder Queue & Policy
     #########################################################################
     SQSResponder:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: ${self:service}-${self:provider.stage}-responder-qu
+        QueueName: ${self:service}-${self:provider.stage}-sns-recipes-sqs-responder-queue
     ResponsesQueueSubscription:
       Type: AWS::SNS::Subscription
       Properties:
-        TopicArn: !Ref SNSResponses
+        TopicArn: !Ref SNSRecipes
         Endpoint: !GetAtt
           - SQSResponder
           - Arn
         Protocol: sqs
       DependsOn:
-        - SNSResponses
+        - SNSRecipes
         - SQSResponder
     SnSResponsestoSQSResponderPolicy:
       Type: AWS::SQS::QueuePolicy
@@ -298,7 +298,7 @@ resources:
               Action: "SQS:SendMessage"
               Condition:
                 ArnEquals:
-                  "aws:SourceArn": !Ref SNSResponses
+                  "aws:SourceArn": !Ref SNSRecipes
         Queues:
           - Ref: SQSResponder
       DependsOn:
@@ -311,7 +311,7 @@ resources:
     SQSMessagesToResponder:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: ${self:service}-${self:provider.stage}-mrssages-to-responder-queue
+        QueueName: ${self:service}-${self:provider.stage}-sns-messages-to-sqs-responder-queue
     MessagesToResponsesQueueSubscription:
       Type: AWS::SNS::Subscription
       Properties:
@@ -363,7 +363,7 @@ resources:
     SQSUser:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: ${self:service}-${self:provider.stage}-interactions-topic-to-user-queue
+        QueueName: ${self:service}-${self:provider.stage}-sns-interactions-to-sqs-user-queue
     InteractionsQueueSubscription:
       Type: AWS::SNS::Subscription
       Properties:
@@ -427,7 +427,7 @@ resources:
     SQSUserTopicToRecipeQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: ${self:service}-${self:provider.stage}-sns-user-to-sqs-recipe
+        QueueName: ${self:service}-${self:provider.stage}-sns-user-to-sqs-recipe-queue
     UserTopicToRecipeQueueSubscription:
       Type: AWS::SNS::Subscription
       Properties:

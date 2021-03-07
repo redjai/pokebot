@@ -1,5 +1,5 @@
 require 'bot/topic/sns'
-require 'lambda/http_response'
+require 'handlers/lambda/http_response'
 require 'slack/authentication'
 require 'bot/event_builders'
 

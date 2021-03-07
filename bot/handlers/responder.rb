@@ -1,4 +1,4 @@
-require 'lambda/event'
+require 'handlers/lambda/event'
 
 module Responder
   class Handler

@@ -1,4 +1,4 @@
-require 'bot/event'
+require 'topic/event'
 
 module Lambda 
   module Event 
@@ -21,7 +21,7 @@ module Lambda
     def sqs_record_bot_request(aws_record)
       record = data(aws_record)
       event = JSON.parse(record["Message"])
-      Bot::Request.new slack_user: event['slack_user'], current: event['current'], trail: event['trail']
+      Topic::Request.new slack_user: event['slack_user'], current: event['current'], trail: event['trail']
     end
 
     private

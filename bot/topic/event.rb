@@ -1,6 +1,6 @@
 require 'json'
 
-module Bot
+module Topic 
   
   MESSAGE_RECEIVED = 'slack-message-received'
   RECIPE_SEARCH_REQUESTED = 'recipes-search-requested'

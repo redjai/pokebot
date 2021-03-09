@@ -1,8 +1,8 @@
-require 'bot/topic/sns'
+require 'topic/sns'
 require_relative 'api/complex_search'
 require_relative '../user'
 require_relative 'api/information_bulk_search'
-require 'bot/event_builders'
+require 'topic/events/recipes'
 
 module Service
   module Recipe
@@ -12,7 +12,7 @@ module Service
 
         def call(bot_request)
           complex_search = Service::Recipe::Spoonacular::ComplexSearch.search_free_text(bot_request.data['query'])
-          bot_request.current = Bot::EventBuilders::recipes_found(
+          bot_request.current = Topic::Events::Recipes::found(
                           source: :recipes,
                   complex_search: complex_search,
                 information_bulk: information_bulk_result(complex_search),

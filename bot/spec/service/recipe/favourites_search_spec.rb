@@ -1,7 +1,8 @@
 require 'service/recipes/controller'
 require 'json'
-require 'bot/topic/sns'
+require 'topic/sns'
 require 'service/recipes/user'
+require 'topic/events/recipes'
 
 describe Service::Recipe::Controller do
 
@@ -10,7 +11,7 @@ describe Service::Recipe::Controller do
 
     context 'recipes found' do
 
-      let(:bot_request){ build(:bot_request, current: Bot::EventBuilders.favourite_search_requested(source: 'intent')) }
+      let(:bot_request){ build(:bot_request, current: Topic::Events::Recipes.favourites_requested(source: 'intent')) }
       let(:offset){ 0 }
       let(:api_key){ 'mock-spoonacular-api-key' }
       let(:recipe_1){ '123' }

@@ -51,7 +51,7 @@ describe 'message handler' do
     end
     
     it 'should not call the controller' do
-      expect(Service::Message::Controller).to receive(:call).with(kind_of(Bot::Request))
+      expect(Service::Message::Controller).to receive(:call).with(kind_of(Topic::Request))
       Messages::Handler.handle(event: aws_event, context: context)
     end
   end 

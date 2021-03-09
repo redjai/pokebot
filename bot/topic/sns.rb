@@ -10,6 +10,7 @@ module Topic
 
     def broadcast(topic:, event:)
       puts "out:"
+      puts topic
       puts event.to_json
       topic(topic: topic).publish( message: event.to_json )
     end

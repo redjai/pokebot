@@ -1,10 +1,10 @@
-require 'bot/event_builders'
+require 'topic/events/users'
 require 'service/user/controller'
-require 'bot/topic/sns'
+require 'topic/sns'
 
 describe Service::User::Controller do
 
-  let(:bot_request){ build(:bot_request, current: Bot::EventBuilders.favourite_new(source: :interactions, favourite_recipe_id:  favourite)) }
+  let(:bot_request){ build(:bot_request, current: Topic::Events::Users.favourite_new(source: :interactions, favourite_recipe_id:  favourite)) }
   let(:table){ 'test-user-table' } 
   let(:favourite){ "234567" }
   let(:item){ Service::User::User.read bot_request.slack_user['slack_id'] } 
@@ -55,7 +55,7 @@ describe Service::User::Controller do
   context 'user exists' do
 
     let(:existing_favourite){ "987654" }
-    let(:previous_bot_request){ build(:bot_request, current: Bot::EventBuilders.favourite_new(source: :interactions, favourite_recipe_id:  existing_favourite)) }
+    let(:previous_bot_request){ build(:bot_request, current: Topic::Events::Users.favourite_new(source: :interactions, favourite_recipe_id:  existing_favourite)) }
     
     before(:each) do
       allow(Topic::Sns).to receive(:broadcast)

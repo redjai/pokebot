@@ -1,4 +1,4 @@
-require 'bot/event_builders'
+require 'topic/events/slack'
 require 'service/message/controller'
 require 'net/http'
 
@@ -6,7 +6,7 @@ module Messages
   class Handler
     def self.handle(event:, context:)
       puts event
-      bot_request = Bot::EventBuilders.slack_api_event(event)
+      bot_request = Topic::Events::Slack.api_event(event)
       if bot_request.data['challenge']
         return Lambda::HttpResponse.plain_text_response(bot_request.data['challenge'])
       end

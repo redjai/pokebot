@@ -1,5 +1,5 @@
-require 'bot/topic/sns'
-require 'bot/event_builders' 
+require 'topic/sns'
+require 'topic/events/recipes' 
 
 module Service
   module Intent
@@ -7,9 +7,9 @@ module Service
       extend self
       
       def call(bot_request)
-        bot_request.current = Bot::EventBuilders.recipe_search_requested(source: :recipes, query: bot_request.data['text'])
+        bot_request.current = Topic::Events::Recipes.search_requested(source: :intent, query: bot_request.data['text'])
         Topic::Sns.broadcast(
-           topic: :intent,
+           topic: :recipes,
            event: bot_request 
         )
       end 

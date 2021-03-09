@@ -1,9 +1,9 @@
-require 'bot/event'
+require 'topic/event'
 require 'handlers/lambda/event'
 
 module User
   class Handler
-    EVENTS = [Bot::USER_FAVOURITE_NEW] 
+    EVENTS = [Topic::USER_FAVOURITE_NEW] 
 
     def self.handle(event:, context:)
       Lambda::Event.each_sqs_record_bot_request(aws_event: event, accept: EVENTS) do |bot_request|

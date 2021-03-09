@@ -1,14 +1,14 @@
-require 'bot/topic/sns'
+require 'topic/sns'
 require 'handlers/lambda/http_response'
 require 'slack/authentication'
-require 'bot/event_builders'
+require 'topic/events/messages'
 
 module Service
   module Message 
     module Search
       def self.call(bot_request)
 
-        bot_request.current = Bot::EventBuilders.message_received(source: :messages, text: text(bot_request)) 
+        bot_request.current = Topic::Events::Messages.received(source: :messages, text: text(bot_request)) 
 
         Topic::Sns.broadcast(
             topic: :messages,

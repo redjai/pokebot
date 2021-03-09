@@ -5,7 +5,7 @@ module Service
 
       def call(bot_request)
         case bot_request.name
-        when Bot::USER_FAVOURITE_NEW
+        when Topic::USER_FAVOURITE_NEW
           favourite(bot_request)
         end
       end

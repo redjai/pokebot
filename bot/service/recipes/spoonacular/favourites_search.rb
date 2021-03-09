@@ -1,7 +1,7 @@
-require 'bot/topic/sns'
+require 'topic/sns'
 require_relative 'api/information_bulk_search'
 require_relative '../user'
-require 'bot/event_builders'
+require 'topic/events/recipes'
 
 module Service
   module Recipe
@@ -11,7 +11,7 @@ module Service
         
         def call(bot_request)
           recipe_ids = Service::Recipe::User.recipe_ids(bot_request.slack_user['slack_id'])
-          bot_request.current = Bot::EventBuilders.favourites_search(              source: :recipes, 
+          bot_request.current = Topic::Events::Recipes.favourites_found(              source: :recipes, 
                                                                       information_bulk: information_bulk(recipe_ids),
                                                                   favourite_recipe_ids: recipe_ids) 
           Topic::Sns.broadcast(

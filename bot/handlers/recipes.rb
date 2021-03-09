@@ -2,9 +2,9 @@ require 'handlers/lambda/event'
 
 module Recipes
   class Handler
-    EVENTS = [ Bot::FAVOURITES_SEARCH_REQUESTED, 
-               Bot::RECIPE_SEARCH_REQUESTED,
-               Bot::USER_FAVOURITES_UPDATED ] 
+    EVENTS = [ Topic::FAVOURITES_SEARCH_REQUESTED, 
+               Topic::RECIPE_SEARCH_REQUESTED,
+               Topic::USER_FAVOURITES_UPDATED ] 
     
     def self.handle(event:, context:)
       puts event

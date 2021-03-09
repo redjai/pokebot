@@ -2,7 +2,7 @@ require 'handlers/lambda/event'
 
 module Responder
   class Handler
-    EVENTS = [Bot::RECIPES_FOUND, Bot::MESSAGE_RECEIVED]
+    EVENTS = [Topic::RECIPES_FOUND, Topic::MESSAGE_RECEIVED]
 
     def self.handle(event:, context:)
       Lambda::Event.each_sqs_record_bot_request(aws_event: event, accept: EVENTS) do |bot_request|

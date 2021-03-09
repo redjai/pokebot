@@ -7,9 +7,9 @@ module Service
       
       def call(bot_request)
         case bot_request.name
-        when Bot::RECIPES_FOUND
+        when Topic::RECIPES_FOUND
           respond_with_recipes(bot_request)
-        when Bot::MESSAGE_RECEIVED
+        when Topic::MESSAGE_RECEIVED
           respond_searching(bot_request)
         else
           raise "unexpected event name #{bot_request.name}"
@@ -38,8 +38,6 @@ module Service
         end
 
         def recipe_blocks
-          
-          puts @bot_request.data['complex_search'].inspect
           @bot_request.data['information_bulk'].collect do |recipe|
             [recipe_block(recipe), button_block(recipe)]
           end
@@ -47,7 +45,7 @@ module Service
           .push(nav_block(@bot_request.data['complex_search']['totalResults'],
                           @bot_request.data['complex_search']['number'], 
                           @bot_request.data['query']))
-            .flatten.compact
+          .flatten.compact
         end
 
         def recipe_block(recipe)

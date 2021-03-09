@@ -1,4 +1,4 @@
-require 'bot/topic/sns'
+require 'topic/sns'
 require 'handlers/lambda/http_response'
 require_relative 'search'
 

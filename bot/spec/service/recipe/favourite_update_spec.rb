@@ -2,7 +2,7 @@ require 'service/recipes/controller'
 
 describe Service::Recipe::Controller do
   
-  let(:bot_request){ build(:bot_request, current: Bot::EventBuilders.favourites_updated(source: :users, favourite_recipe_ids:  favourites)) }
+  let(:bot_request){ build(:bot_request, current: Topic::Events::Users.favourites_updated(source: :users, favourite_recipe_ids:  favourites)) }
   let(:table){ 'test-recipe-user-table' } 
   let(:favourites){ ["234567","678910"] }
   let(:item){ Service::Recipe::User.read bot_request.slack_user['slack_id'] } 
@@ -43,7 +43,7 @@ describe Service::Recipe::Controller do
   context 'user exists' do
 
     let(:existing_favourites){ ["987654"] }
-    let(:previous_bot_request){ build(:bot_request, current: Bot::EventBuilders.favourites_updated(source: :user, favourite_recipe_ids:  existing_favourites)) }
+    let(:previous_bot_request){ build(:bot_request, current: Topic::Events::Users.favourites_updated(source: :user, favourite_recipe_ids:  existing_favourites)) }
     
     before(:each) do
       subject.call(previous_bot_request) # set up the user with a favourite

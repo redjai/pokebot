@@ -11,14 +11,20 @@ module Service
         extend self
 
         def call(bot_request)
-          complex_search = Service::Recipe::Spoonacular::ComplexSearch.search_free_text(bot_request.data['query'])
+          complex_search = Service::Recipe::Spoonacular::ComplexSearch.search_free_text(
+                                                                                          bot_request.data['query'],
+                                                                                          bot_request.data['page']['offset'], 
+                                                                                          bot_request.data['page']['per_page']
+                                                                                       )
           bot_request.current = Topic::Events::Recipes::found(
-                          source: :recipes,
-                  complex_search: complex_search,
-                information_bulk: information_bulk_result(complex_search),
+                              source: :recipes,
+                             recipes: information_bulk_result(complex_search),
                 favourite_recipe_ids: Service::Recipe::User.recipe_ids(bot_request.slack_user['slack_id']),
-                query: Service::Recipe::Spoonacular::ComplexSearch.params(bot_request.data['query'], bot_request.data['offset'])
-          )
+                               query: bot_request.data['query'],
+                              offset: bot_request.data['page']['offset'], 
+                            per_page: bot_request.data['page']['per_page'],
+                       total_results: complex_search['totalResults']
+                                                                         )
           Topic::Sns.broadcast(topic: :recipes, event: bot_request)
         end
 

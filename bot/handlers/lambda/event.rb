@@ -1,19 +1,23 @@
 require 'topic/event'
+require 'honeybadger'
 
 module Lambda 
   module Event 
     extend self
     
     def each_sqs_record_bot_request(aws_event:, accept: [])
-      puts accept.inspect
       aws_event['Records'].each do |aws_record|
-        bot_request = sqs_record_bot_request(aws_record)
-        puts "Record in:"
-        puts bot_request.to_json
-        if accept.empty? || accept.include?(bot_request.current['name'])
-          yield bot_request
-        else
-          puts "event #{bot_request.name} not accepted by this service. expected #{accept}"
+        begin
+          bot_request = sqs_record_bot_request(aws_record)
+          puts "Record in:"
+          puts bot_request.to_json
+          if accept.empty? || accept.include?(bot_request.current['name'])
+            yield bot_request
+          else
+            puts "event #{bot_request.name} not accepted by this service. expected #{accept}"
+          end
+        rescue StandardError => e
+          Honeybadger.notify(e, sync: true) #sync true is important as we have no background worker thread
         end
       end
     end

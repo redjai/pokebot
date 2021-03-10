@@ -38,13 +38,11 @@ module Service
         end
 
         def recipe_blocks
-          @bot_request.data['information_bulk'].collect do |recipe|
+          @bot_request.data['recipes'].collect do |recipe|
             [recipe_block(recipe), button_block(recipe)]
           end
           .push(divider_block)
-          .push(nav_block(@bot_request.data['complex_search']['totalResults'],
-                          @bot_request.data['complex_search']['number'], 
-                          @bot_request.data['query']))
+            .push(nav_block(@bot_request.data['query'], @bot_request.data['page']))
           .flatten.compact
         end
 
@@ -105,15 +103,15 @@ module Service
           }
         end
 
-        def nav_block(total_results, number, query)
+        def nav_block(query, page)
           elements = []
 
-          if less?(query['offset'], number)
-            elements << nav_block_button("back", query.merge({ 'offset' => query['offset'] - number })) 
+          if less?(page['offset'], page['per_page'])
+            elements << nav_block_button("back", {'query' => query, 'offset' => page['offset'] - page['per_page'] }) 
           end
 
-          if more?(query['offset'], number, total_results)
-            elements << nav_block_button("more", query.merge({ 'offset' => query['offset'] + number })) 
+          if more?(page['offset'], page['per_page'], page['total_results'])
+            elements << nav_block_button("more", { 'query' => query,  'offset' => page['offset'] + page['per_page'] }) 
           end
 
           if elements.size > 0
@@ -124,12 +122,12 @@ module Service
           end
         end
 
-        def less?(offset, number)
-          offset - number > 1
+        def less?(offset, per_page)
+          offset - per_page > 1
         end
 
-        def more?(offset, number, total_results)
-          offset + number < total_results
+        def more?(offset, per_page, total_results)
+          offset + per_page < total_results
         end
 
         def nav_block_button(text, data)

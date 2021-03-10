@@ -7,20 +7,20 @@ module Topic
       extend self
       extend Topic::Events::Base
 
-      def search_requested(source:, query:, offset: 0)
+      def search_requested(source:, query:, offset: 0, per_page: 10)
         data = {
           'query' => query,
-          'offset' => offset 
+          'page' => { 'offset' => offset, 'per_page' => per_page }  
         }
         Topic::Event.new(source: source, name: RECIPE_SEARCH_REQUESTED, version: 1.0, data: data)      
       end
 
-      def found(source:, complex_search:, information_bulk:, favourite_recipe_ids:, query:)
+      def found(source:, recipes:, favourite_recipe_ids:, query:, offset:, per_page:, total_results:)
         data = {
-          'complex_search' => complex_search,
-          'information_bulk' => information_bulk,
+          'recipes' => recipes,
           'favourite_recipe_ids' => favourite_recipe_ids,
-          'query' => query
+          'query' => query,
+          'page' => { 'offset' => offset, 'per_page' => per_page, 'total_results' => total_results }
         }
         Topic::Event.new(source: source, name: RECIPES_FOUND, version: 1.0, data: data)      
       end

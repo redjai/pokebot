@@ -7,13 +7,22 @@ module Slack
     extend self
 
     POST_MESSAGE_URI = URI.parse("https://slack.com/api/chat.postMessage")
+    DELETE_MESSAGE_URI = URI.parse("https://slack.com/api/chat.delete")
 
     class Failure < StandardError ; end 
 
-    def respond(channel:, text:, blocks: nil)
+    def delete(channel:, ts:)
+      data = { channel: channel, ts: ts }
+      result = JSON.parse(Net::HTTP.post(DELETE_MESSAGE_URI, data.to_json , header).body)
+      puts result
+      raise Failure, result['error'] unless result['ok']
+    end
+
+    def respond(channel:, text:, blocks: nil, response_url: nil)
       data = { channel: channel, text: text }
       data[:blocks] = blocks if blocks
-      result = JSON.parse(Net::HTTP.post(POST_MESSAGE_URI, data.to_json , header).body)
+      uri = response_url ?  URI.parse(response_url) : POST_MESSAGE_URI
+      result = JSON.parse(Net::HTTP.post(uri, data.to_json , header).body)
       puts result
       raise Failure, result['error'] unless result['ok']
     end

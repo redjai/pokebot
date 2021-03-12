@@ -24,12 +24,28 @@ module Service
       end
 
       def respond_with_recipes(bot_request)
-        ::Slack::Response.respond(
+        write_recipes(
           channel: bot_request.slack_user['channel'], 
-          text: 'recipes:',
-          blocks:  RecipeBlocks.new(bot_request).recipe_blocks
+          blocks: RecipeBlocks.new(bot_request).recipe_blocks,
+          response_url: bot_request.slack_user['response_url']
         )
       end
+
+      def delete_recipes_container(channel:, ts:)
+        ::Slack::Response.delete(
+          channel: channel,
+          ts: ts
+        )
+      end
+      
+      def write_recipes(channel:, blocks:, response_url:)
+      ::Slack::Response.respond(
+        channel: channel, 
+        text: 'recipes:',
+        blocks: blocks,
+        response_url: response_url  
+      )
+    end
 
       class RecipeBlocks
 
@@ -151,7 +167,7 @@ module Service
         end
         
         def favourite?(recipe_id)
-          if @bot_request.data['favourite_recipe_ids'].include?(recipe_id)
+          if @bot_request.data['favourite_recipe_ids'].include?(recipe_id.to_s)
             ':star:'  
           end
         end

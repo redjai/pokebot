@@ -10,7 +10,7 @@ module Topic
       def search_requested(source:, query:, offset: 0, per_page: 10)
         data = {
           'query' => query,
-          'page' => { 'offset' => offset, 'per_page' => per_page }  
+          'page' => { 'offset' => offset, 'per_page' => per_page },
         }
         Topic::Event.new(source: source, name: RECIPE_SEARCH_REQUESTED, version: 1.0, data: data)      
       end

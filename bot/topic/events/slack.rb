@@ -27,7 +27,12 @@ module Topic
                            source: 'slack-interaction-api',
                           version: 1.0,
                              data: payload_data(aws_event))
-        user = {'slack_id' => record.record['data']['user']['id'], 'channel' => record.record['data']['container']['channel_id']}   
+        user = {
+          'slack_id' => record.record['data']['user']['id'], 
+          'channel' => record.record['data']['container']['channel_id'],
+          'message_ts' => record.record['data']['container']['message_ts'],
+          'response_url' => record.record['data']['response_url']
+        }   
         Topic::Request.new slack_user: user, current: record
       end
 

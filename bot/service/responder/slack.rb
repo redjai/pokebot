@@ -38,12 +38,20 @@ module Service
         end
 
         def recipe_blocks
-          @bot_request.data['recipes'].collect do |recipe|
-            [recipe_block(recipe), button_block(recipe)]
+          blocks = []
+          @bot_request.data.tap do |data|
+            data['recipes'].collect do |recipe|
+              blocks << [recipe_block(recipe), button_block(recipe)]
+            end
+            blocks.push(divider_block)
+            blocks.push(nav_block(
+                              query: data['query'], 
+                              offset: data['page']['offset'],
+                              per_page: data['page']['per_page'],
+                              total_results: data['page']['total_results']
+                            ))
           end
-          .push(divider_block)
-            .push(nav_block(@bot_request.data['query'], @bot_request.data['page']))
-          .flatten.compact
+          blocks.flatten.compact
         end
 
         def recipe_block(recipe)
@@ -103,15 +111,15 @@ module Service
           }
         end
 
-        def nav_block(query, page)
+        def nav_block(query:, offset:, per_page:, total_results:)
           elements = []
 
-          if less?(page['offset'], page['per_page'])
-            elements << nav_block_button("back", {'query' => query, 'offset' => page['offset'] - page['per_page'] }) 
+          if less?(offset, per_page)
+            elements << nav_block_button("back", {'query' => query, 'per_page' => per_page, 'offset' => offset - per_page }) 
           end
 
-          if more?(page['offset'], page['per_page'], page['total_results'])
-            elements << nav_block_button("more", { 'query' => query,  'offset' => page['offset'] + page['per_page'] }) 
+          if more?(offset, per_page, total_results)
+            elements << nav_block_button("more", { 'query' => query,  'per_page' => per_page, 'offset' => offset + per_page }) 
           end
 
           if elements.size > 0

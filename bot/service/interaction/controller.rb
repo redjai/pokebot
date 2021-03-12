@@ -16,9 +16,10 @@ module Service
 
             Topic::Sns.broadcast(topic: :users, event: bot_request)
           else
-            bot_request.current = Topic::Events::Recipes.more_search_results_requested(source: :interaction, 
-                                                                                    query: value['data']['query'],
-                                                                                       ts: bot_request.data['container']['message_ts'])
+            bot_request.current = Topic::Events::Recipes.search_requested(source: :interaction, 
+                                                                           query: value['data']['query'],
+                                                                           offset: value['data']['offset'],
+                                                                           per_page: value['data']['per_page'])
             Topic::Sns.broadcast(topic: :recipes, event: bot_request)
           end
         end

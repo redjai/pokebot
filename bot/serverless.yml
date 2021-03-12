@@ -6,6 +6,9 @@ frameworkVersion: '2'
 package:
   exclude:
     - config.*.yml
+    - Gemfile
+    - Gemfile.lock
+    - spec/**
 
 provider:
   name: aws

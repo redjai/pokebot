@@ -71,17 +71,26 @@ module Service
         end
 
         def recipe_block(recipe)
+          recipe_section(recipe).tap do |section|
+            section['accessory'] = image_accessory(recipe) if recipe['image'] =~ URI::regexp
+          end
+        end
+
+        def recipe_section(recipe)
           {
             type: "section",
             text: {
               type: "mrkdwn",
               text: "*#{recipe['title']}* #{favourite?(recipe['id'])}\n#{recipe['extendedIngredients'].collect{|ing| ing['name']}.join(", ")}\n_ready in #{recipe["readyInMinutes"]} minutes_"
-            },
-            accessory: {
-              type: "image",
-              image_url: recipe['image'],
-              alt_text: recipe['title']
             }
+          }
+        end
+
+        def image_accessory(recipe)
+          {
+            type: "image",
+            image_url: recipe['image'],
+            alt_text: recipe['title']
           }
         end
 

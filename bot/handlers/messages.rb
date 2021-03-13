@@ -22,7 +22,7 @@ module Messages
         Service::Message::Controller.call(bot_request)
     
       rescue StandardError => e
-        Honeybadger.notify(e, sync: true) #sync true is important as we have no background worker thread
+        Honeybadger.notify(e, sync: true, context: (e.respond_to?(:context) ? e.context : nil)) #sync true is important as we have no background worker thread
       end
     end
   end

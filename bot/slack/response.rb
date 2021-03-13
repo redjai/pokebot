@@ -9,7 +9,13 @@ module Slack
     POST_MESSAGE_URI = URI.parse("https://slack.com/api/chat.postMessage")
     DELETE_MESSAGE_URI = URI.parse("https://slack.com/api/chat.delete")
 
-    class Failure < StandardError ; end 
+    class Failure < StandardError
+      attr_accessor :context
+      def initialize(message, context=nil)
+        super(message)
+        @context = context
+      end
+    end 
 
     def delete(channel:, ts:)
       data = { channel: channel, ts: ts }
@@ -24,7 +30,7 @@ module Slack
       uri = response_url ?  URI.parse(response_url) : POST_MESSAGE_URI
       result = JSON.parse(Net::HTTP.post(uri, data.to_json , header).body)
       puts result
-      raise Failure, result['error'] unless result['ok']
+      raise Failure.new(result['error'], data) unless result['ok']
     end
 
     def header

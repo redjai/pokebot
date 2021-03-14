@@ -10,8 +10,8 @@ module Service
       end
 
       def respond_to_slack(bot_request)
-        require_relative 'slack'
-        Service::Responder::Slack.call(bot_request)
+        require_relative 'slack/spoonacular/recipes'
+        Service::Responder::Slack::Spoonacular::Recipes.call(bot_request)
       end
     end
   end

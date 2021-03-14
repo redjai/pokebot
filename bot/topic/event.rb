@@ -4,7 +4,6 @@ module Topic
   
   MESSAGE_RECEIVED = 'slack-message-received'
   RECIPE_SEARCH_REQUESTED = 'recipes-search-requested'
-  RECIPE_SEARCH_NEXT_PAGE = 'recipes-search-next-page'
   FAVOURITES_SEARCH_REQUESTED = 'favourites-search-requested'
   RECIPES_FOUND = 'recipes-found'
   USER_FAVOURITE_NEW = 'user-favourite-new'

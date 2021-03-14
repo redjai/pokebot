@@ -29,14 +29,14 @@ describe Service::Interaction::Controller do
     let(:bot_request){ Topic::Events::Slack.interaction_event(aws_records_event) }
 
     it 'should broadcast the  event to the interactions topic' do
-      expect(Topic::Sns).to receive(:broadcast).with(topic: :users, event: bot_request)
+      expect(Topic::Sns).to receive(:broadcast).with(topic: :recipes, event: bot_request)
       subject.call(bot_request)
     end
     
     it 'should broadcast a recipes next page search event' do
-      allow(Topic::Sns).to receive(:broadcast).with(topic: :users, event: bot_request)
+      allow(Topic::Sns).to receive(:broadcast).with(topic: :recipes, event: bot_request)
       subject.call(bot_request)
-      expect(bot_request.name).to eq Topic::RECIPE_SEARCH_NEXT_PAGE
+      expect(bot_request.name).to eq Topic::RECIPE_SEARCH_REQUESTED
     end
 
   end

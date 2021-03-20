@@ -51,7 +51,7 @@ describe Service::Recipe::Controller do
 
           it 'should set the information_bulk data in the event' do
               subject.call(bot_request) 
-              expect(bot_request.data['information_bulk']).to eq information_bulk_response
+              expect(bot_request.data['recipes']).to eq information_bulk_response
           end
           
           it 'should set teh recipe_ids list' do
@@ -65,7 +65,7 @@ describe Service::Recipe::Controller do
 
         it 'should set the information_bulk as an empty list' do
             subject.call(bot_request) 
-            expect(bot_request.data['information_bulk']).to eq []
+            expect(bot_request.data['recipes']).to eq []
         end
 
         it 'should return an empty list where the user does not exist' do

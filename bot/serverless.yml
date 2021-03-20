@@ -151,6 +151,17 @@ functions:
       RECIPES_TOPIC_ARN: !Ref SNSRecipes
       USERS_TOPIC_ARN: !Ref SNSUserTopic
 
+  shortcuts:
+    handler: handlers/shortcuts.Shortcuts::Handler.handle
+    layers:
+      - {Ref: GemsLambdaLayer}
+    events:
+      - httpApi:
+          method: POST 
+          path:  /shortcuts
+    environment:
+      RECIPES_TOPIC_ARN: !Ref SNSRecipes
+  
   user:
     handler: handlers/user.User::Handler.handle
     layers:

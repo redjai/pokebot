@@ -7,8 +7,18 @@ module Topic
       end
 
       def payload_data(aws_event)
+        json = unescape(body(aws_event)).gsub(/^payload=/,"")
+        JSON.parse(json)
+      end
+
+      def shortcut_data(aws_event)
+        body = unescape(body(aws_event))
+        CGI.parse(body)
+      end
+
+      def unescape(body)
         require 'uri'
-        JSON.parse(CGI.unescape(body(aws_event).gsub(/^payload=/,"")))
+        CGI.unescape(body)
       end
 
       def data(aws_event)

@@ -30,9 +30,9 @@ module Topic
         Topic::Event.new(source: source, name: FAVOURITES_SEARCH_REQUESTED, version: 1.0, data: data)      
       end
       
-      def favourites_found(source:, information_bulk:, favourite_recipe_ids:)
+      def favourites_found(source:, recipes:, favourite_recipe_ids:)
         data = {
-          'information_bulk' => information_bulk,
+          'recipes' => recipes,
           'favourite_recipe_ids' => favourite_recipe_ids,
         }
         Topic::Event.new(source: source, name: RECIPES_FOUND, version: 1.0, data: data)      

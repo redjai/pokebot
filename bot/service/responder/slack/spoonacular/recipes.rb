@@ -67,7 +67,7 @@ module Service
                                   offset: data['page']['offset'],
                                   per_page: data['page']['per_page'],
                                   total_results: data['page']['total_results']
-                                ))
+                                )) if data['page']
               end
               blocks.flatten.compact
             end

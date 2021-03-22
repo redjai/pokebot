@@ -54,7 +54,7 @@ describe Service::Recipe::Controller do
               expect(bot_request.data['recipes']).to eq information_bulk_response
           end
           
-          it 'should set teh recipe_ids list' do
+          it 'should set the recipe_ids list' do
               subject.call(bot_request) 
               expect(bot_request.data['favourite_recipe_ids']).to eq favourites
           end

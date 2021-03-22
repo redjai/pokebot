@@ -1,55 +1,9 @@
-require 'slack/response'
-
 module Service
   module Responder
     module Slack
-      module Spoonacular
-        module Recipes
-          extend self
-          
-          def call(bot_request)
-            case bot_request.name
-            when Topic::RECIPES_FOUND
-              respond_with_recipes(bot_request)
-            when Topic::MESSAGE_RECEIVED
-              respond_searching(bot_request)
-            else
-              raise "unexpected event name #{bot_request.name}"
-            end
-          end
-
-          def respond_searching(bot_request)
-            ::Slack::Response.respond(
-              channel: bot_request.slack_user['channel'], 
-              text: "searching for #{bot_request.data['text']} recipes... :male-cook: :knife_fork_plate: :female-cook:",
-            )
-          end
-
-          def respond_with_recipes(bot_request)
-            write_recipes(
-              channel: bot_request.slack_user['channel'], 
-              blocks: RecipeBlocks.new(bot_request).recipe_blocks,
-              response_url: bot_request.slack_user['response_url']
-            )
-          end
-
-          def delete_recipes_container(channel:, ts:)
-            ::Slack::Response.delete(
-              channel: channel,
-              ts: ts
-            )
-          end
-          
-          def write_recipes(channel:, blocks:, response_url:)
-          ::Slack::Response.respond(
-            channel: channel, 
-            text: 'recipes:',
-            blocks: blocks,
-            response_url: response_url  
-          )
-        end
-
-          class RecipeBlocks
+      module Recipes
+        module Spoonacular
+          class Blocks
 
             def initialize(bot_request)
               @bot_request = bot_request

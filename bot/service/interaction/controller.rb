@@ -15,6 +15,10 @@ module Service
             bot_request.current = Topic::Events::Users.favourite_new(source: :interaction, favourite_recipe_id: value['data']) 
 
             Topic::Sns.broadcast(topic: :users, event: bot_request)
+          when 'unfavourite'
+            bot_request.current = Topic::Events::Users.favourite_destroy(source: :interaction, favourite_recipe_id: value['data']) 
+
+            Topic::Sns.broadcast(topic: :users, event: bot_request)
           else
             bot_request.current = Topic::Events::Recipes.search_requested(source: :interaction, 
                                                                            query: value['data']['query'],

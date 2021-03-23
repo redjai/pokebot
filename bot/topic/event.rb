@@ -7,6 +7,7 @@ module Topic
   FAVOURITES_SEARCH_REQUESTED = 'favourites-search-requested'
   RECIPES_FOUND = 'recipes-found'
   USER_FAVOURITE_NEW = 'user-favourite-new'
+  USER_FAVOURITE_DESTROY = 'user-favourite-destroy'
   USER_FAVOURITES_UPDATED = 'user-favourites-updated'
   SLACK_EVENT_API_REQUEST = 'slack-event-api-request'
   

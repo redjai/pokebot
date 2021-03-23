@@ -75,7 +75,7 @@ module Service
                   "text": "Favourite",
                   "emoji": true
                 },
-                "value": { interaction: 'favourite', data: { recipe_id: recipe_id,  'page' => { 'query' => query, 'per_page' => per_page, 'offset' => offset } } }.to_json,
+                "value": { interaction: 'favourite', data: recipe_id }.to_json,
               }
             end
 
@@ -87,7 +87,7 @@ module Service
                   "text": "Unfavourite",
                   "emoji": true
                 },
-                "value": { interaction: 'unfavourite', data: { recipe_id: recipe_id,  'page' => { 'query' => query, 'per_page' => per_page, 'offset' => offset } } }.to_json,
+                "value": { interaction: 'unfavourite', data: recipe_id }.to_json,
               }
             end
 

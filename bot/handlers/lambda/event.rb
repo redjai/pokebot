@@ -17,7 +17,7 @@ module Lambda
             puts "event #{bot_request.name} not accepted by this service. expected #{accept}"
           end
         rescue StandardError => e
-          Honeybadger.notify(e, sync: true, context: (e.respond_to?(:context) ? e.context : nil)) #sync true is important as we have no background worker thread
+          Honeybadger.notify(e, sync: true, context: context(e)) #sync true is important as we have no background worker thread
         end
       end
     end
@@ -40,6 +40,16 @@ module Lambda
         Base64.decode64(aws_event['body'])
       else
         aws_event['body']
+      end
+    end
+
+    def context(e)
+      return nil unless e.respond_to?(:context)
+      case e.context
+      when Seahorse::Client::RequestContext
+        e.context.params
+      else
+        e.context
       end
     end
   end

@@ -14,6 +14,13 @@ module Topic
         Topic::Event.new(source: source, name: Topic::USER_FAVOURITE_NEW , version: 1.0, data: data)      
       end
 
+      def favourite_destroy(source:, favourite_recipe_id:)
+        data = {
+          'favourite_recipe_id' => favourite_recipe_id.to_s
+        }
+        Topic::Event.new(source: source, name: Topic::USER_FAVOURITE_DESTROY , version: 1.0, data: data)      
+      end
+
       def favourites_updated(source:, favourite_recipe_ids:)
         data = {
           'favourite_recipe_ids' => favourite_recipe_ids,

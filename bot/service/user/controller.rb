@@ -7,6 +7,8 @@ module Service
         case bot_request.name
         when Topic::USER_FAVOURITE_NEW
           favourite(bot_request)
+        when Topic::USER_FAVOURITE_DESTROY
+          unfavourite(bot_request)
         end
       end
 
@@ -14,6 +16,11 @@ module Service
       def favourite(bot_request)
         require_relative 'favourite'
         Service::User::Favourite.call(bot_request)
+      end
+      
+      def unfavourite(bot_request)
+        require_relative 'unfavourite'
+        Service::User::Unfavourite.call(bot_request)
       end
     end
   end

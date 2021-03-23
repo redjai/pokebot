@@ -12,6 +12,31 @@ module Service
         @@dynamo_resource = Aws::DynamoDB::Resource.new(options)
       end
 
+      def destroy(user_id, recipe_id)
+        begin 
+          dynamo_resource.client.update_item(
+            {
+              key: {
+                "user_id" => user_id 
+              },  
+              update_expression: 'DELETE #favourites :recipe_id',
+              expression_attribute_names: {
+                '#favourites': 'favourites'
+              },
+              #condition_expression: 'attribute_exists(#favourites) AND contains(#favourites, :recipe_id)',
+              expression_attribute_values: {
+                ':recipe_id': Set.new([recipe_id.to_s])
+              },
+              table_name: ENV['FAVOURITES_TABLE_NAME'],
+              return_values: 'UPDATED_NEW'
+            }
+          ) 
+        rescue Aws::DynamoDB::Errors::ConditionalCheckFailedException
+          # our conditional failed because we have a duplicate favourite
+          # attribute_not_exists(#favourites) OR not contains(#favourites, :recipe_id)
+        end
+      end
+
       def upsert(user_id, recipe_id)
         begin 
           dynamo_resource.client.update_item(

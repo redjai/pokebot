@@ -37,7 +37,7 @@ module Service
                 type: "section",
                 text: {
                   type: "mrkdwn",
-                  text: "*#{recipe['title']}* #{favourite?(recipe['id'])}\n#{recipe['extendedIngredients'].collect{|ing| ing['name']}.join(", ")}\n_ready in #{recipe["readyInMinutes"]} minutes_"
+                  text: "*#{recipe['title']}* #{favourite_icon?(recipe['id'])}\n#{recipe['extendedIngredients'].collect{|ing| ing['name']}.join(", ")}\n_ready in #{recipe["readyInMinutes"]} minutes_"
                 }
               }
             end
@@ -50,38 +50,53 @@ module Service
               }
             end
 
+            def view_recipe_button_element(url)
+              {
+                "type": "button",
+                "text": {
+                  "type": "plain_text",
+                  "text": "View",
+                  "emoji": true
+                },
+                "value": "click_me_123",
+                "url": url 
+              }
+            end
+
+            def favourite_unfavourite_button_element(recipe_id)
+              favourite?(recipe_id) ? unfavourite_button_element(recipe_id) : favourite_button_element(recipe_id)
+            end
+
+            def favourite_button_element(recipe_id)
+              {
+                "type": "button",
+                "text": {
+                  "type": "plain_text",
+                  "text": "Favourite",
+                  "emoji": true
+                },
+                "value": { interaction: 'favourite', data: { recipe_id: recipe_id,  'page' => { 'query' => query, 'per_page' => per_page, 'offset' => offset } } }.to_json,
+              }
+            end
+
+            def unfavourite_button_element(recipe_id)
+              {
+                "type": "button",
+                "text": {
+                  "type": "plain_text",
+                  "text": "Unfavourite",
+                  "emoji": true
+                },
+                "value": { interaction: 'unfavourite', data: { recipe_id: recipe_id,  'page' => { 'query' => query, 'per_page' => per_page, 'offset' => offset } } }.to_json,
+              }
+            end
+
             def button_block(recipe)
               {
                 "type": "actions",
                 "elements": [
-                  {
-                    "type": "button",
-                    "text": {
-                      "type": "plain_text",
-                      "text": "View",
-                      "emoji": true
-                    },
-                    "value": "click_me_123",
-                    "url": recipe['sourceUrl'] 
-                  },
-                  {
-                    "type": "button",
-                    "text": {
-                      "type": "plain_text",
-                      "text": "Favourite",
-                      "emoji": true
-                    },
-                    "value": { interaction: 'favourite', data: recipe['id'] }.to_json,
-                  },
-                  {
-                    "type": "button",
-                    "text": {
-                      "type": "plain_text",
-                      "text": "Email me Ingredients",
-                      "emoji": true
-                    },
-                    "value": "email-#{recipe['id']}",
-                  }
+                  view_recipe_button_element(recipe['sourceUrl']),
+                  favourite_unfavourite_button_element(recipe['id']) 
                 ]
               }
             end
@@ -96,7 +111,7 @@ module Service
               elements = []
 
               if less?(offset, per_page)
-                elements << nav_block_button("back", {'query' => query, 'per_page' => per_page, 'offset' => offset - per_page }) 
+                elements << nav_block_button("back", { 'query' => query, 'per_page' => per_page, 'offset' => offset - per_page }) 
               end
 
               if more?(offset, per_page, total_results)
@@ -132,9 +147,11 @@ module Service
             end
             
             def favourite?(recipe_id)
-              if @bot_request.data['favourite_recipe_ids'].include?(recipe_id.to_s)
-                ':star:'  
-              end
+              @bot_request.data['favourite_recipe_ids'].include?(recipe_id.to_s)
+            end
+            
+            def favourite_icon?(recipe_id)
+              favourite?(recipe_id) ? ':star:' : '' 
             end
 
           end

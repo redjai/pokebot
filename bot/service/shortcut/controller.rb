@@ -1,5 +1,5 @@
 require 'topic/sns'
-require 'topic/events/recipes'
+require 'topic/topic'
 
 module Service
   module Shortcut 
@@ -9,7 +9,7 @@ module Service
       def call(bot_request)
         case bot_request.data['command'].first
         when '/favourites' 
-          bot_request.current = Topic::Events::Recipes.favourites_requested(source: :intent)
+          bot_request.current = Topic::Recipes.favourites_requested(source: :intent)
           Topic::Sns.broadcast(
             topic: :recipes,
             event: bot_request 

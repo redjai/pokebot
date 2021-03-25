@@ -1,14 +1,14 @@
 require 'service/intent/controller'
 require 'topic/sns'
 require 'topic/event'
-require 'topic/events/messages'
+require 'topic/topic'
 require 'topic/topic'
 
 describe Service::Intent::Controller do
 
   context 'recipe search' do
 
-    let(:bot_request){ build(:bot_request, current: Topic::Events::Messages.received(source: :messages, text: 'beef rendang')) }
+    let(:bot_request){ build(:bot_request, current: Topic::Messages.received(source: :messages, text: 'beef rendang')) }
 
     it 'sets the correct data' do
       allow(Topic::Sns).to receive(:broadcast).with(topic: :recipes, event: bot_request)
@@ -33,7 +33,7 @@ describe Service::Intent::Controller do
 
   context 'favourite search' do
     
-    let(:bot_request){ build(:bot_request, current: Topic::Events::Messages.received(source: :messages, text: 'favourite')) }
+    let(:bot_request){ build(:bot_request, current: Topic::Messages.received(source: :messages, text: 'favourite')) }
 
     it 'sets the correct data' do
       allow(Topic::Sns).to receive(:broadcast).with(topic: :recipes, event: bot_request)

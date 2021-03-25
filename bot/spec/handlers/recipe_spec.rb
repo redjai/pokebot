@@ -1,7 +1,7 @@
 require 'handlers/recipes'
 require 'service/recipes/controller'
-require 'topic/events/recipes'
-require 'topic/events/users'
+require 'topic/topic'
+require 'topic/topic'
 
 describe 'handler' do
 
@@ -11,7 +11,7 @@ describe 'handler' do
   
   context 'recipe search' do
 
-    let(:bot_event){ Topic::Events::Recipes.search_requested(source: :intent, query: 'beef rendang') }
+    let(:bot_event){ Topic::Recipes.search_requested(source: :intent, query: 'beef rendang') }
 
     it 'should call the controller with a bot event' do
       expect(Service::Recipe::Controller).to receive(:call).with(kind_of(Topic::Request))
@@ -22,7 +22,7 @@ describe 'handler' do
 
   context 'favourites search' do
 
-    let(:bot_event){ Topic::Events::Recipes.favourites_requested(source: :intent) }
+    let(:bot_event){ Topic::Recipes.favourites_requested(source: :intent) }
 
     it 'should call the controller with a bot event' do
       expect(Service::Recipe::Controller).to receive(:call).with(kind_of(Topic::Request))
@@ -33,7 +33,7 @@ describe 'handler' do
   
   context 'favourites updated' do
 
-    let(:bot_event){ Topic::Events::Users.favourites_updated(source: :intent, favourite_recipe_ids: ['12345','45678']) }
+    let(:bot_event){ Topic::Users.favourites_updated(source: :intent, favourite_recipe_ids: ['12345','45678']) }
 
     it 'should call the controller with a bot event' do
       expect(Service::Recipe::Controller).to receive(:call).with(kind_of(Topic::Request))

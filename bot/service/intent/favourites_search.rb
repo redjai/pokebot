@@ -1,5 +1,5 @@
 require 'topic/sns'
-require 'topic/events/recipes'
+require 'topic/topic'
 
 module Service
   module Intent
@@ -7,7 +7,7 @@ module Service
       extend self
       
       def call(bot_request)
-        bot_request.current = Topic::Events::Recipes.favourites_requested(source: :intent)
+        bot_request.current = Topic::Recipes.favourites_requested(source: :intent)
         Topic::Sns.broadcast(
           topic: :recipes,
           event: bot_request 

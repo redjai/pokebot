@@ -2,7 +2,7 @@ require 'topic/sns'
 require_relative 'api/complex_search'
 require_relative '../user'
 require_relative 'api/information_bulk_search'
-require 'topic/events/recipes'
+require 'topic/topic'
 
 module Service
   module Recipe
@@ -16,7 +16,7 @@ module Service
                                                                                           bot_request.data['page']['offset'], 
                                                                                           bot_request.data['page']['per_page']
                                                                                        )
-          bot_request.current = Topic::Events::Recipes::found(
+          bot_request.current = Topic::Recipes::found(
                               source: :recipes,
                              recipes: information_bulk_result(complex_search),
                 favourite_recipe_ids: Service::Recipe::User.recipe_ids(bot_request.slack_user['slack_id']),

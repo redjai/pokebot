@@ -1,4 +1,4 @@
-require 'topic/events/slack'
+require 'topic/topic'
 require 'service/shortcut/controller'
 require 'topic/topic'
 
@@ -6,7 +6,7 @@ module Shortcuts
   class Handler
     def self.handle(event:, context:)
       begin
-        bot_request = Topic::Events::Slack.shortcut_event(event)
+        bot_request = Topic::Slack.shortcut_event(event)
         Service::Shortcut::Controller.call(bot_request)
         "hello"
       rescue StandardError => e

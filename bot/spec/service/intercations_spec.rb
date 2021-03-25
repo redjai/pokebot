@@ -1,6 +1,6 @@
 require 'service/interaction/controller'
 require 'topic/sns'
-require 'topic/events/slack'
+require 'topic/topic'
 require 'topic/event'
 require 'topic/topic'
 
@@ -9,7 +9,7 @@ describe Service::Interaction::Controller do
   context 'favourites' do
 
     let(:aws_records_event){ build(:slack_favourites_interaction_event) }
-    let(:bot_request){ Topic::Events::Slack.interaction_event(aws_records_event) }
+    let(:bot_request){ Topic::Slack.interaction_event(aws_records_event) }
 
     it 'should broadcast to the interactions topic' do
       expect(Topic::Sns).to receive(:broadcast).with(topic: :users, event: bot_request)
@@ -27,7 +27,7 @@ describe Service::Interaction::Controller do
   context 'more results' do
 
     let(:aws_records_event){ build(:slack_more_results_interaction_event) }
-    let(:bot_request){ Topic::Events::Slack.interaction_event(aws_records_event) }
+    let(:bot_request){ Topic::Slack.interaction_event(aws_records_event) }
 
     it 'should broadcast the  event to the interactions topic' do
       expect(Topic::Sns).to receive(:broadcast).with(topic: :recipes, event: bot_request)

@@ -1,4 +1,4 @@
-require 'topic/events/recipes'
+require 'topic/topic'
 require 'topic/topic'
 
 module Service

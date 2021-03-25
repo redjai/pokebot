@@ -1,10 +1,10 @@
 require 'handlers/intent'
 require 'service/intent/controller'
-require 'topic/events/messages'
+require 'topic/topic'
 
 describe 'handler' do
 
-  let(:bot_event){ Topic::Events::Messages.received(source: :messages, text: 'beef rendang') }
+  let(:bot_event){ Topic::Messages.received(source: :messages, text: 'beef rendang') }
   let(:bot_request){ build(:bot_request, bot_event: bot_event) }
   let(:aws_records_event){ build(:aws_records_event, bot_request: bot_request) }
   let(:context){ {} }

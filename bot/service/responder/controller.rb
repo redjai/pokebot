@@ -10,8 +10,17 @@ module Service
       end
 
       def respond_to_slack(bot_request)
-        require_relative 'slack/spoonacular/recipes/recipes'
-        Service::Responder::Slack::Recipes::Spoonacular::Respond.call(bot_request)
+        case bot_request.name
+        when Topic::Recipes::FOUND
+          require_relative 'slack/spoonacular/recipes'
+          Service::Responder::Slack::Spoonacular::Recipes.call(bot_request)
+        when Topic::Messages::RECEIVED
+          require_relative 'slack/spoonacular/searching'
+          Service::Responder::Slack::Spoonacular::Searching.call(bot_request)
+        when Topic::Users::FAVOURITES_UPDATED
+          require_relative 'slack/spoonacular/favourites'
+          Service::Responder::Slack::Spoonacular::Favourites.call(bot_request)
+        end
       end
     end
   end

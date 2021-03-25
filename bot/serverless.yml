@@ -136,6 +136,11 @@ functions:
            Fn::GetAtt:
              - SQSMessagesToResponder
              - Arn
+      - sqs:
+         arn:
+           Fn::GetAtt:
+             - SNSUsersToSQSResponder
+             - Arn
     environment:
       BOT_USER_OAUTH_ACCESS_TOKEN: ${file(config.${self:provider.stage}.yml):bot_user_oauth_access_token}  
 
@@ -143,12 +148,6 @@ functions:
     handler: handlers/notifier.Notifier::Handler.handle
     layers:
       - {Ref: GemsLambdaLayer}
-    events:
-      - sqs:
-         arn:
-           Fn::GetAtt:
-             - SNSUsersToSQSNotifier
-             - Arn
     environment:
       POKEBOT_TESTER_NOTIFICATION_URI: ${file(config.${self:provider.stage}.yml):pokebot_tester_notification_uri}  
   
@@ -376,24 +375,24 @@ resources:
 
 
     #########################################################################
-    # Notifier Service: SNS Users Topic -> SQS Notifier Queue & Policy
+    # Responder Service: SNS Users Topic -> SQS Responder Queue & Policy
     #########################################################################
-    SNSUsersToSQSNotifier:
+    SNSUsersToSQSResponder:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: ${self:service}-${self:provider.stage}-sns-users-sqs-notifier-queue
-    SNSUsersToSQSNotifierQueueSubscription:
+        QueueName: ${self:service}-${self:provider.stage}-sns-users-sqs-responder-queue
+    SNSUsersToSQSResponderQueueSubscription:
       Type: AWS::SNS::Subscription
       Properties:
         TopicArn: !Ref SNSUserTopic
         Endpoint: !GetAtt
-          - SNSUsersToSQSNotifier
+          - SNSUsersToSQSResponder
           - Arn
         Protocol: sqs
       DependsOn:
         - SNSUserTopic
-        - SNSUsersToSQSNotifier
-    SNSUserstoSQSNotifierPolicy:
+        - SNSUsersToSQSResponder
+    SNSUserstoSQSResponderPolicy:
       Type: AWS::SQS::QueuePolicy
       Properties:
         PolicyDocument:
@@ -403,16 +402,16 @@ resources:
               Effect: Allow
               Principal: "*"
               Resource: !GetAtt
-                - SNSUsersToSQSNotifier 
+                - SNSUsersToSQSResponder 
                 - Arn
               Action: "SQS:SendMessage"
               Condition:
                 ArnEquals:
                   "aws:SourceArn": !Ref SNSUserTopic
         Queues:
-          - Ref: SNSUsersToSQSNotifier
+          - Ref: SNSUsersToSQSResponder
       DependsOn:
-        - SNSUsersToSQSNotifierQueueSubscription
+        - SNSUsersToSQSResponderQueueSubscription
 
     ###################################################
     # User Service: SNS Interactions -> User SQS Queue & Policy

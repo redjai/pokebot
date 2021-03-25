@@ -1,12 +1,13 @@
 require_relative '../event'
 require_relative 'base'
+require 'topic/topic'
 
 module Topic 
   module Events
     module Slack
       extend self
       extend Topic::Events::Base
-
+      
       def api_event(aws_event)
         slack_data = http_data(aws_event)
 
@@ -15,7 +16,7 @@ module Topic
            channel: slack_data['event']['channel']
         }
 
-        record = Topic::Event.new(name: 'slack-event-api-request',
+        record = Topic::Event.new(name: Topic::Slack::EVENT_API_REQUEST,
                                     source: 'slack-event-api',
                                    version: 1.0,
                                       data: slack_data)   
@@ -23,7 +24,7 @@ module Topic
       end
 
       def interaction_event(aws_event)
-        record = Topic::Event.new(  name: 'slack-interaction-api-request',
+        record = Topic::Event.new(name: Topic::Slack::INTERACTION_API_REQUEST,
                            source: 'slack-interaction-api',
                           version: 1.0,
                              data: payload_data(aws_event))
@@ -37,7 +38,7 @@ module Topic
       end
       
       def shortcut_event(aws_event)
-        record = Topic::Event.new(  name: 'slack-shortcut-api-request',
+        record = Topic::Event.new(  name: Topic::Slack::SHORTCUT_API_REQUEST,
                            source: 'slack-shortcut-api',
                           version: 1.0,
                              data: shortcut_data(aws_event))

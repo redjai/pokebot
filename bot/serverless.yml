@@ -139,6 +139,19 @@ functions:
     environment:
       BOT_USER_OAUTH_ACCESS_TOKEN: ${file(config.${self:provider.stage}.yml):bot_user_oauth_access_token}  
 
+  notifier:
+    handler: handlers/notifier.Notifier::Handler.handle
+    layers:
+      - {Ref: GemsLambdaLayer}
+    events:
+      - sqs:
+         arn:
+           Fn::GetAtt:
+             - SNSUsersToSQSNotifier
+             - Arn
+    environment:
+      POKEBOT_TESTER_NOTIFICATION_URI: ${file(config.${self:provider.stage}.yml):pokebot_tester_notification_uri}  
+  
   interactions:
     handler: handlers/interactions.Interactions::Handler.handle
     layers:
@@ -361,6 +374,45 @@ resources:
       DependsOn:
         - MessagesToResponsesQueueSubscription
 
+
+    #########################################################################
+    # Notifier Service: SNS Users Topic -> SQS Notifier Queue & Policy
+    #########################################################################
+    SNSUsersToSQSNotifier:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-${self:provider.stage}-sns-users-sqs-notifier-queue
+    SNSUsersToSQSNotifierQueueSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn: !Ref SNSUserTopic
+        Endpoint: !GetAtt
+          - SNSUsersToSQSNotifier
+          - Arn
+        Protocol: sqs
+      DependsOn:
+        - SNSUserTopic
+        - SNSUsersToSQSNotifier
+    SNSUserstoSQSNotifierPolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Sid: "allow-sns-responses"
+              Effect: Allow
+              Principal: "*"
+              Resource: !GetAtt
+                - SNSUsersToSQSNotifier 
+                - Arn
+              Action: "SQS:SendMessage"
+              Condition:
+                ArnEquals:
+                  "aws:SourceArn": !Ref SNSUserTopic
+        Queues:
+          - Ref: SNSUsersToSQSNotifier
+      DependsOn:
+        - SNSUsersToSQSNotifierQueueSubscription
 
     ###################################################
     # User Service: SNS Interactions -> User SQS Queue & Policy

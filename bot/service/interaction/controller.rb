@@ -1,6 +1,7 @@
 require 'topic/sns'
 require 'topic/events/users'
 require 'topic/events/recipes'
+require 'topic/topic'
 
 module Service
   module Interaction

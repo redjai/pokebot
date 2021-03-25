@@ -1,5 +1,6 @@
 require 'topic/events/slack'
 require 'service/shortcut/controller'
+require 'topic/topic'
 
 module Shortcuts 
   class Handler

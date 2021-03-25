@@ -1,5 +1,6 @@
 require 'slack/response'
 require_relative 'blocks' 
+require 'topic/topic'
 
 module Service
   module Responder
@@ -11,9 +12,9 @@ module Service
           
             def call(bot_request)
               case bot_request.name
-              when Topic::RECIPES_FOUND
+              when Topic::Recipes::FOUND
                 respond_with_recipes(bot_request)
-              when Topic::MESSAGE_RECEIVED
+              when Topic::Messages::RECEIVED
                 respond_searching(bot_request)
               else
                 raise "unexpected event name #{bot_request.name}"

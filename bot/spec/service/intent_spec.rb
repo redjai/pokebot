@@ -2,6 +2,7 @@ require 'service/intent/controller'
 require 'topic/sns'
 require 'topic/event'
 require 'topic/events/messages'
+require 'topic/topic'
 
 describe Service::Intent::Controller do
 
@@ -20,7 +21,7 @@ describe Service::Intent::Controller do
       allow(Topic::Sns).to receive(:broadcast).with(topic: :recipes, event: bot_request)
       expect{ 
         subject.call(bot_request)
-      }.to change { bot_request.name }.from(Topic::MESSAGE_RECEIVED).to(Topic::RECIPE_SEARCH_REQUESTED)
+      }.to change { bot_request.name }.from(Topic::Messages::RECEIVED).to(Topic::Recipes::SEARCH_REQUESTED)
     end
 
     it 'should brodacast the event to the intent topic' do
@@ -45,7 +46,7 @@ describe Service::Intent::Controller do
       allow(Topic::Sns).to receive(:broadcast).with(topic: :recipes, event: bot_request)
       expect{ 
         subject.call(bot_request)
-      }.to change { bot_request.name }.from(Topic::MESSAGE_RECEIVED).to(Topic::FAVOURITES_SEARCH_REQUESTED)
+      }.to change { bot_request.name }.from(Topic::Messages::RECEIVED).to(Topic::Recipes::FAVOURITES_SEARCH_REQUESTED)
     end
 
     it 'should brodacast the event to the intent topic' do

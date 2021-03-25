@@ -1,3 +1,5 @@
+require 'topic/topic'
+
 module Service
   module User 
     module Controller
@@ -5,9 +7,9 @@ module Service
 
       def call(bot_request)
         case bot_request.name
-        when Topic::USER_FAVOURITE_NEW
+        when Topic::Users::FAVOURITE_NEW
           favourite(bot_request)
-        when Topic::USER_FAVOURITE_DESTROY
+        when Topic::Users::FAVOURITE_DESTROY
           unfavourite(bot_request)
         end
       end

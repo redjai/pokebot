@@ -19,7 +19,7 @@ describe Service::Message::Controller do
     allow(Topic::Sns).to receive(:broadcast).with(topic: :messages, event: bot_request)
     expect{ 
       subject.call(bot_request)
-    }.to change { bot_request.name }.from(Topic::SLACK_EVENT_API_REQUEST).to(Topic::MESSAGE_RECEIVED)
+    }.to change { bot_request.name }.from(Topic::Slack::EVENT_API_REQUEST).to(Topic::Messages::RECEIVED)
   end
 
   it 'should broadcast the event to the messages topic' do

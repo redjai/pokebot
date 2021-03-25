@@ -1,6 +1,7 @@
 require 'topic/events/slack'
 require 'service/message/controller'
 require 'net/http'
+require 'topic/topic'
 
 module Messages
   class Handler

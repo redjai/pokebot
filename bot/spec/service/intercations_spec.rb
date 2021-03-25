@@ -2,6 +2,7 @@ require 'service/interaction/controller'
 require 'topic/sns'
 require 'topic/events/slack'
 require 'topic/event'
+require 'topic/topic'
 
 describe Service::Interaction::Controller do
 
@@ -18,7 +19,7 @@ describe Service::Interaction::Controller do
     it 'should broadcast a favourites new event' do
       allow(Topic::Sns).to receive(:broadcast).with(topic: :users, event: bot_request)
       subject.call(bot_request)
-      expect(bot_request.name).to eq Topic::USER_FAVOURITE_NEW
+      expect(bot_request.name).to eq Topic::Users::FAVOURITE_NEW
     end
 
   end
@@ -36,7 +37,7 @@ describe Service::Interaction::Controller do
     it 'should broadcast a recipes next page search event' do
       allow(Topic::Sns).to receive(:broadcast).with(topic: :recipes, event: bot_request)
       subject.call(bot_request)
-      expect(bot_request.name).to eq Topic::RECIPE_SEARCH_REQUESTED
+      expect(bot_request.name).to eq Topic::Recipes::SEARCH_REQUESTED
     end
 
   end

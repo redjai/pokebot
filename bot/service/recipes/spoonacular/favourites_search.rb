@@ -11,9 +11,9 @@ module Service
         
         def call(bot_request)
           recipe_ids = Service::Recipe::User.recipe_ids(bot_request.slack_user['slack_id'])
-          bot_request.current = Topic::Recipes.favourites_found(        source: :recipes, 
-                                                                               recipes: information_bulk(recipe_ids),
-                                                                  favourite_recipe_ids: recipe_ids) 
+          bot_request.current = Topic::Recipes.found(        source: :recipes, 
+                                                            recipes: information_bulk(recipe_ids),
+                                               favourite_recipe_ids: recipe_ids) 
           Topic::Sns.broadcast(
                                 topic: :recipes, 
                                 event: bot_request

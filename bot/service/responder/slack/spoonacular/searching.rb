@@ -10,7 +10,7 @@ module Service
           def call(bot_request)
             ::Slack::Response.respond(
               channel: bot_request.slack_user['channel'], 
-              text: "searching for #{bot_request.data['text']} recipes... :male-cook: :knife_fork_plate: :female-cook:",
+              text: ":smiley:  _#{bot_request.data['text']}_...\n...helping you is what I do !",
             )
           end
         end

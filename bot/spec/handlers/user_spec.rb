@@ -4,8 +4,7 @@ require 'topic/topic'
 
 describe 'handler' do
 
-  let(:bot_event){ Topic::Users.favourite_new(source: :interactions, favourite_recipe_id: '12345') }
-  let(:bot_request){ build(:bot_request, bot_event: bot_event) }
+  let(:bot_request){ build(:bot_request, :with_user_favourite_new) }
   let(:aws_records_event){ build(:aws_records_event, bot_request: bot_request) }
   let(:context){ {} }
 

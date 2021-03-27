@@ -116,7 +116,7 @@ module Service
             if more?(offset, per_page, total_results)
               elements << nav_block_button("more", { 'query' => query,  'per_page' => per_page, 'offset' => offset + per_page }) 
             end
-
+:with_message_received
             if elements.size > 0
               {
                 "type": "actions",

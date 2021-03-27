@@ -61,13 +61,15 @@ module Topic
       Topic::Event.new(source: source, name: Topic::Recipes::SEARCH_REQUESTED, version: 1.0, data: data)      
     end
 
-    def found(source:, recipes:, favourite_recipe_ids:, query:, offset:, per_page:, total_results:)
+    def found(source:, recipes:, favourite_recipe_ids:, query: nil, offset: nil, per_page: nil, total_results: nil)
       data = {
         'recipes' => recipes,
         'favourite_recipe_ids' => favourite_recipe_ids,
-        'query' => query,
-        'page' => { 'offset' => offset, 'per_page' => per_page, 'total_results' => total_results }
       }
+      if query
+        data['query'] = query
+        data['page'] = { 'offset' => offset, 'per_page' => per_page, 'total_results' => total_results }
+      end
       Topic::Event.new(source: source, name: Topic::Recipes::FOUND, version: 1.0, data: data)      
     end
 
@@ -76,13 +78,6 @@ module Topic
       Topic::Event.new(source: source, name: Topic::Recipes::FAVOURITES_SEARCH_REQUESTED, version: 1.0, data: data)      
     end
       
-    def favourites_found(source:, recipes:, favourite_recipe_ids:)
-      data = {
-        'recipes' => recipes,
-        'favourite_recipe_ids' => favourite_recipe_ids,
-      }
-      Topic::Event.new(source: source, name: Topic::Recipes::FOUND, version: 1.0, data: data)      
-    end
   end
 
   module Slack

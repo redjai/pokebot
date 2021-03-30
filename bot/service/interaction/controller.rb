@@ -20,7 +20,7 @@ module Service
             bot_request.current = Topic::Users.favourite_destroy(source: :interaction, favourite_recipe_id: value['data']) 
 
             Topic::Sns.broadcast(topic: :users, event: bot_request)
-          else
+          when 'next-recipes' 
             bot_request.current = Topic::Recipes.search_requested(source: :interaction, 
                                                                            query: value['data']['query'],
                                                                            offset: value['data']['offset'],

@@ -10,7 +10,7 @@ module Topic
       JSON.parse(json)
     end
 
-    def shortcut_data(aws_event)
+    def command_data(aws_event)
       body = unescape(body(aws_event))
       CGI.parse(body)
     end

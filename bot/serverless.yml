@@ -163,16 +163,17 @@ functions:
       RECIPES_TOPIC_ARN: !Ref SNSRecipes
       USERS_TOPIC_ARN: !Ref SNSUserTopic
 
-  shortcuts:
-    handler: handlers/shortcuts.Shortcuts::Handler.handle
+  command:
+    handler: handlers/command.Command::Handler.handle
     layers:
       - {Ref: GemsLambdaLayer}
     events:
       - httpApi:
           method: POST 
-          path:  /shortcuts
+          path:  /command
     environment:
       RECIPES_TOPIC_ARN: !Ref SNSRecipes
+      USERS_TOPIC_ARN: !Ref SNSUserTopic
   
   user:
     handler: handlers/user.User::Handler.handle
@@ -186,7 +187,7 @@ functions:
              - Arn
     environment:
       FAVOURITES_TABLE_NAME: ${self:custom.favourites_table}
-      USER_TOPIC_ARN: !Ref SNSUserTopic
+      USERS_TOPIC_ARN: !Ref SNSUserTopic
 
 
 

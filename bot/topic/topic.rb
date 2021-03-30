@@ -22,7 +22,9 @@ module Topic
     FAVOURITE_NEW = 'user-favourite-new'
     FAVOURITE_DESTROY = 'user-favourite-destroy'
     FAVOURITES_UPDATED = 'user-favourites-updated'
-    
+    ACCOUNT_EDIT = 'user-account-edit'
+    ACCOUNT_UPDATE = 'user-account-update'
+
     def favourite_new(source:, favourite_recipe_id:)
       data = {
         'favourite_recipe_id' => favourite_recipe_id.to_s
@@ -42,6 +44,22 @@ module Topic
         'favourite_recipe_ids' => favourite_recipe_ids,
       }
       Topic::Event.new(source: source, name: Topic::Users::FAVOURITES_UPDATED, version: 1.0, data: data)      
+    end
+
+    def account_edit(source:, handle: nil, kanbanize_username: nil)
+      data = {
+        handle: handle,
+        kanbanize_username: kanbanize_username
+      }
+      Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_EDIT, version: 1.0, data: data)      
+    end
+    
+    def account_update(source:, handle:, kanbanize_username:)
+      data = {
+        handle: handle,
+        kanbanize_username: kanbanize_username
+      }
+      Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_UPDATE, version: 1.0, data: data)      
     end
   end
 
@@ -86,7 +104,7 @@ module Topic
     
     EVENT_API_REQUEST = 'slack-event-api-request'
     INTERACTION_API_REQUEST = 'slack-interaction-api-request'
-    SHORTCUT_API_REQUEST = 'slack-shortcut-api-request'
+    SHORTCUT_API_REQUEST = 'slack-command-api-request'
     
     def api_event(aws_event)
       slack_data = http_data(aws_event)
@@ -117,11 +135,11 @@ module Topic
       Topic::Request.new slack_user: user, current: record
     end
     
-    def shortcut_event(aws_event)
+    def command_event(aws_event)
       record = Topic::Event.new(  name: Topic::Slack::SHORTCUT_API_REQUEST,
-                         source: 'slack-shortcut-api',
+                         source: 'slack-command-api',
                         version: 1.0,
-                           data: shortcut_data(aws_event))
+                           data: command_data(aws_event))
       user = {
         'slack_id' => record.record['data']['user_id'].first, 
         'channel' => record.record['data']['channel_id'].first,

@@ -46,7 +46,7 @@ describe Service::Responder::Controller do
     let(:bot_request){ build(:bot_request, :with_user_favourites_updated) }
     let(:channel){ bot_request.slack_user['channel'] }
     let(:favourites_count){ bot_request.data['favourite_recipe_ids'].length }
-    let(:text){ "favourites updated, you have #{favourites_count} favourites. You can see them with the shortcut /favourites" }
+    let(:text){ "favourites updated, you have #{favourites_count} favourites. You can see them with the command /favourites" }
 
     it 'should respond to slack' do
       expect(Slack::Response).to receive(:respond).with(channel: channel, text: text)

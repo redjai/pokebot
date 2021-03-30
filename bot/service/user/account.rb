@@ -3,8 +3,15 @@ require 'topic/sns'
 
 module Service
   module User
-    module User 
+    module Account 
       extend self
+
+      def call(bot_request)
+        upsert(bot_request.slack_user['slack_id'], bot_request.data['handle'], bot_request.data['kanbanize_username']).tap do |updated|
+          bot_request.current = Topic::Users.account_update(source: :user, handle: updated[:attributes][:handle], kanbanize_username: updated[:attributes][:kanbanize_username])
+          Topic::Sns.broadcast(topic: :users, event: bot_request)
+        end
+      end
 
       @@dynamo_resource = nil 
       
@@ -12,23 +19,14 @@ module Service
         @@dynamo_resource = Aws::DynamoDB::Resource.new(options)
       end
 
-      def destroy(user_id, recipe_id)
+      def destroy(user_id)
         begin 
-          dynamo_resource.client.update_item(
+          dynamo_resource.client.delete_item(
             {
               key: {
                 "user_id" => user_id 
               },  
-              update_expression: 'DELETE #favourites :recipe_id',
-              expression_attribute_names: {
-                '#favourites': 'favourites'
-              },
-              #condition_expression: 'attribute_exists(#favourites) AND contains(#favourites, :recipe_id)',
-              expression_attribute_values: {
-                ':recipe_id': Set.new([recipe_id.to_s])
-              },
-              table_name: ENV['FAVOURITES_TABLE_NAME'],
-              return_values: 'UPDATED_NEW'
+              table_name: ENV['FAVOURITES_TABLE_NAME']
             }
           ) 
         rescue Aws::DynamoDB::Errors::ConditionalCheckFailedException
@@ -37,21 +35,21 @@ module Service
         end
       end
 
-      def upsert(user_id, recipe_id)
+      def upsert(user_id, handle, kanbanize_username)
         begin 
           dynamo_resource.client.update_item(
             {
               key: {
                 "user_id" => user_id 
               },  
-              update_expression: 'ADD #favourites :empty_set',
+              update_expression: 'SET #handle = :handle, #kanbanize_username = :kanbanize_username',
               expression_attribute_names: {
-                '#favourites': 'favourites'
+                '#handle': 'handle',
+                '#kanbanize_username': 'kanbanize_username'
               },
-              condition_expression: 'attribute_not_exists(#favourites) OR not contains(#favourites, :recipe_id)',
               expression_attribute_values: {
-                ':empty_set': Set.new([recipe_id.to_s]),
-                ':recipe_id': recipe_id
+                ':handle': handle,
+                ':kanbanize_username': kanbanize_username
               },
               table_name: ENV['FAVOURITES_TABLE_NAME'],
               return_values: 'UPDATED_NEW'

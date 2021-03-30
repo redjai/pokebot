@@ -2,16 +2,22 @@ require 'topic/sns'
 require 'topic/topic'
 
 module Service
-  module Shortcut 
+  module Command 
     module Controller
       extend self
 
       def call(bot_request)
         case bot_request.data['command'].first
         when '/favourites' 
-          bot_request.current = Topic::Recipes.favourites_requested(source: :intent)
+          bot_request.current = Topic::Recipes.favourites_requested(source: :command)
           Topic::Sns.broadcast(
             topic: :recipes,
+            event: bot_request 
+          )
+        when '/account'
+          bot_request.current = Topic::Users.account_edit(source: :command)
+          Topic::Sns.broadcast(
+            topic: :users,
             event: bot_request 
           )
         else

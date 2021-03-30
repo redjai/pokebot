@@ -6,7 +6,8 @@ module Responder
     EVENTS = [
                Topic::Recipes::FOUND, 
                Topic::Messages::RECEIVED, 
-               Topic::Users::FAVOURITES_UPDATED
+               Topic::Users::FAVOURITES_UPDATED,
+               Topic::Users::ACCOUNT_UPDATE
              ]
 
     def self.handle(event:, context:)

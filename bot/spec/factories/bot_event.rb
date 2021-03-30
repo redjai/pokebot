@@ -52,6 +52,24 @@ FactoryBot.define do
 
   end
 
+  factory :user_account_edit, class: Topic::Event do
+
+    source { :test_source }
+
+    initialize_with{ Topic::Users.account_edit(source: source) }
+
+  end
+
+  factory :user_account_update, class: Topic::Event do
+
+    source { :test_source }
+    handle { 'test handle' }
+    kanbanize_username { 'test-kanbanze-username' }
+
+    initialize_with{ Topic::Users.account_update(source: source, handle: handle, kanbanize_username: kanbanize_username) }
+
+  end
+
   factory :recipes_found, class: Topic::Request do
 
     source { :test_source }
@@ -133,6 +151,18 @@ FactoryBot.define do
     trait :with_favourites_found do
       transient do
         bot_event { build(:favourites_found) }
+      end
+    end
+
+    trait :with_user_account_edit do
+      transient do
+        bot_event { build(:user_account_edit) }
+      end
+    end
+    
+    trait :with_user_account_update do
+      transient do
+        bot_event { build(:user_account_update) }
       end
     end
 

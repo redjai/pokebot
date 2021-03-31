@@ -8,14 +8,23 @@ module Service
       def call(bot_request)
         case bot_request.name
         when Topic::Users::FAVOURITE_NEW
-          require_relative 'favourite'
-          Service::User::Favourite.call(bot_request)
+          require_relative 'favourite/add'
+          Service::User::Favourite::Add.call(bot_request)
         when Topic::Users::FAVOURITE_DESTROY
-          require_relative 'unfavourite'
-          Service::User::Unfavourite.call(bot_request)
+          require_relative 'favourite/remove'
+          Service::User::Favourite::Remove.call(bot_request)
+        when Topic::Users::ACCOUNT_REQUESTED
+          require_relative 'account/requested'
+          Service::User::Account::Requested.call(bot_request)
+        when Topic::Users::ACCOUNT_FOUND
+          require_relative 'account/found'
+          Service::User::Account::Found.call(bot_request)
         when Topic::Users::ACCOUNT_EDIT
-          require_relative 'account'
-          Service::User::Account.call(bot_request)
+          require_relative 'account/edit'
+          Service::User::Account::Edit.call(bot_request)
+        when Topic::Users::ACCOUNT_UPDATE
+          require_relative 'account/update'
+          Service::User::Account::Update.call(bot_request)
         end
       end
     end

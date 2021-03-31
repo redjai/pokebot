@@ -53,4 +53,16 @@ describe Service::Responder::Controller do
       subject.call(bot_request)
     end
   end
+  
+  context 'account found' do
+
+    let(:bot_request){ build(:bot_request, :with_user_account_found) }
+    let(:channel){ bot_request.slack_user['channel'] }
+    let(:text){ "your account:" }
+
+    it 'should respond to slack' do
+      expect(Slack::Response).to receive(:respond).with(channel: channel, text: text, blocks: kind_of(Hash))
+      subject.call(bot_request)
+    end
+  end
 end

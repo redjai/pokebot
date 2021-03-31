@@ -1,8 +1,10 @@
+require_relative '../../spoonacular/blocks/account'
+
 module Service
   module Responder
     module Slack
       module Account
-        module Edit
+        module Found
         extend self
 
           def call(bot_request)

@@ -15,7 +15,7 @@ module Service
             event: bot_request 
           )
         when '/account'
-          bot_request.current = Topic::Users.account_edit(source: :command)
+          bot_request.current = Topic::Users.account_requested(source: :command)
           Topic::Sns.broadcast(
             topic: :users,
             event: bot_request 

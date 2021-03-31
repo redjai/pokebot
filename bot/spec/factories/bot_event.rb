@@ -52,6 +52,29 @@ FactoryBot.define do
 
   end
 
+  factory :user_account_requested, class: Topic::Event do
+
+    source { :test_source }
+
+    initialize_with{ Topic::Users.account_requested(source: source) }
+
+  end
+
+  factory :user_account_found, class: Topic::Event do
+
+    source { :test_source }
+
+    transient do
+      handle { 'test-handle' }
+      kanbanize_username { 'test-kanbanize-username' }
+      user { {'user_id' => user_id, 'handle' => handle, 'kanbanize_username' => kanbanize_username }  }
+      user_id { 'user-id-123' }
+    end
+
+    initialize_with{ Topic::Users.account_found(source: source, user: user) }
+
+  end
+
   factory :user_account_edit, class: Topic::Event do
 
     source { :test_source }
@@ -151,6 +174,18 @@ FactoryBot.define do
     trait :with_favourites_found do
       transient do
         bot_event { build(:favourites_found) }
+      end
+    end
+
+    trait :with_user_account_requested do
+      transient do
+        bot_event { build(:user_account_requested) }
+      end
+    end
+    
+    trait :with_user_account_found do
+      transient do
+        bot_event { build(:user_account_found, user_id: slack_user['slack_id']) }
       end
     end
 

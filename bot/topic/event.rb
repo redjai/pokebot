@@ -51,9 +51,13 @@ module Topic
     def trail
       @trail ||= []
     end
-
+    
     def to_json
-      { current: @current, trail: @trail, slack_user: @slack_user }.to_json 
+      to_h.to_json 
+    end
+
+    def to_h
+      { current: @current, trail: @trail, slack_user: @slack_user }
     end
   end
 end

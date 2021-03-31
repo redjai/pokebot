@@ -22,6 +22,10 @@ module Topic
     FAVOURITE_NEW = 'user-favourite-new'
     FAVOURITE_DESTROY = 'user-favourite-destroy'
     FAVOURITES_UPDATED = 'user-favourites-updated'
+    
+    ACCOUNT_REQUESTED = 'user-account-requested'
+    ACCOUNT_FOUND = 'user-account-found'
+
     ACCOUNT_EDIT = 'user-account-edit'
     ACCOUNT_UPDATE = 'user-account-update'
 
@@ -44,6 +48,18 @@ module Topic
         'favourite_recipe_ids' => favourite_recipe_ids,
       }
       Topic::Event.new(source: source, name: Topic::Users::FAVOURITES_UPDATED, version: 1.0, data: data)      
+    end
+
+    def account_requested(source:)
+      data = {}
+      Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_REQUESTED, version: 1.0, data: data)      
+    end
+
+    def account_found(source:, user:)
+      data = {
+        'user' => user
+      }
+      Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_FOUND, version: 1.0, data: data)      
     end
 
     def account_edit(source:, handle: nil, kanbanize_username: nil)

@@ -1,19 +1,19 @@
 require 'slack/response'
 require 'topic/topic'
-require_relative 'blocks/recipes'
+require_relative 'blocks/account'
 
 module Service
   module Responder
     module Slack
       module Spoonacular
-        module Recipes
+        module Account 
         extend self
           
-        def call(bot_request)
+          def call(bot_request)
             ::Slack::Response.respond(
               channel: bot_request.slack_user['channel'], 
-              text: 'recipes:',
-              blocks: Blocks::Recipes.new(bot_request).recipe_blocks,
+              text: 'your account:',
+              blocks: Blocks::Account.new(bot_request.data['user']).blocks,
               response_url: bot_request.slack_user['response_url']
             )
           end

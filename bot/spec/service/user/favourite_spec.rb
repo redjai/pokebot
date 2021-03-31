@@ -7,7 +7,7 @@ describe Service::User::Controller do
   let(:bot_request){ build(:bot_request, current: Topic::Users.favourite_new(source: :interactions, favourite_recipe_id:  favourite)) }
   let(:table){ 'test-user-table' } 
   let(:favourite){ "234567" }
-  let(:item){ Service::User::Recipe.read bot_request.slack_user['slack_id'] } 
+  let(:item){ Service::User::Storage.read bot_request.slack_user['slack_id'] } 
   
   table!('test-user-table')
 

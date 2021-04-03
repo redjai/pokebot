@@ -1,6 +1,6 @@
 require 'slack/response'
 require 'topic/topic'
-require_relative 'blocks/account'
+require_relative 'blocks/account/show'
 
 module Service
   module Responder
@@ -11,10 +11,10 @@ module Service
           
           def call(bot_request)
             ::Slack::Response.respond(
-              channel: bot_request.slack_user['channel'], 
+              channel: bot_request.context.channel, 
               text: 'your account:',
-              blocks: Blocks::Account.new(bot_request.data['user']).blocks,
-              response_url: bot_request.slack_user['response_url']
+              blocks: Blocks::Account::Show.new(bot_request.data['user']).blocks,
+              response_url: bot_request.context.response_url
             )
           end
         end

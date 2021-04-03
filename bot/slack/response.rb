@@ -9,6 +9,7 @@ module Slack
     POST_MESSAGE_URI = URI.parse("https://slack.com/api/chat.postMessage")
     DELETE_MESSAGE_URI = URI.parse("https://slack.com/api/chat.delete")
     NOTIFICATION_URI = URI.parse("https://hooks.slack.com/services/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e")
+    VIEWS_OPEN_URI = URI.parse('https://slack.com/api/views.open')
 
     class Failure < StandardError
       attr_accessor :context
@@ -40,6 +41,13 @@ module Slack
       result = JSON.parse(Net::HTTP.post(uri, data.to_json , header).body)
       raise Failure.new(result['error'], data) unless result['ok']
     end
+
+    def modal(trigger_id:,view:)
+      data = { trigger_id: trigger_id, view: view }
+      uri = VIEWS_OPEN_URI
+      result = JSON.parse(Net::HTTP.post(uri, data.to_json , header).body)
+      raise Failure.new(result['error'], data) unless result['ok']
+    end  
 
     def header
       {

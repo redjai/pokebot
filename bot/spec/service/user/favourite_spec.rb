@@ -7,7 +7,7 @@ describe Service::User::Controller do
   let(:bot_request){ build(:bot_request, current: Topic::Users.favourite_new(source: :interactions, favourite_recipe_id:  favourite)) }
   let(:table){ 'test-user-table' } 
   let(:favourite){ "234567" }
-  let(:item){ Service::User::Storage.read bot_request.slack_user['slack_id'] } 
+  let(:item){ Service::User::Storage.read bot_request.context.slack_id } 
   
   table!('test-user-table')
 
@@ -43,7 +43,7 @@ describe Service::User::Controller do
         end
 
         it 'set the slack_id as key' do
-          expect(item['user_id']).to eq bot_request.slack_user['slack_id'] 
+          expect(item['user_id']).to eq bot_request.context.slack_id 
         end
 
         it 'should create a set with the favourite' do

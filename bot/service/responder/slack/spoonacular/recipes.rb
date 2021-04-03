@@ -11,10 +11,10 @@ module Service
           
         def call(bot_request)
             ::Slack::Response.respond(
-              channel: bot_request.slack_user['channel'], 
+              channel: bot_request.context.channel, 
               text: 'recipes:',
               blocks: Blocks::Recipes.new(bot_request).recipe_blocks,
-              response_url: bot_request.slack_user['response_url']
+              response_url: bot_request.context.response_url
             )
           end
         end

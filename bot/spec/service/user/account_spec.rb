@@ -6,7 +6,7 @@ require 'service/user/storage'
 describe Service::User::Controller do
 
   let(:table){ 'test-user-table' } 
-  let(:user){ Service::User::Storage.read bot_request.slack_user['slack_id'] } 
+  let(:user){ Service::User::Storage.read bot_request.context.slack_id } 
   
   table!('test-user-table')
 
@@ -41,7 +41,7 @@ describe Service::User::Controller do
     context 'user exists' do
 
       before(:each) do
-        Service::User::Storage.update_account(bot_request.slack_user['slack_id'], nil, nil)
+        Service::User::Storage.update_account(bot_request.context.slack_id, nil, nil)
       end
 
       it 'should change the event from requested to found' do
@@ -76,10 +76,10 @@ describe Service::User::Controller do
       it 'should create an account update event' do
         expect{
           subject.call(bot_request)
-        }.to change{ bot_request.name }.from(Topic::Users::ACCOUNT_EDIT).to(Topic::Users::ACCOUNT_UPDATE)
+        }.to change{ bot_request.name }.from(Topic::Users::ACCOUNT_EDIT).to(Topic::Users::ACCOUNT_UPDATED)
       end  
 
-      it 'should create a new user user' do
+      it 'should create a new  user' do
         expect {
           subject.call(bot_request)
         }.to change{ DbSpec.count('test-user-table') }.by(1)
@@ -100,7 +100,7 @@ describe Service::User::Controller do
 
       before(:each) do
         allow(Topic::Sns).to receive(:broadcast)
-        Service::User::Storage.update_account(bot_request.slack_user['slack_id'], nil, nil)
+        Service::User::Storage.update_account(bot_request.context.slack_id, nil, nil)
       end
       
       it 'should broadcast to the user topic' do
@@ -111,7 +111,7 @@ describe Service::User::Controller do
       it 'should create an account update event' do
         expect{
           subject.call(bot_request)
-        }.to change{ bot_request.name }.from(Topic::Users::ACCOUNT_EDIT).to(Topic::Users::ACCOUNT_UPDATE)
+        }.to change{ bot_request.name }.from(Topic::Users::ACCOUNT_EDIT).to(Topic::Users::ACCOUNT_UPDATED)
       end  
 
       it 'should create a new user user' do

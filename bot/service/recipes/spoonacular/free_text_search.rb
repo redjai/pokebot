@@ -19,7 +19,7 @@ module Service
           bot_request.current = Topic::Recipes::found(
                               source: :recipes,
                              recipes: information_bulk_result(complex_search),
-                favourite_recipe_ids: Service::Recipe::User.recipe_ids(bot_request.slack_user['slack_id']),
+                favourite_recipe_ids: Service::Recipe::User.recipe_ids(bot_request.context.slack_id),
                                query: bot_request.data['query'],
                               offset: bot_request.data['page']['offset'], 
                             per_page: bot_request.data['page']['per_page'],

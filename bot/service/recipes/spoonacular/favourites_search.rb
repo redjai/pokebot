@@ -10,7 +10,7 @@ module Service
         extend self
         
         def call(bot_request)
-          recipe_ids = Service::Recipe::User.recipe_ids(bot_request.slack_user['slack_id'])
+          recipe_ids = Service::Recipe::User.recipe_ids(bot_request.context.slack_id)
           bot_request.current = Topic::Recipes.found(        source: :recipes, 
                                                             recipes: information_bulk(recipe_ids),
                                                favourite_recipe_ids: recipe_ids) 

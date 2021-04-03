@@ -6,7 +6,7 @@ describe Service::Responder::Controller do
   context 'recipes found' do
 
     let(:bot_request){ build(:bot_request, :with_recipes_found) }
-    let(:channel){ bot_request.slack_user['channel'] }
+    let(:channel){ bot_request.context.channel }
     let(:text){ 'recipes:' }
 
     it 'should respond to slack' do
@@ -19,7 +19,7 @@ describe Service::Responder::Controller do
   context 'favourites found' do
 
     let(:bot_request){ build(:bot_request, :with_favourites_found) }
-    let(:channel){ bot_request.slack_user['channel'] }
+    let(:channel){ bot_request.context.channel }
     let(:text){ 'recipes:' }
 
     it 'should respond to slack' do
@@ -32,7 +32,7 @@ describe Service::Responder::Controller do
   context 'message received' do
 
     let(:bot_request){ build(:bot_request, :with_message_received) }
-    let(:channel){ bot_request.slack_user['channel'] }
+    let(:channel){ bot_request.context.channel }
     let(:text){ ":smiley:  _some test text_...\n...helping you is what I do !" }
 
     it 'should respond to slack' do
@@ -44,7 +44,7 @@ describe Service::Responder::Controller do
   context 'favourites updated' do
 
     let(:bot_request){ build(:bot_request, :with_user_favourites_updated) }
-    let(:channel){ bot_request.slack_user['channel'] }
+    let(:channel){ bot_request.context.channel }
     let(:favourites_count){ bot_request.data['favourite_recipe_ids'].length }
     let(:text){ "favourites updated, you have #{favourites_count} favourites. You can see them with the command /favourites" }
 
@@ -57,7 +57,7 @@ describe Service::Responder::Controller do
   context 'account found' do
 
     let(:bot_request){ build(:bot_request, :with_user_account_found) }
-    let(:channel){ bot_request.slack_user['channel'] }
+    let(:channel){ bot_request.context.channel }
     let(:text){ "your account:" }
 
     it 'should respond to slack' do

@@ -8,8 +8,8 @@ module Service
       module Edit
       extend self
         def call(bot_request)
-          Service::User::Storage.update_account(bot_request.slack_user['slack_id'], bot_request.data['handle'], bot_request.data['kanbanize_username']).tap do |updated|
-            bot_request.current = Topic::Users.account_update(source: :user, handle: updated[:attributes][:handle], kanbanize_username: updated[:attributes][:kanbanize_username])
+          Service::User::Storage.read(bot_request.context.slack_id).tap do |user|
+            bot_request.current = Topic::Users.account_updated(source: :user, user: user)
             Topic::Sns.broadcast(topic: :users, event: bot_request)
           end
         end

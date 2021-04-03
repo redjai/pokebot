@@ -7,7 +7,7 @@ module Service
       extend self
 
       def call(bot_request)
-        Service::Recipe::User.upsert(bot_request.slack_user['slack_id'], bot_request.data['favourite_recipe_ids'])
+        Service::Recipe::User.upsert(bot_request.context.slack_id, bot_request.data['favourite_recipe_ids'])
       end
 
     end

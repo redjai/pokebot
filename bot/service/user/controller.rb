@@ -16,15 +16,9 @@ module Service
         when Topic::Users::ACCOUNT_REQUESTED
           require_relative 'account/requested'
           Service::User::Account::Requested.call(bot_request)
-        when Topic::Users::ACCOUNT_FOUND
-          require_relative 'account/found'
-          Service::User::Account::Found.call(bot_request)
         when Topic::Users::ACCOUNT_EDIT
           require_relative 'account/edit'
           Service::User::Account::Edit.call(bot_request)
-        when Topic::Users::ACCOUNT_UPDATE
-          require_relative 'account/update'
-          Service::User::Account::Update.call(bot_request)
         end
       end
     end

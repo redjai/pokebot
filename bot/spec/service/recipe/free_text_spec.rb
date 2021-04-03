@@ -53,7 +53,7 @@ describe Service::Recipe::Controller do
 
       context 'favourites' do
 
-        let(:user_id){ bot_request.slack_user['slack_id'] }
+        let(:user_id){ bot_request.context.slack_id }
         let(:favourites){ ['123','456'] }
 
         it 'should return an empty list where the user does not exist' do

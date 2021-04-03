@@ -23,7 +23,7 @@ module Service
         when Topic::Users::ACCOUNT_FOUND
           require_relative 'slack/spoonacular/account'
           Service::Responder::Slack::Spoonacular::Account.call(bot_request)
-        when Topic::Users::ACCOUNT_UPDATE
+        when Topic::Users::ACCOUNT_UPDATED
           require_relative 'slack/account/update'
           Service::Responder::Slack::Account.call(bot_request)
         end

@@ -27,7 +27,7 @@ module Topic
     ACCOUNT_FOUND = 'user-account-found'
 
     ACCOUNT_EDIT = 'user-account-edit'
-    ACCOUNT_UPDATE = 'user-account-update'
+    ACCOUNT_UPDATED = 'user-account-update'
 
     def favourite_new(source:, favourite_recipe_id:)
       data = {
@@ -62,20 +62,16 @@ module Topic
       Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_FOUND, version: 1.0, data: data)      
     end
 
-    def account_edit(source:, handle: nil, kanbanize_username: nil)
-      data = {
-        handle: handle,
-        kanbanize_username: kanbanize_username
-      }
+    def account_edit(source:)
+      data = {}
       Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_EDIT, version: 1.0, data: data)      
     end
     
-    def account_update(source:, handle:, kanbanize_username:)
+    def account_updated(source:, user:)
       data = {
-        handle: handle,
-        kanbanize_username: kanbanize_username
+        user: user
       }
-      Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_UPDATE, version: 1.0, data: data)      
+      Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_UPDATED, version: 1.0, data: data)      
     end
   end
 
@@ -124,17 +120,11 @@ module Topic
     
     def api_event(aws_event)
       slack_data = http_data(aws_event)
-
-      user = {
-        slack_id: slack_data['event']['user'], 
-         channel: slack_data['event']['channel']
-      }
-
       record = Topic::Event.new(name: Topic::Slack::EVENT_API_REQUEST,
                                   source: 'slack-event-api',
                                  version: 1.0,
                                     data: slack_data)   
-      Topic::Request.new slack_user: user, current: record
+      Topic::Request.new current: record, context: Topic::SlackContext.from_slack_event(slack_data)
     end
 
     def interaction_event(aws_event)
@@ -142,13 +132,8 @@ module Topic
                          source: 'slack-interaction-api',
                         version: 1.0,
                            data: payload_data(aws_event))
-      user = {
-        'slack_id' => record.record['data']['user']['id'], 
-        'channel' => record.record['data']['container']['channel_id'],
-        'message_ts' => record.record['data']['container']['message_ts'],
-        'response_url' => record.record['data']['response_url']
-      }   
-      Topic::Request.new slack_user: user, current: record
+      
+      Topic::Request.new current: record, context: Topic::SlackContext.from_slack_interaction(record)
     end
     
     def command_event(aws_event)
@@ -156,12 +141,8 @@ module Topic
                          source: 'slack-command-api',
                         version: 1.0,
                            data: command_data(aws_event))
-      user = {
-        'slack_id' => record.record['data']['user_id'].first, 
-        'channel' => record.record['data']['channel_id'].first,
-        'response_url' => record.record['data']['response_url'].first
-      }   
-      Topic::Request.new slack_user: user, current: record
+      
+      Topic::Request.new current: record, context: Topic::SlackContext.from_slack_command(record)
     end
   end
 end

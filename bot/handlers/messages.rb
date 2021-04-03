@@ -7,8 +7,8 @@ module Messages
   class Handler
     def self.handle(event:, context:)
       begin
-        puts event
         bot_request = Topic::Slack.api_event(event)
+        
         if bot_request.data['challenge']
           return Lambda::HttpResponse.plain_text_response(bot_request.data['challenge'])
         end
@@ -23,7 +23,11 @@ module Messages
         Service::Message::Controller.call(bot_request)
     
       rescue StandardError => e
-        Honeybadger.notify(e, sync: true, context: (e.respond_to?(:context) ? e.context : nil)) #sync true is important as we have no background worker thread
+        if ENV['HONEYBADGER_API_KEY']
+          Honeybadger.notify(e, sync: true, context: context(e)) #sync true is important as we have no background worker thread
+        else
+          raise e
+        end
       end
     end
   end

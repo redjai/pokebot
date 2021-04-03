@@ -42,7 +42,7 @@ describe Service::Recipe::Controller do
      
         context 'user favourites exist' do
           
-          let(:user_id){ bot_request.slack_user['slack_id'] }
+          let(:user_id){ bot_request.context.slack_id }
           let(:favourites){ [recipe_1, recipe_2] }
 
           before do

@@ -138,12 +138,7 @@ FactoryBot.define do
       bot_event { build(:bot_event) }
     end
 
-    slack_user {
-       { 
-          'slack_id' => 'UTESTSLACK123', 
-          'channel' => 'CTESTSLACK234' 
-       } 
-    } 
+    context { Topic::SlackContext.new(slack_id: 'UTESTSLACK123', channel: 'CTESTSLACK234') }
     current { bot_event } 
     trail { [ build(:bot_event) ] }
    
@@ -185,7 +180,7 @@ FactoryBot.define do
     
     trait :with_user_account_found do
       transient do
-        bot_event { build(:user_account_found, user_id: slack_user['slack_id']) }
+        bot_event { build(:user_account_found, user_id: context.slack_id) }
       end
     end
 
@@ -201,7 +196,7 @@ FactoryBot.define do
       end
     end
 
-    initialize_with{ Topic::Request.new(current: current, slack_user: slack_user, trail: trail) }
+    initialize_with{ Topic::Request.new(current: current, context: context, trail: trail) }
   end
 
 end

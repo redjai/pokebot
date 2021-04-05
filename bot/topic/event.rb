@@ -40,17 +40,19 @@ module Topic
       end
       
       def self.from_h(record)
-        @slack_id = record['slack_id']
-        @channel_id = record['channel_id']
-        @message_ts = record['message_ts']
-        @response_url = record['response_url']
-        @trigger_id = record['trigger_id']
+        new(
+          slack_id: record['slack_id'],
+          channel: record['channel'],
+          message_ts: record['message_ts'],
+          response_url: record['response_url'],
+          trigger_id: record['trigger_id']
+        )
       end
 
       def to_h
         {
           slack_id: @slack_id,
-          channel_id: @channel_id,
+          channel: @channel,
           message_ts: @message_ts,
           response_url: @response_url,
           trigger_id: @trigger_id
@@ -75,6 +77,10 @@ module Topic
                  }
     end
 
+    def name
+      @record['name']
+    end
+
     def to_h
       @record.to_h
     end
@@ -85,10 +91,11 @@ module Topic
     
     attr_reader :current, :context
 
-    def initialize(context:, current:, trail: [])
+    def initialize(context:, current:, intent: nil, trail: [])
       @context = context
       @current = current.to_h
       @trail = trail
+      @intent = intent
     end
 
     def data
@@ -105,8 +112,8 @@ module Topic
     end
 
     def intent=(record)
-      raise "intent has already been set in this request" if @intent
-      @intent = record
+      raise "intent '#{@intent}' has already been set in this request" if @intent
+      @intent = record.name
       self.current = record
     end
 
@@ -124,7 +131,7 @@ module Topic
     end
 
     def to_h
-      { current: @current, trail: @trail, context: @context.to_h }
+      { current: @current, trail: @trail, context: @context.to_h, intent: @intent }
     end
   end
 end

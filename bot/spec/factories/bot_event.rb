@@ -60,7 +60,7 @@ FactoryBot.define do
 
   end
 
-  factory :user_account_found, class: Topic::Event do
+  factory :user_account_read, class: Topic::Event do
 
     source { :test_source }
 
@@ -71,7 +71,7 @@ FactoryBot.define do
       user_id { 'user-id-123' }
     end
 
-    initialize_with{ Topic::Users.account_found(source: source, user: user) }
+    initialize_with{ Topic::Users.account_read(source: source, user: user) }
 
   end
 
@@ -178,9 +178,9 @@ FactoryBot.define do
       end
     end
     
-    trait :with_user_account_found do
+    trait :with_user_account_read do
       transient do
-        bot_event { build(:user_account_found, user_id: context.slack_id) }
+        bot_event { build(:user_account_read, user_id: context.slack_id) }
       end
     end
 

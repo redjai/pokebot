@@ -5,12 +5,12 @@ require_relative '../storage'
 module Service
   module User
     module Account 
-      module Requested
+      module Read
       extend self
 
         def call(bot_request)
           Service::User::Storage.read(bot_request.context.slack_id).tap do |user|
-            bot_request.current = Topic::Users.account_found(source: :user, user: user)
+            bot_request.current = Topic::Users.account_read(source: :user, user: user)
             Topic::Sns.broadcast(topic: :users, event: bot_request)
           end
         end

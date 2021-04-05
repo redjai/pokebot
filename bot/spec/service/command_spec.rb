@@ -39,7 +39,7 @@ describe Service::Command::Controller do
     it 'should emit an account edit event' do
       expect{ 
         subject.call(bot_request)
-      }.to change{ bot_request.name }.from(Topic::Slack::SHORTCUT_API_REQUEST).to(Topic::Users::ACCOUNT_REQUESTED) 
+      }.to change{ bot_request.name }.from(Topic::Slack::SHORTCUT_API_REQUEST).to(Topic::Users::ACCOUNT_SHOW_REQUESTED) 
     end
   end
 

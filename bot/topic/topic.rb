@@ -23,10 +23,11 @@ module Topic
     FAVOURITE_DESTROY = 'user-favourite-destroy'
     FAVOURITES_UPDATED = 'user-favourites-updated'
     
-    ACCOUNT_REQUESTED = 'user-account-requested'
-    ACCOUNT_FOUND = 'user-account-found'
+    ACCOUNT_SHOW_REQUESTED = 'user-account-requested'
+    ACCOUNT_EDIT_REQUESTED = 'user-account-edit'
+    ACCOUNT_READ = 'user-account-read'
 
-    ACCOUNT_EDIT = 'user-account-edit'
+    ACOUNT_UPDATE_REQUESTED = 'user-account-update-requested' 
     ACCOUNT_UPDATED = 'user-account-update'
 
     def favourite_new(source:, favourite_recipe_id:)
@@ -52,19 +53,19 @@ module Topic
 
     def account_requested(source:)
       data = {}
-      Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_REQUESTED, version: 1.0, data: data)      
+      Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_SHOW_REQUESTED, version: 1.0, data: data)      
     end
 
-    def account_found(source:, user:)
+    def account_read(source:, user:)
       data = {
         'user' => user
       }
-      Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_FOUND, version: 1.0, data: data)      
+      Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_READ, version: 1.0, data: data)      
     end
 
     def account_edit(source:)
       data = {}
-      Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_EDIT, version: 1.0, data: data)      
+      Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_EDIT_REQUESTED, version: 1.0, data: data)      
     end
     
     def account_updated(source:, user:)

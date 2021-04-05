@@ -20,7 +20,7 @@ module Service
         when Topic::Users::FAVOURITES_UPDATED
           require_relative 'slack/spoonacular/favourites'
           Service::Responder::Slack::Spoonacular::Favourites.call(bot_request)
-        when Topic::Users::ACCOUNT_FOUND
+        when Topic::Users::ACCOUNT_READ
           require_relative 'slack/spoonacular/account'
           Service::Responder::Slack::Spoonacular::Account.call(bot_request)
         when Topic::Users::ACCOUNT_UPDATED

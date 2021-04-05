@@ -1,6 +1,7 @@
 require 'slack/response'
 require 'topic/topic'
 require_relative 'blocks/account/show'
+require_relative 'blocks/account/edit'
 
 module Service
   module Responder
@@ -10,12 +11,20 @@ module Service
         extend self
           
           def call(bot_request)
-            ::Slack::Response.respond(
-              channel: bot_request.context.channel, 
-              text: 'your account:',
-              blocks: Blocks::Account::Show.new(bot_request.data['user']).blocks,
-              response_url: bot_request.context.response_url
-            )
+            case bot_request.intent
+            when Topic::Users::ACCOUNT_SHOW_REQUESTED
+              ::Slack::Response.respond(
+                channel: bot_request.context.channel, 
+                text: 'your account:',
+                blocks: Blocks::Account::Show.new(bot_request.data['user']).blocks,
+                response_url: bot_request.context.response_url
+              )
+            when Topic::Users::ACCOUNT_EDIT_REQUESTED
+              ::Slack::Response.modal(
+                trigger_id: bot_request.context.trigger_id,
+                view: Blocks::Account::Edit.new(bot_request.context.trigger_id, bot_request).view 
+              )
+            end
           end
         end
       end

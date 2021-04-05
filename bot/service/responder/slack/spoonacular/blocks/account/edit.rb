@@ -6,8 +6,7 @@ module Service
           module Account
             class Edit
 
-              def initialize(trigger_id, user)
-                @user = user
+              def initialize(trigger_id, bot_request)
                 @trigger_id = trigger_id
               end
 

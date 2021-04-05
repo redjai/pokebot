@@ -42,7 +42,7 @@ module Slack
       raise Failure.new(result['error'], data) unless result['ok']
     end
 
-    def modal(trigger_id:,view:)
+    def modal(trigger_id:, view:)
       data = { trigger_id: trigger_id, view: view }
       uri = VIEWS_OPEN_URI
       result = JSON.parse(Net::HTTP.post(uri, data.to_json , header).body)

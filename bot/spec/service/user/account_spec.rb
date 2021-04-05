@@ -28,7 +28,7 @@ describe Service::User::Controller do
       it 'should change the event from requested to found' do
         expect{
           subject.call(bot_request)
-        }.to change { bot_request.name }.from(Topic::Users::ACCOUNT_REQUESTED).to(Topic::Users::ACCOUNT_FOUND)
+        }.to change { bot_request.name }.from(Topic::Users::ACCOUNT_SHOW_REQUESTED).to(Topic::Users::ACCOUNT_READ)
       end
 
       it 'should set nil user data' do
@@ -47,7 +47,7 @@ describe Service::User::Controller do
       it 'should change the event from requested to found' do
         expect{
           subject.call(bot_request)
-        }.to change { bot_request.name }.from(Topic::Users::ACCOUNT_REQUESTED).to(Topic::Users::ACCOUNT_FOUND)
+        }.to change { bot_request.name }.from(Topic::Users::ACCOUNT_SHOW_REQUESTED).to(Topic::Users::ACCOUNT_READ)
       end
       
       it 'should set the found user data' do
@@ -76,13 +76,13 @@ describe Service::User::Controller do
       it 'should create an account update event' do
         expect{
           subject.call(bot_request)
-        }.to change{ bot_request.name }.from(Topic::Users::ACCOUNT_EDIT).to(Topic::Users::ACCOUNT_UPDATED)
+        }.to change{ bot_request.name }.from(Topic::Users::ACCOUNT_EDIT_REQUESTED).to(Topic::Users::ACCOUNT_READ)
       end  
 
-      it 'should create a new  user' do
+      it 'should not create a new  user' do
         expect {
           subject.call(bot_request)
-        }.to change{ DbSpec.count('test-user-table') }.by(1)
+        }.to change{ DbSpec.count('test-user-table') }.by(0)
       end
 
       it 'should create a user with no handle' do
@@ -111,7 +111,7 @@ describe Service::User::Controller do
       it 'should create an account update event' do
         expect{
           subject.call(bot_request)
-        }.to change{ bot_request.name }.from(Topic::Users::ACCOUNT_EDIT).to(Topic::Users::ACCOUNT_UPDATED)
+        }.to change{ bot_request.name }.from(Topic::Users::ACCOUNT_EDIT_REQUESTED).to(Topic::Users::ACCOUNT_READ)
       end  
 
       it 'should create a new user user' do

@@ -29,7 +29,7 @@ module Lambda
     def sqs_record_bot_request(aws_record)
       record = data(aws_record)
       event = JSON.parse(record["Message"])
-      Topic::Request.new current: event['current'], trail: event['trail'], context: Topic::SlackContext.from_h(event['context'])
+      Topic::Request.new current: event['current'], trail: event['trail'], intent: event['intent'], context: Topic::SlackContext.from_h(event['context'])
     end
 
     private
@@ -49,11 +49,10 @@ module Lambda
 
     def context(e)
       return nil unless e.respond_to?(:context)
-      case e.context
-      when Seahorse::Client::RequestContext
-        e.context.params
-      else
+      if e.context.is_a?(Hash)
         e.context
+      elsif e.context.respond_to?(:params)
+        e.context.params 
       end
     end
   end

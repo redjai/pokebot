@@ -7,6 +7,7 @@ module Messages
   class Handler
     def self.handle(event:, context:)
       begin
+        puts event
         bot_request = Topic::Slack.api_event(event)
         
         if bot_request.data['challenge']

@@ -56,7 +56,7 @@ describe Service::Responder::Controller do
   
   context 'account found' do
 
-    let(:bot_request){ build(:bot_request, :with_user_account_found) }
+    let(:bot_request){ build(:bot_request, :with_user_account_read) }
     let(:channel){ bot_request.context.channel }
     let(:text){ "your account:" }
 

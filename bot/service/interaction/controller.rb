@@ -28,7 +28,7 @@ module Service
                                                                          )
             Topic::Sns.broadcast(topic: :recipes, event: bot_request)
           when 'edit-account'
-            bot_request.intent = Topid::Users.account_edit(source: :interactions) 
+            bot_request.intent = Topic::Users.account_edit(source: :interactions) 
             Topic::Sns.broadcast(topic: :users, event: bot_request)
           end
 

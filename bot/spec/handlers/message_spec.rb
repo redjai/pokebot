@@ -6,7 +6,7 @@ describe 'message handler' do
   context 'slack challenge' do
 
     let(:challenge){ 'test-slack-challenge' }
-    let(:aws_event){ build(:slack_challenge_event, challenge: challenge) }
+    let(:aws_event){ build(:slack_challenge_aws_event, challenge: challenge) }
     let(:context){ {} }
     let(:response){  {:body=>challenge, :headers=>{"Content-Type"=>"text/plain"}, :statusCode=>200 } }
 
@@ -22,7 +22,7 @@ describe 'message handler' do
 
   context 'slack authentication' do
 
-    let(:aws_event){ build(:slack_recipe_search_event) }
+    let(:aws_event){ build(:slack_recipe_search_aws_event) }
     let(:context){ {} }
     let(:response){ {:body=>"Not authorized", :headers=>{"Content-Type"=>"text/plain"}, :statusCode=>401} }
 
@@ -43,7 +43,7 @@ describe 'message handler' do
 
   context 'broadcast the event if no challenge and authnticated' do
 
-    let(:aws_event){ build(:slack_recipe_search_event) }
+    let(:aws_event){ build(:slack_recipe_search_aws_event) }
     let(:context){ {} }
     
     before do

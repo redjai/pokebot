@@ -4,7 +4,7 @@ module Topic
 
   class SlackContext
       
-      attr_accessor :slack_id, :channel, :response_url, :messge_ts, :trigger_id
+      attr_accessor :slack_id, :channel, :response_url, :message_ts, :trigger_id
 
       def initialize(slack_id:, channel:, response_url: nil, message_ts: nil, trigger_id: nil)
         @slack_id = slack_id
@@ -22,10 +22,10 @@ module Topic
         )
       end
 
-      def self.from_slack_event(slack_data)
+      def self.from_slack_event(api_event)
         new(
-          slack_id: slack_data['event']['user'], 
-          channel: slack_data['event']['channel']
+          slack_id: api_event.record['data']['event']['user'], 
+          channel: api_event.record['data']['event']['channel']
         )
       end
 
@@ -51,11 +51,11 @@ module Topic
 
       def to_h
         {
-          slack_id: @slack_id,
-          channel: @channel,
-          message_ts: @message_ts,
-          response_url: @response_url,
-          trigger_id: @trigger_id
+          'slack_id' =>  @slack_id,
+          'channel' => @channel,
+          'message_ts' => @message_ts,
+          'response_url' => @response_url,
+          'trigger_id' => @trigger_id
         }
       end
   end 

@@ -39,13 +39,6 @@ module Service
                   }
                 }
               end
-              
-              def modal
-                {
-                  trigger_id: @trigger_id,
-                  view: view
-                }
-              end
 
             end
           end

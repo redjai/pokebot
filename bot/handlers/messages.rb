@@ -8,7 +8,7 @@ module Messages
     def self.handle(event:, context:)
       begin
         puts event
-        bot_request = Topic::Slack.api_event(event)
+        bot_request = Topic::Slack.api_request(event)
         
         if bot_request.data['challenge']
           return Lambda::HttpResponse.plain_text_response(bot_request.data['challenge'])

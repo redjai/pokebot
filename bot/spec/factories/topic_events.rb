@@ -1,6 +1,10 @@
 require 'topic/event'
 require 'topic/topic'
 
+module TopicHelper
+  extend Topic::Base
+end
+
 FactoryBot.define do
 
   sequence(:recipe_id) { |n| "test-recipe-id-#{n}" }
@@ -93,7 +97,7 @@ FactoryBot.define do
 
   end
 
-  factory :recipes_found, class: Topic::Request do
+  factory :recipes_found, class: Topic::Event do
 
     source { :test_source }
     recipes { Factory::Support::Spoonacular.information_bulk_beef_rendang }
@@ -113,7 +117,7 @@ FactoryBot.define do
 
   end
 
-  factory :favourites_found, class: Topic::Request do
+  factory :favourites_found, class: Topic::Event do
 
     source { :test_source }
     recipes { Factory::Support::Spoonacular.information_bulk_beef_rendang }
@@ -133,70 +137,16 @@ FactoryBot.define do
 
   end
 
-  factory :bot_request, class: Topic::Request do
-    transient do
-      bot_event { build(:bot_event) }
-    end
+  factory :slack_command_account_requested_event, class: Topic::Event do
+    initialize_with{ Topic::Slack.command_event(slack_command_account_event) } 
+  end
+  
+  factory :slack_event_api_recipe_search_event, class: Topic::Event do
+    initialize_with{ Topic::Slack.api_event(recipe_search_api_event) } 
+  end
 
-    context { Topic::SlackContext.new(slack_id: 'UTESTSLACK123', channel: 'CTESTSLACK234') }
-    current { bot_event } 
-    trail { [ build(:bot_event) ] }
-   
-    trait :with_message_received do
-      transient do
-        bot_event { build(:message_received) }
-      end
-    end
-
-    trait :with_user_favourite_new do
-      transient do
-        bot_event { build(:user_favourite_new) }
-      end
-    end
-    
-    trait :with_user_favourites_updated do
-      transient do
-        bot_event { build(:user_favourites_updated) }
-      end
-    end
-    
-    trait :with_recipes_found do
-      transient do
-        bot_event { build(:recipes_found) }
-      end
-    end
-    
-    trait :with_favourites_found do
-      transient do
-        bot_event { build(:favourites_found) }
-      end
-    end
-
-    trait :with_user_account_requested do
-      transient do
-        bot_event { build(:user_account_requested) }
-      end
-    end
-    
-    trait :with_user_account_read do
-      transient do
-        bot_event { build(:user_account_read, user_id: context.slack_id) }
-      end
-    end
-
-    trait :with_user_account_edit do
-      transient do
-        bot_event { build(:user_account_edit) }
-      end
-    end
-    
-    trait :with_user_account_update do
-      transient do
-        bot_event { build(:user_account_update) }
-      end
-    end
-
-    initialize_with{ Topic::Request.new(current: current, context: context, trail: trail) }
+  factory :slack_interaction_favourite_event, class: Topic::Event do
+    initialize_with{ Topic::Slack.interaction_event(slack_favourites_interaction_event) } 
   end
 
 end

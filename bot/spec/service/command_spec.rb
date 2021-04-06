@@ -9,8 +9,8 @@ describe Service::Command::Controller do
   
   context 'favourites' do
 
-    let(:aws_event){ build(:slack_command_favourite_event) }
-    let(:bot_request){ Topic::Slack.command_event(aws_event) }
+    let(:aws_event){ build(:slack_command_favourite_aws_event) }
+    let(:bot_request){ Topic::Slack.command_request(aws_event) }
 
 
     it 'should call favourites' do
@@ -28,8 +28,8 @@ describe Service::Command::Controller do
 
   context 'account' do
 
-    let(:aws_event){ build(:slack_command_account_event) }
-    let(:bot_request){ Topic::Slack.command_event(aws_event) }
+    let(:aws_event){ build(:slack_command_account_aws_event) }
+    let(:bot_request){ Topic::Slack.command_request(aws_event) }
 
     it 'should call favourites' do
       expect(Topic::Sns).to receive(:broadcast).with(topic: :users, event: bot_request)

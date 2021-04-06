@@ -12,7 +12,7 @@ module Service
 
         Topic::Sns.broadcast(
             topic: :messages,
-            event: bot_request
+            request: bot_request
         )
       end
 

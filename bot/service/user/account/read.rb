@@ -11,7 +11,7 @@ module Service
         def call(bot_request)
           Service::User::Storage.read(bot_request.context.slack_id).tap do |user|
             bot_request.current = Topic::Users.account_read(source: :user, user: user)
-            Topic::Sns.broadcast(topic: :users, event: bot_request)
+            Topic::Sns.broadcast(topic: :users, request: bot_request)
           end
         end
       end

@@ -12,13 +12,13 @@ module Service
           bot_request.intent = Topic::Recipes.favourites_requested(source: :command)
           Topic::Sns.broadcast(
             topic: :recipes,
-            event: bot_request 
+            request: bot_request 
           )
         when '/account'
           bot_request.intent = Topic::Users.account_requested(source: :command)
           Topic::Sns.broadcast(
             topic: :users,
-            event: bot_request 
+            request: bot_request 
           )
         else
           raise "unexpected command #{bot_request.data['command'].first}"

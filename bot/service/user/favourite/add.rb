@@ -16,7 +16,7 @@ module Service
                                                        favourite_recipe_ids: updates['attributes']['favourites'].collect{|id| id })
             Topic::Sns.broadcast(
                                   topic: :user,
-                                  event: bot_request
+                                  request: bot_request
                                 )
           end
         end

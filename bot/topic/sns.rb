@@ -8,11 +8,11 @@ module Topic
 
     @@topics = {}
 
-    def broadcast(topic:, event:)
+    def broadcast(topic:, request:)
       puts "out:"
       puts topic
-      puts event.to_json
-      topic(topic: topic).publish( message: event.to_json )
+      puts request.to_json
+      topic(topic: topic).publish( message: request.to_json )
     end
 
     private

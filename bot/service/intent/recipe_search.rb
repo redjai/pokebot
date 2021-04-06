@@ -10,7 +10,7 @@ module Service
         bot_request.intent = Topic::Recipes.search_requested(source: :intent, query: bot_request.data['text'])
         Topic::Sns.broadcast(
            topic: :recipes,
-           event: bot_request 
+           request: bot_request 
         )
       end 
 

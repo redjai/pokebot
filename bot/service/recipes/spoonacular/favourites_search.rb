@@ -16,7 +16,7 @@ module Service
                                                favourite_recipe_ids: recipe_ids) 
           Topic::Sns.broadcast(
                                 topic: :recipes, 
-                                event: bot_request
+                                request: bot_request
                               )
         end
         

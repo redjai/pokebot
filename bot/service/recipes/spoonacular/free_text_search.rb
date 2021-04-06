@@ -25,7 +25,7 @@ module Service
                             per_page: bot_request.data['page']['per_page'],
                        total_results: complex_search['totalResults']
                                                                          )
-          Topic::Sns.broadcast(topic: :recipes, event: bot_request)
+          Topic::Sns.broadcast(topic: :recipes, request: bot_request)
         end
 
         def information_bulk_result(search_result)

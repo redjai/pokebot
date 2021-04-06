@@ -32,7 +32,7 @@ describe Service::User::Controller do
       end
 
       it 'should broadcast the user favourites array to the users topic' do
-        expect(Topic::Sns).to receive(:broadcast).with(topic: :user, event: bot_request)
+        expect(Topic::Sns).to receive(:broadcast).with(topic: :user, request: bot_request)
         subject.call(bot_request)
       end
 
@@ -79,7 +79,7 @@ describe Service::User::Controller do
         end
 
         it 'should broadcast the user favourites array to the users topic' do
-          expect(Topic::Sns).to receive(:broadcast).with(topic: :user, event: bot_request)
+          expect(Topic::Sns).to receive(:broadcast).with(topic: :user, request: bot_request)
           subject.call(bot_request)
         end
 
@@ -93,7 +93,7 @@ describe Service::User::Controller do
         end
 
         it 'should NOT broadcast the user favourites array to the users topic' do
-          expect(Topic::Sns).to receive(:broadcast).with(topic: :user, event: bot_request).never
+          expect(Topic::Sns).to receive(:broadcast).with(topic: :user, request: bot_request).never
           subject.call(previous_bot_request)
         end
       end

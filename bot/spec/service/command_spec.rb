@@ -14,7 +14,7 @@ describe Service::Command::Controller do
 
 
     it 'should call favourites' do
-      expect(Topic::Sns).to receive(:broadcast).with(topic: :recipes, event: bot_request)
+      expect(Topic::Sns).to receive(:broadcast).with(topic: :recipes, request: bot_request)
       subject.call(bot_request)
     end
     
@@ -32,7 +32,7 @@ describe Service::Command::Controller do
     let(:bot_request){ Topic::Slack.command_request(aws_event) }
 
     it 'should call favourites' do
-      expect(Topic::Sns).to receive(:broadcast).with(topic: :users, event: bot_request)
+      expect(Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request)
       subject.call(bot_request)
     end
     

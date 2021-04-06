@@ -69,7 +69,7 @@ describe Service::User::Controller do
       end
       
       it 'should broadcast to the user topic' do
-        expect(Topic::Sns).to receive(:broadcast).with(topic: :users, event: bot_request) 
+        expect(Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request) 
         subject.call(bot_request)
       end
 
@@ -104,7 +104,7 @@ describe Service::User::Controller do
       end
       
       it 'should broadcast to the user topic' do
-        expect(Topic::Sns).to receive(:broadcast).with(topic: :users, event: bot_request) 
+        expect(Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request) 
         subject.call(bot_request)
       end
 

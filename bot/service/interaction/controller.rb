@@ -15,21 +15,21 @@ module Service
           when 'favourite'
             bot_request.intent = Topic::Users.favourite_new(source: :interaction, favourite_recipe_id: value['data']) 
 
-            Topic::Sns.broadcast(topic: :users, event: bot_request)
+            Topic::Sns.broadcast(topic: :users, request: bot_request)
           when 'unfavourite'
             bot_request.intent = Topic::Users.favourite_destroy(source: :interaction, favourite_recipe_id: value['data']) 
 
-            Topic::Sns.broadcast(topic: :users, event: bot_request)
+            Topic::Sns.broadcast(topic: :users, request: bot_request)
           when 'next-recipes' 
             bot_request.intent = Topic::Recipes.search_requested(source: :interaction, 
                                                                            query: value['data']['query'],
                                                                            offset: value['data']['offset'],
                                                                            per_page: value['data']['per_page']
                                                                          )
-            Topic::Sns.broadcast(topic: :recipes, event: bot_request)
+            Topic::Sns.broadcast(topic: :recipes, request: bot_request)
           when 'edit-account'
             bot_request.intent = Topic::Users.account_edit(source: :interactions) 
-            Topic::Sns.broadcast(topic: :users, event: bot_request)
+            Topic::Sns.broadcast(topic: :users, request: bot_request)
           end
 
         end

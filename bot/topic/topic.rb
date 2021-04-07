@@ -34,14 +34,14 @@ module Topic
       data = {
         'favourite_recipe_id' => favourite_recipe_id.to_s
       }
-      Topic::Event.new(source: source, name: Topic::Users::FAVOURITE_NEW , version: 1.0, data: data)      
+      Topic::Event.new(source: source, name: Topic::Users::FAVOURITE_NEW , version: 1.0, data: data, intent: true)      
     end
 
     def favourite_destroy(source:, favourite_recipe_id:)
       data = {
         'favourite_recipe_id' => favourite_recipe_id.to_s
       }
-      Topic::Event.new(source: source, name: Topic::Users::FAVOURITE_DESTROY , version: 1.0, data: data)      
+      Topic::Event.new(source: source, name: Topic::Users::FAVOURITE_DESTROY , version: 1.0, data: data, intent: true)      
     end
 
     def favourites_updated(source:, favourite_recipe_ids:)
@@ -53,7 +53,7 @@ module Topic
 
     def account_requested(source:)
       data = {}
-      Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_SHOW_REQUESTED, version: 1.0, data: data)      
+      Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_SHOW_REQUESTED, version: 1.0, data: data, intent: true)      
     end
 
     def account_read(source:, user:)
@@ -65,7 +65,7 @@ module Topic
 
     def account_edit(source:)
       data = {}
-      Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_EDIT_REQUESTED, version: 1.0, data: data)      
+      Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_EDIT_REQUESTED, version: 1.0, data: data, intent: true)      
     end
     
     def account_updated(source:, user:)
@@ -89,7 +89,7 @@ module Topic
         'query' => query,
         'page' => { 'offset' => offset, 'per_page' => per_page },
       }
-      Topic::Event.new(source: source, name: Topic::Recipes::SEARCH_REQUESTED, version: 1.0, data: data)      
+      Topic::Event.new(source: source, name: Topic::Recipes::SEARCH_REQUESTED, version: 1.0, data: data, intent: true)      
     end
 
     def found(source:, recipes:, favourite_recipe_ids:, query: nil, offset: nil, per_page: nil, total_results: nil)
@@ -106,7 +106,7 @@ module Topic
 
     def favourites_requested(source:, offset: 0)
       data = { offset: offset }
-      Topic::Event.new(source: source, name: Topic::Recipes::FAVOURITES_SEARCH_REQUESTED, version: 1.0, data: data)      
+      Topic::Event.new(source: source, name: Topic::Recipes::FAVOURITES_SEARCH_REQUESTED, version: 1.0, data: data, intent: true)      
     end
       
   end

@@ -9,13 +9,13 @@ module Service
       def call(bot_request)
         case bot_request.data['command'].first
         when '/favourites' 
-          bot_request.intent = Topic::Recipes.favourites_requested(source: :command)
+          bot_request.current = Topic::Recipes.favourites_requested(source: :command)
           Topic::Sns.broadcast(
             topic: :recipes,
             request: bot_request 
           )
         when '/account'
-          bot_request.intent = Topic::Users.account_requested(source: :command)
+          bot_request.current = Topic::Users.account_requested(source: :command)
           Topic::Sns.broadcast(
             topic: :users,
             request: bot_request 

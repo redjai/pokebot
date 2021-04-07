@@ -29,7 +29,7 @@ module Lambda
     def sqs_record_bot_request(aws_record)
       record = data(aws_record)
       event = JSON.parse(record["Message"])
-      Topic::Request.new current: event['current'], trail: event['trail'], intent: event['intent'], context: Topic::SlackContext.from_h(event['context'])
+      Topic::Request.new current: event['current'], trail: event['trail'], context: Topic::SlackContext.from_h(event['context'])
     end
 
     private

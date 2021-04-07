@@ -8,9 +8,9 @@ FactoryBot.define do
       bot_event { build(:bot_event) }
     end
 
-    context { Topic::SlackContext.new(slack_id: 'UTESTSLACK123', channel: 'CTESTSLACK234') }
+    context { Topic::SlackContext.new(slack_id: 'UTESTSLACK123', channel: 'CTESTSLACK234', trigger_id: 'test-trigger-id-123') }
     current { bot_event } 
-    trail { [ build(:bot_event) ] }
+    trail { [ build(:bot_event).to_h ] }
    
     trait :with_message_received do
       transient do
@@ -63,6 +63,18 @@ FactoryBot.define do
     trait :with_user_account_update do
       transient do
         bot_event { build(:user_account_update) }
+      end
+    end
+
+    trait :with_account_show_intent do
+      transient do
+        trail { [ build(:user_account_requested).to_h ] }
+      end
+    end
+    
+    trait :with_account_edit_intent do
+      transient do
+        trail { [ build(:user_account_edit).to_h ] }
       end
     end
 

@@ -37,7 +37,6 @@ describe Topic::SlackContext do
       subject{ Topic::SlackContext.from_h(to_h) }
 
       it 'should assign slack_id' do
-        puts subject.inspect
         expect(subject.slack_id).to eq slack_id
       end
 

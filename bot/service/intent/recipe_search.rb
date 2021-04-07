@@ -7,7 +7,7 @@ module Service
       extend self
       
       def call(bot_request)
-        bot_request.intent = Topic::Recipes.search_requested(source: :intent, query: bot_request.data['text'])
+        bot_request.current = Topic::Recipes.search_requested(source: :intent, query: bot_request.data['text'])
         Topic::Sns.broadcast(
            topic: :recipes,
            request: bot_request 

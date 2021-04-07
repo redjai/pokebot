@@ -54,15 +54,33 @@ describe Service::Responder::Controller do
     end
   end
   
-  context 'account found' do
+  context 'account read' do
 
-    let(:bot_request){ build(:bot_request, :with_user_account_read) }
     let(:channel){ bot_request.context.channel }
     let(:text){ "your account:" }
 
-    it 'should respond to slack' do
-      expect(Slack::Response).to receive(:respond).with(channel: channel, text: text, blocks: kind_of(Hash))
-      subject.call(bot_request)
+    context 'account show intent' do
+
+      let(:bot_request){ build(:bot_request, :with_user_account_read, :with_account_show_intent) }
+      
+      it 'should respond to slack' do
+        expect(Slack::Response).to receive(:respond).with(channel: channel, text: text, blocks: kind_of(Array))
+        subject.call(bot_request)
+      end
+
+    end
+    
+    context 'account edit  intent' do
+
+      let(:bot_request){ build(:bot_request, :with_user_account_read, :with_account_edit_intent) }
+      let(:trigger_id){ bot_request.context.trigger_id }
+
+      it 'should respond to slack' do
+        puts bot_request.inspect
+        expect(Slack::Response).to receive(:modal).with(trigger_id: trigger_id, view: kind_of(Hash))
+        subject.call(bot_request)
+      end
+
     end
   end
 end

@@ -6,10 +6,7 @@ module Notifier
     EVENTS = []
 
     def self.handle(event:, context:)
-      Lambda::Event.each_sqs_record_bot_request(aws_event: event, accept: EVENTS) do |bot_request|
-        require 'service/notifications/controller'
-        Service::Notifications::Controller.call(bot_request)
-      end 
+      Lambda::Event.process_sqs(aws_event: event, controller: :notifications,  accept: EVENTS) do |bot_request|
     end
   end
 end

@@ -1,4 +1,4 @@
-require 'service/recipes/controller'
+require 'service/recipe/controller'
 require 'json'
 require 'topic/sns'
 

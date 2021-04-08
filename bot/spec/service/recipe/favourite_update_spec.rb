@@ -1,4 +1,4 @@
-require 'service/recipes/controller'
+require 'service/recipe/controller'
 
 describe Service::Recipe::Controller do
   

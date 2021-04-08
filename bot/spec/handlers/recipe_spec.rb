@@ -1,5 +1,5 @@
 require 'handlers/recipes'
-require 'service/recipes/controller'
+require 'service/recipe/controller'
 require 'topic/topic'
 require 'topic/topic'
 

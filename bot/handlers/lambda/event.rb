@@ -5,14 +5,19 @@ module Lambda
   module Event 
     extend self
     
-    def each_sqs_record_bot_request(aws_event:, accept: [])
+    def process_sqs(aws_event:, controller:, accept: [])
       aws_event['Records'].each do |aws_record|
         begin
           bot_request = sqs_record_bot_request(aws_record)
           puts "Record in:"
           puts bot_request.to_json
           if accept.empty? || accept.include?(bot_request.current['name'])
-            yield bot_request
+            if block_given?
+              require_controller(controller)
+              yield bot_request
+            else
+              call(controller, bot_request)
+            end 
           else
             puts "event #{bot_request.name} not accepted by this service. expected #{accept}"
           end
@@ -54,6 +59,19 @@ module Lambda
       elsif e.context.respond_to?(:params)
         e.context.params 
       end
+    end
+
+    def require_controller(controller)
+      require File.join("service", controller.to_s, 'controller')
+    end
+
+    def call(controller, bot_request)
+      require_controller(controller)
+      controller(controller).call(bot_request)
+    end
+
+    def controller(controller)
+      Class.const_get("Service::#{controller.to_s.capitalize}::Controller")
     end
   end
 end

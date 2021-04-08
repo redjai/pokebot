@@ -76,7 +76,6 @@ describe Service::Responder::Controller do
       let(:trigger_id){ bot_request.context.trigger_id }
 
       it 'should respond to slack' do
-        puts bot_request.inspect
         expect(Slack::Response).to receive(:modal).with(trigger_id: trigger_id, view: kind_of(Hash))
         subject.call(bot_request)
       end

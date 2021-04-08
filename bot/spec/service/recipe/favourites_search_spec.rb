@@ -1,7 +1,7 @@
-require 'service/recipes/controller'
+require 'service/recipe/controller'
 require 'json'
 require 'topic/sns'
-require 'service/recipes/user'
+require 'service/recipe/user'
 require 'topic/topic'
 
 describe Service::Recipe::Controller do

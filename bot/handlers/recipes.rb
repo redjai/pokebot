@@ -6,7 +6,8 @@ module Recipes
     def self.handle(event:, context:)
       puts event
       Lambda::Event.process_sqs(aws_event: event, controller: :recipe, accept: {
-        recipes: %w{ favourites_search_requested search_requested, favourites_updated }
+        recipes: %w{ favourites_search_requested search_requested },
+         users: %w{ favourites_updated }
       })
     end
   end

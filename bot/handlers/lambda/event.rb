@@ -6,12 +6,16 @@ module Lambda
     extend self
     
     def process_sqs(aws_event:, controller:, accept: [])
+      puts accept
       aws_event['Records'].each do |aws_record|
         begin
           bot_request = sqs_record_bot_request(aws_record)
           puts "Record in:"
           puts bot_request.to_json
-          if accept.empty? || accept.include?(bot_request.current['name'])
+          accept?(bot_request, accept)
+          accept?(bot_request, accept)
+          accept?(bot_request, accept)
+          if accept?(bot_request, accept)
             if block_given?
               require_controller(controller)
               yield bot_request
@@ -27,6 +31,21 @@ module Lambda
           else
             raise e
           end
+        end
+      end
+    end
+
+    def accept?(bot_request, accepts)
+      accept_array(accepts).tap do |array|
+        array.empty? || array.include?(bot_request.current['name'])
+      end
+    end
+
+    def accept_array(accepts)
+      @accepts ||= begin
+        accepts.collect do |name|
+          parts = name.split("#")
+          Class.const_get("Topic::#{parts.first.capitalize}::#{parts.last.upcase}")
         end
       end
     end

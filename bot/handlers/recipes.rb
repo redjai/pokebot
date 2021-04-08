@@ -3,13 +3,13 @@ require 'topic/topic'
 
 module Recipes
   class Handler
-    EVENTS = [ Topic::Recipes::FAVOURITES_SEARCH_REQUESTED, 
-               Topic::Recipes::SEARCH_REQUESTED,
-               Topic::Users::FAVOURITES_UPDATED ] 
-    
     def self.handle(event:, context:)
       puts event
-      Lambda::Event.process_sqs(aws_event: event, controller: :recipe, accept: EVENTS)
+      Lambda::Event.process_sqs(aws_event: event, controller: :recipe, accept: [
+        "recipes#favourites_search_requested",
+        "recipes#search_requested",
+        "recipes#favourites_updated"
+      ])
     end
   end
 end

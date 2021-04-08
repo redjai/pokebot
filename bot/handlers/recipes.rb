@@ -5,11 +5,9 @@ module Recipes
   class Handler
     def self.handle(event:, context:)
       puts event
-      Lambda::Event.process_sqs(aws_event: event, controller: :recipe, accept: [
-        "recipes#favourites_search_requested",
-        "recipes#search_requested",
-        "recipes#favourites_updated"
-      ])
+      Lambda::Event.process_sqs(aws_event: event, controller: :recipe, accept: {
+        recipes: %w{ favourites_search_requested search_requested, favourites_updated }
+      })
     end
   end
 end

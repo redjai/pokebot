@@ -43,10 +43,11 @@ module Lambda
 
     def accept_array(accepts)
       @accepts ||= begin
-        accepts.collect do |name|
-          parts = name.split("#")
-          Class.const_get("Topic::#{parts.first.capitalize}::#{parts.last.upcase}")
-        end
+        accepts.collect do |topic, events|
+          events.collect do |event|
+            Class.const_get("Topic::#{topic.to_s.capitalize}::#{event.upcase}")
+          end
+        end.flatten
       end
     end
 

@@ -15,7 +15,7 @@ module Service
             bot_request.current = Topic::Users.favourites_updated(source: :user, 
                                                        favourite_recipe_ids: updates['attributes']['favourites'].collect{|id| id })
             Topic::Sns.broadcast(
-                                  topic: :user,
+                                  topic: :users,
                                   request: bot_request
                                 )
           end

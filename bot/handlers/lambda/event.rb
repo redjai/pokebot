@@ -4,94 +4,103 @@ require 'honeybadger'
 module Lambda 
   module Event 
     extend self
-    
+   
     def process_sqs(aws_event:, controller:, accept: [])
-      puts accept
-      aws_event['Records'].each do |aws_record|
-        begin
-          bot_request = sqs_record_bot_request(aws_record)
-          puts "Record in:"
-          puts bot_request.to_json
-          accept?(bot_request, accept)
-          accept?(bot_request, accept)
-          accept?(bot_request, accept)
-          if accept?(bot_request, accept)
-            if block_given?
-              require_controller(controller)
-              yield bot_request
+      handler = SqsRecordsHandler.new(accept, controller) 
+      handler.handle_records(aws_event['Records'])
+    end
+
+    class SqsRecordsHandler
+
+      def initialize(accepts, controller)
+        @accept_definition = accepts
+        @controller_name = controller
+      end
+
+      def handle_records(aws_records)
+        aws_records.each do |aws_record|
+          begin
+            handle_request sqs_record_bot_request(aws_record)
+          rescue StandardError => e
+            if ENV['HONEYBADGER_API_KEY']
+              Honeybadger.notify(e, sync: true, context: context(e)) #sync true is important as we have no background worker thread
             else
-              call(controller, bot_request)
-            end 
-          else
-            puts "event #{bot_request.name} not accepted by this service. expected #{accept}"
-          end
-        rescue StandardError => e
-          if ENV['HONEYBADGER_API_KEY']
-            Honeybadger.notify(e, sync: true, context: context(e)) #sync true is important as we have no background worker thread
-          else
-            raise e
+              raise e
+            end
           end
         end
       end
-    end
 
-    def accept?(bot_request, accepts)
-      accept_array(accepts).tap do |array|
-        array.empty? || array.include?(bot_request.current['name'])
+      def handle_request(bot_request)
+        puts "Record in:"
+        puts bot_request.to_json
+        if accept?(bot_request)
+          require_controller
+          if block_given?
+            yield bot_request
+          else
+            call(bot_request)
+          end 
+        else
+          puts "event #{bot_request.name} not accepted by this service. expected #{accepts}"
+        end
       end
-    end
 
-    def accept_array(accepts)
-      @accepts ||= begin
-        accepts.collect do |topic, events|
-          events.collect do |event|
-            Class.const_get("Topic::#{topic.to_s.capitalize}::#{event.upcase}")
-          end
-        end.flatten
+      def require_controller
+        require File.join("service", @controller_name.to_s, 'controller')
       end
-    end
 
-    def sqs_record_bot_request(aws_record)
-      record = data(aws_record)
-      event = JSON.parse(record["Message"])
-      Topic::Request.new current: event['current'], trail: event['trail'], context: Topic::SlackContext.from_h(event['context'])
-    end
-
-    private
-
-    def data(aws_event)
-      JSON.parse(body(aws_event))
-    end
-
-    def body(aws_event)
-      if aws_event["isBase64Encoded"]
-        require 'base64'
-        Base64.decode64(aws_event['body'])
-      else
-        aws_event['body']
+      def call(bot_request)
+        controller.call(bot_request)
       end
-    end
 
-    def context(e)
-      return nil unless e.respond_to?(:context)
-      if e.context.is_a?(Hash)
-        e.context
-      elsif e.context.respond_to?(:params)
-        e.context.params 
+      def controller
+        Class.const_get("Service::#{@controller_name.to_s.capitalize}::Controller")
       end
-    end
 
-    def require_controller(controller)
-      require File.join("service", controller.to_s, 'controller')
-    end
+      def accept?(bot_request)
+        accepts.empty? || accepts.include?(bot_request.current['name'])
+      end
 
-    def call(controller, bot_request)
-      require_controller(controller)
-      controller(controller).call(bot_request)
-    end
+      def accepts
+        @accepts ||= begin
+          @accept_definition.collect do |topic, events|
+            events.collect do |event|
+              Class.const_get("Topic::#{topic.to_s.capitalize}::#{event.upcase}")
+            end
+          end.flatten
+       end
+      end
+      
+      def context(e)
+        return nil unless e.respond_to?(:context)
+        if e.context.is_a?(Hash)
+          e.context
+        elsif e.context.respond_to?(:params)
+          e.context.params 
+        end
+      end
+      
+      private
+      
+      def sqs_record_bot_request(aws_record)
+        record = data(aws_record)
+        event = JSON.parse(record["Message"])
+        Topic::Request.new current: event['current'], trail: event['trail'], context: Topic::SlackContext.from_h(event['context'])
+      end
 
-    def controller(controller)
-      Class.const_get("Service::#{controller.to_s.capitalize}::Controller")
+      def data(aws_event)
+        JSON.parse(body(aws_event))
+      end
+
+      def body(aws_event)
+        if aws_event["isBase64Encoded"]
+          require 'base64'
+          Base64.decode64(aws_event['body'])
+        else
+          aws_event['body']
+        end
+      end
     end
   end
 end

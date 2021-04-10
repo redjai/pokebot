@@ -30,8 +30,11 @@ module Slack
       data = { channel: channel, text: text }
       data[:blocks] = blocks if blocks
       uri = response_url ?  URI.parse(response_url) : POST_MESSAGE_URI
-      result = JSON.parse(Net::HTTP.post(uri, data.to_json , header).body)
-      raise Failure.new(result['error'], data) unless result['ok']
+      result = Net::HTTP.post(uri, data.to_json , header).body
+      unless result == "ok"
+        JSON.parse(result)
+        raise Failure.new(result['error'], data) unless result['ok']
+      end
     end
 
     # notify users in a specific channel set up with a webhook URI

@@ -10,11 +10,11 @@ module Service
       extend self
 
         def call(bot_request)
-          updates = Service::User::Recipe.remove_favourite(bot_request.context.slack_id, bot_request.data['favourite_recipe_id']) 
+          updates = Service::User::Storage.remove_favourite(bot_request.context.slack_id, bot_request.data['favourite_recipe_id']) 
           bot_request.current = Topic::Users.favourites_updated(source: :user, 
                                                        favourite_recipe_ids: updates['attributes']['favourites'].collect{|id| id })
           Topic::Sns.broadcast(
-                                  topic: :user,
+                                  topic: :users,
                                   request: bot_request
                               ) 
         end

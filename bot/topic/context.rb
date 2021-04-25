@@ -20,6 +20,7 @@ module Topic
     end
 
     def self.from_slack_event(api_event)
+      return nil unless api_event.record['data']['event'] # challenge events have no event record
       new(
         slack_id: api_event.record['data']['event']['user'], 
         channel: api_event.record['data']['event']['channel']

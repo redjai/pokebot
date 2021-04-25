@@ -33,9 +33,17 @@ module Service
                 {
                   "type": "section",
                   "block_id": "section-identifier",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Welcome* to ~my~ Block Kit _modal_!"
+                  "label": {
+                    "type": "plain_text",
+                    "text": "Label of input"
+                  },
+                  "element": {
+                    "type": "plain_text_input",
+                    "action_id": "plain_input",
+                    "placeholder": {
+                      "type": "plain_text",
+                      "text": "Enter some plain text"
+                    }
                   }
                 }
               end

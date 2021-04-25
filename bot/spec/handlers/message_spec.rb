@@ -5,7 +5,7 @@ describe 'message handler' do
 
   context 'slack challenge' do
 
-    let(:challenge){ 'test-slack-challenge' }
+    let(:challenge){ 'test-slack-challenge-123' }
     let(:aws_event){ build(:slack_challenge_aws_event, challenge: challenge) }
     let(:context){ {} }
     let(:response){  {:body=>challenge, :headers=>{"Content-Type"=>"text/plain"}, :statusCode=>200 } }

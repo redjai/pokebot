@@ -2,6 +2,7 @@ require_relative 'slack_events/favourites_interaction_aws_event'
 require_relative 'slack_events/more_results_interaction_event'
 require_relative 'slack_events/recipe_search_api_event'
 require_relative 'slack_events/command/favourite'
+require_relative 'slack_events/challenge'
 require 'topic/base'
 
 module TopicHelper
@@ -55,24 +56,9 @@ FactoryBot.define do
 
   factory :slack_challenge_aws_event, class: Hash do
     challenge { 'slack-challenge-1234' }
-    user { 'U-SLACK-TEST-USER123' }
-    channel { 'C-SLACK-TEST-CHANNEL456' }
-    initialize_with{ slack_challenge_event(attributes) }
+    initialize_with{ slack_challenge(attributes) }
   end
 
-end
-
-def slack_challenge_event(**args)
-  {
-    'body' => {
-      'challenge' => args[:challenge],
-       event: {
-         user: args[:user],
-         channel: args[:channel],
-         text: args[:text]
-       }
-    }.to_json
-  }
 end
  
 def slack_aws_event(**args)

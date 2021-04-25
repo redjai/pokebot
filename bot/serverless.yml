@@ -9,6 +9,8 @@ package:
     - Gemfile
     - Gemfile.lock
     - spec/**
+    - scripts/*
+    - generators/*
 
 provider:
   name: aws
@@ -25,15 +27,15 @@ provider:
     - Effect: "Allow"
       Action:
         - "SNS:Publish"
-      Resource: !Ref SNSMessagesTopic # !Ref returns the ARN of SNSMessages in the resources element below:
+      Resource: !Ref MessagesSnsTopic # !Ref returns the ARN of SNSMessages in the resources element below:
     - Effect: "Allow"
       Action:
         - "SNS:Publish"
-      Resource: !Ref SNSRecipes # !Ref returns the ARN of SNSMessages in the resources element below:
+      Resource: !Ref RecipesSnsTopic # !Ref returns the ARN of SNSMessages in the resources element below:
     - Effect: "Allow"
       Action:
         - "SNS:Publish"
-      Resource: !Ref SNSUserTopic # !Ref returns the ARN of SNSMessages in the resources element below:
+      Resource: !Ref UsersSnsTopic # !Ref returns the ARN of SNSMessages in the resources element below:
     - Effect: "Allow"
       Action:
         - dynamodb:DescribeTable
@@ -85,7 +87,7 @@ functions:
           path:  /messages
     environment:
       SLACK_SIGNED_SECRET: ${self:custom.config.slack_signed_secret}
-      MESSAGES_TOPIC_ARN: !Ref SNSMessagesTopic
+      MESSAGES_TOPIC_ARN: !Ref MessagesSnsTopic
 
   intent:
     handler: handlers/intent.Intent::Handler.handle
@@ -95,10 +97,10 @@ functions:
       - sqs:
          arn:
            Fn::GetAtt:
-             - SQSMessagesTopicToIntentQueue
+             - MessagesToIntentSqsQueue
              - Arn  
     environment:
-      RECIPES_TOPIC_ARN: !Ref SNSRecipes
+      RECIPES_TOPIC_ARN: !Ref RecipesSnsTopic
 
   recipe:
     handler: handlers/recipes.Recipes::Handler.handle
@@ -108,17 +110,16 @@ functions:
       - sqs:
          arn:
            Fn::GetAtt:
-             - SQSRecipesTopicToRecipeQueue
+             - RecipesToRecipesSqsQueue
              - Arn  
       - sqs:
          arn:
            Fn::GetAtt:
-             - SQSUserTopicToRecipeQueue
+             - UsersToRecipesSqsQueue
              - Arn  
     environment:
-      RECIPES_TOPIC_ARN: !Ref SNSRecipes
+      RECIPES_TOPIC_ARN: !Ref RecipesSnsTopic
       SPOONACULAR_API_KEY: ${self:custom.config.spoonacular_api_key}
-      SPOONACULAR_ENDPOINT: ${self:custom.config.spoonacular_endpoint}
       FAVOURITES_TABLE_NAME: ${self:custom.recipe_favourites_table}
 
   responder:
@@ -129,17 +130,17 @@ functions:
       - sqs:
          arn:
            Fn::GetAtt:
-             - SQSResponder
+             - RecipesToResponderSqsQueue
              - Arn
       - sqs:
          arn:
            Fn::GetAtt:
-             - SQSMessagesToResponder
+             - MessagesToResponderSqsQueue
              - Arn
       - sqs:
          arn:
            Fn::GetAtt:
-             - SNSUsersToSQSResponder
+             - UsersToResponderSqsQueue
              - Arn
     environment:
       BOT_USER_OAUTH_ACCESS_TOKEN: ${file(config.${self:provider.stage}.yml):bot_user_oauth_access_token}  
@@ -160,8 +161,8 @@ functions:
           method: POST 
           path:  /interactions
     environment:
-      RECIPES_TOPIC_ARN: !Ref SNSRecipes
-      USERS_TOPIC_ARN: !Ref SNSUserTopic
+      RECIPES_TOPIC_ARN: !Ref RecipesSnsTopic
+      USERS_TOPIC_ARN: !Ref UsersSnsTopic
 
   command:
     handler: handlers/command.Command::Handler.handle
@@ -172,8 +173,8 @@ functions:
           method: POST 
           path:  /command
     environment:
-      RECIPES_TOPIC_ARN: !Ref SNSRecipes
-      USERS_TOPIC_ARN: !Ref SNSUserTopic
+      RECIPES_TOPIC_ARN: !Ref RecipesSnsTopic
+      USERS_TOPIC_ARN: !Ref UsersSnsTopic
   
   user:
     handler: handlers/user.User::Handler.handle
@@ -183,46 +184,56 @@ functions:
       - sqs:
          arn:
            Fn::GetAtt:
-             - SQSUser
+             - UsersToUsersSqsQueue
              - Arn
     environment:
       FAVOURITES_TABLE_NAME: ${self:custom.favourites_table}
-      USERS_TOPIC_ARN: !Ref SNSUserTopic
-
-
+      USERS_TOPIC_ARN: !Ref UsersSnsTopic
 
 resources:
   Resources:
 
+    
+      
+      
+      
+      
+    #AUTO-BEGIN-TOPICS
+    # IMPORTANT !!!!!!! 
+    # Any content between here and AUTO-END-TOPICS will be overwritten.
+    
+
+
+    #### AUTO GENERATED TOPIC - 'messages' 
     #################################
-    # Messages Service: Messages Topic
-    #################################
-    SNSMessagesTopic:
+    MessagesSnsTopic:
       Type: AWS::SNS::Topic
       Properties:
-        TopicName: ${self:service}-${self:provider.stage}-messages-topic
-   
+        TopicName: ${self:service}-${self:provider.stage}-messages
+     
 
 
-    #########################################################################
-    # Intent Service: SNS Messages Topic -> SQS Intent Queue & Policy
-    #########################################################################
-    SQSMessagesTopicToIntentQueue:
+    #### AUTO GENERATED QUEUE - 'intent'
+    MessagesToIntentSqsQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: ${self:service}-${self:provider.stage}-sns-messages-to-sqs-intent-queue
-    MessagesTopicToIntentQueueSubscription:
+        QueueName: ${self:service}-${self:provider.stage}-sns-messages-to-sqs-intent
+    
+    #### AUTO GENERATED - ATTACH 'messages' TOPIC to 'intent' QUEUE
+    MessagesToIntentSubscription:
       Type: AWS::SNS::Subscription
       Properties:
-        TopicArn: !Ref SNSMessagesTopic
+        TopicArn: !Ref MessagesSnsTopic
         Endpoint: !GetAtt
-          - SQSMessagesTopicToIntentQueue
+          - MessagesToIntentSqsQueue
           - Arn
         Protocol: sqs
       DependsOn:
-        - SNSMessagesTopic
-        - SQSMessagesTopicToIntentQueue
-    SnSMessagesTopictoSQSIntentQueuePolicy:
+        - MessagesSnsTopic
+        - MessagesToIntentSqsQueue
+    
+    #### AUTO GENERATED - ALLOW 'messages' TOPIC to send messages to 'intent' QUEUE
+    SnSMessagesToSQSIntentSqsQueuePolicy:
       Type: AWS::SQS::QueuePolicy
       Properties:
         PolicyDocument:
@@ -232,36 +243,40 @@ resources:
               Effect: Allow
               Principal: "*"
               Resource: !GetAtt
-                - SQSMessagesTopicToIntentQueue 
+                - MessagesToIntentSqsQueue
                 - Arn
               Action: "SQS:SendMessage"
               Condition:
                 ArnEquals:
-                  "aws:SourceArn": !Ref SNSMessagesTopic
+                  "aws:SourceArn": !Ref MessagesSnsTopic 
         Queues:
-          - Ref: SQSMessagesTopicToIntentQueue
+          - Ref: MessagesToIntentSqsQueue
       DependsOn:
-        - MessagesTopicToIntentQueueSubscription
+        - MessagesToIntentSubscription
+      
 
-    #########################################################################
-    # Recipe Service: SNS  Topic -> SQS Recipe Queue & Policy
-    #########################################################################
-    SQSRecipesTopicToRecipeQueue:
+
+    #### AUTO GENERATED QUEUE - 'responder'
+    MessagesToResponderSqsQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: ${self:service}-${self:provider.stage}-sns-recipes-to-sqs-recipe-queue
-    RecipesTopicToRecipeQueueSubscription:
+        QueueName: ${self:service}-${self:provider.stage}-sns-messages-to-sqs-responder
+    
+    #### AUTO GENERATED - ATTACH 'messages' TOPIC to 'responder' QUEUE
+    MessagesToResponderSubscription:
       Type: AWS::SNS::Subscription
       Properties:
-        TopicArn: !Ref SNSRecipes
+        TopicArn: !Ref MessagesSnsTopic
         Endpoint: !GetAtt
-          - SQSRecipesTopicToRecipeQueue
+          - MessagesToResponderSqsQueue
           - Arn
         Protocol: sqs
       DependsOn:
-        - SNSRecipes
-        - SQSRecipesTopicToRecipeQueue
-    SnSRecipesTopictoSQSRecipeQueuePolicy:
+        - MessagesSnsTopic
+        - MessagesToResponderSqsQueue
+    
+    #### AUTO GENERATED - ALLOW 'messages' TOPIC to send messages to 'responder' QUEUE
+    SnSMessagesToSQSResponderSqsQueuePolicy:
       Type: AWS::SQS::QueuePolicy
       Properties:
         PolicyDocument:
@@ -271,187 +286,308 @@ resources:
               Effect: Allow
               Principal: "*"
               Resource: !GetAtt
-                - SQSRecipesTopicToRecipeQueue 
+                - MessagesToResponderSqsQueue
                 - Arn
               Action: "SQS:SendMessage"
               Condition:
                 ArnEquals:
-                  "aws:SourceArn": !Ref SNSRecipes
+                  "aws:SourceArn": !Ref MessagesSnsTopic 
         Queues:
-          - Ref: SQSRecipesTopicToRecipeQueue
+          - Ref: MessagesToResponderSqsQueue
       DependsOn:
-        - RecipesTopicToRecipeQueueSubscription
+        - MessagesToResponderSubscription
+      
 
-    #########################################   
-    # Recipe Service: SNS Recipes Topic
-    ##########################################
-    SNSRecipes:
+
+    #### AUTO GENERATED TOPIC - 'recipes' 
+    #################################
+    RecipesSnsTopic:
       Type: AWS::SNS::Topic
       Properties:
-        TopicName: ${self:service}-${self:provider.stage}-recipes-topic
+        TopicName: ${self:service}-${self:provider.stage}-recipes
+     
 
 
-
-
-
-
-    #########################################################################
-    # Responder Service: SNS Recipes Topic -> SQS Responder Queue & Policy
-    #########################################################################
-    SQSResponder:
+    #### AUTO GENERATED QUEUE - 'recipes'
+    RecipesToRecipesSqsQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: ${self:service}-${self:provider.stage}-sns-recipes-sqs-responder-queue
-    ResponsesQueueSubscription:
+        QueueName: ${self:service}-${self:provider.stage}-sns-recipes-to-sqs-recipes
+    
+    #### AUTO GENERATED - ATTACH 'recipes' TOPIC to 'recipes' QUEUE
+    RecipesToRecipesSubscription:
       Type: AWS::SNS::Subscription
       Properties:
-        TopicArn: !Ref SNSRecipes
+        TopicArn: !Ref RecipesSnsTopic
         Endpoint: !GetAtt
-          - SQSResponder
+          - RecipesToRecipesSqsQueue
           - Arn
         Protocol: sqs
       DependsOn:
-        - SNSRecipes
-        - SQSResponder
-    SnSResponsestoSQSResponderPolicy:
+        - RecipesSnsTopic
+        - RecipesToRecipesSqsQueue
+    
+    #### AUTO GENERATED - ALLOW 'recipes' TOPIC to send messages to 'recipes' QUEUE
+    SnSRecipesToSQSRecipesSqsQueuePolicy:
       Type: AWS::SQS::QueuePolicy
       Properties:
         PolicyDocument:
           Version: "2012-10-17"
           Statement:
-            - Sid: "allow-sns-responses"
+            - Sid: "allow-sns-recipes"
               Effect: Allow
               Principal: "*"
               Resource: !GetAtt
-                - SQSResponder 
+                - RecipesToRecipesSqsQueue
                 - Arn
               Action: "SQS:SendMessage"
               Condition:
                 ArnEquals:
-                  "aws:SourceArn": !Ref SNSRecipes
+                  "aws:SourceArn": !Ref RecipesSnsTopic 
         Queues:
-          - Ref: SQSResponder
+          - Ref: RecipesToRecipesSqsQueue
       DependsOn:
-        - ResponsesQueueSubscription
+        - RecipesToRecipesSubscription
+      
 
 
-    #########################################################################
-    # Responder Service: SNS Messages Topic -> SQS Responder Queue & Policy
-    #########################################################################
-    SQSMessagesToResponder:
+    #### AUTO GENERATED QUEUE - 'responder'
+    RecipesToResponderSqsQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: ${self:service}-${self:provider.stage}-sns-messages-to-sqs-responder-queue
-    MessagesToResponsesQueueSubscription:
+        QueueName: ${self:service}-${self:provider.stage}-sns-recipes-to-sqs-responder
+    
+    #### AUTO GENERATED - ATTACH 'recipes' TOPIC to 'responder' QUEUE
+    RecipesToResponderSubscription:
       Type: AWS::SNS::Subscription
       Properties:
-        TopicArn: !Ref SNSMessagesTopic
+        TopicArn: !Ref RecipesSnsTopic
         Endpoint: !GetAtt
-          - SQSMessagesToResponder
+          - RecipesToResponderSqsQueue
           - Arn
         Protocol: sqs
       DependsOn:
-        - SNSMessagesTopic
-        - SQSMessagesToResponder
-    SnSMessagestoSQSResponderPolicy:
+        - RecipesSnsTopic
+        - RecipesToResponderSqsQueue
+    
+    #### AUTO GENERATED - ALLOW 'recipes' TOPIC to send messages to 'responder' QUEUE
+    SnSRecipesToSQSResponderSqsQueuePolicy:
       Type: AWS::SQS::QueuePolicy
       Properties:
         PolicyDocument:
           Version: "2012-10-17"
           Statement:
-            - Sid: "allow-sns-responses"
+            - Sid: "allow-sns-recipes"
               Effect: Allow
               Principal: "*"
               Resource: !GetAtt
-                - SQSMessagesToResponder 
+                - RecipesToResponderSqsQueue
                 - Arn
               Action: "SQS:SendMessage"
               Condition:
                 ArnEquals:
-                  "aws:SourceArn": !Ref SNSMessagesTopic
+                  "aws:SourceArn": !Ref RecipesSnsTopic 
         Queues:
-          - Ref: SQSMessagesToResponder
+          - Ref: RecipesToResponderSqsQueue
       DependsOn:
-        - MessagesToResponsesQueueSubscription
+        - RecipesToResponderSubscription
+      
 
 
-    #########################################################################
-    # Responder Service: SNS Users Topic -> SQS Responder Queue & Policy
-    #########################################################################
-    SNSUsersToSQSResponder:
+    #### AUTO GENERATED TOPIC - 'users' 
+    #################################
+    UsersSnsTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:service}-${self:provider.stage}-users
+     
+
+
+    #### AUTO GENERATED QUEUE - 'responder'
+    UsersToResponderSqsQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: ${self:service}-${self:provider.stage}-sns-users-sqs-responder-queue
-    SNSUsersToSQSResponderQueueSubscription:
+        QueueName: ${self:service}-${self:provider.stage}-sns-users-to-sqs-responder
+    
+    #### AUTO GENERATED - ATTACH 'users' TOPIC to 'responder' QUEUE
+    UsersToResponderSubscription:
       Type: AWS::SNS::Subscription
       Properties:
-        TopicArn: !Ref SNSUserTopic
+        TopicArn: !Ref UsersSnsTopic
         Endpoint: !GetAtt
-          - SNSUsersToSQSResponder
+          - UsersToResponderSqsQueue
           - Arn
         Protocol: sqs
       DependsOn:
-        - SNSUserTopic
-        - SNSUsersToSQSResponder
-    SNSUserstoSQSResponderPolicy:
+        - UsersSnsTopic
+        - UsersToResponderSqsQueue
+    
+    #### AUTO GENERATED - ALLOW 'users' TOPIC to send messages to 'responder' QUEUE
+    SnSUsersToSQSResponderSqsQueuePolicy:
       Type: AWS::SQS::QueuePolicy
       Properties:
         PolicyDocument:
           Version: "2012-10-17"
           Statement:
-            - Sid: "allow-sns-responses"
+            - Sid: "allow-sns-users"
               Effect: Allow
               Principal: "*"
               Resource: !GetAtt
-                - SNSUsersToSQSResponder 
+                - UsersToResponderSqsQueue
                 - Arn
               Action: "SQS:SendMessage"
               Condition:
                 ArnEquals:
-                  "aws:SourceArn": !Ref SNSUserTopic
+                  "aws:SourceArn": !Ref UsersSnsTopic 
         Queues:
-          - Ref: SNSUsersToSQSResponder
+          - Ref: UsersToResponderSqsQueue
       DependsOn:
-        - SNSUsersToSQSResponderQueueSubscription
+        - UsersToResponderSubscription
+      
 
-    ###################################################
-    # User Service: SNS Interactions -> User SQS Queue & Policy
-    ###################################################    
-    SQSUser:
+
+    #### AUTO GENERATED QUEUE - 'recipes'
+    UsersToRecipesSqsQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: ${self:service}-${self:provider.stage}-sns-user-to-sqs-user-queue
-    UsersQueueSubscription:
+        QueueName: ${self:service}-${self:provider.stage}-sns-users-to-sqs-recipes
+    
+    #### AUTO GENERATED - ATTACH 'users' TOPIC to 'recipes' QUEUE
+    UsersToRecipesSubscription:
       Type: AWS::SNS::Subscription
       Properties:
-        TopicArn: !Ref SNSUserTopic
+        TopicArn: !Ref UsersSnsTopic
         Endpoint: !GetAtt
-          - SQSUser
+          - UsersToRecipesSqsQueue
           - Arn
         Protocol: sqs
       DependsOn:
-        - SNSUserTopic
-        - SQSUser
-    SnSUsertoSQSUserPolicy:
+        - UsersSnsTopic
+        - UsersToRecipesSqsQueue
+    
+    #### AUTO GENERATED - ALLOW 'users' TOPIC to send messages to 'recipes' QUEUE
+    SnSUsersToSQSRecipesSqsQueuePolicy:
       Type: AWS::SQS::QueuePolicy
       Properties:
         PolicyDocument:
           Version: "2012-10-17"
           Statement:
-            - Sid: "allow-sns-responses"
+            - Sid: "allow-sns-users"
               Effect: Allow
               Principal: "*"
               Resource: !GetAtt
-                - SQSUser 
+                - UsersToRecipesSqsQueue
                 - Arn
               Action: "SQS:SendMessage"
               Condition:
                 ArnEquals:
-                  "aws:SourceArn": !Ref SNSUserTopic
+                  "aws:SourceArn": !Ref UsersSnsTopic 
         Queues:
-          - Ref: SQSUser
+          - Ref: UsersToRecipesSqsQueue
       DependsOn:
-        - UsersQueueSubscription
+        - UsersToRecipesSubscription
+      
+
+
+    #### AUTO GENERATED QUEUE - 'users'
+    UsersToUsersSqsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-${self:provider.stage}-sns-users-to-sqs-users
+    
+    #### AUTO GENERATED - ATTACH 'users' TOPIC to 'users' QUEUE
+    UsersToUsersSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn: !Ref UsersSnsTopic
+        Endpoint: !GetAtt
+          - UsersToUsersSqsQueue
+          - Arn
+        Protocol: sqs
+      DependsOn:
+        - UsersSnsTopic
+        - UsersToUsersSqsQueue
+    
+    #### AUTO GENERATED - ALLOW 'users' TOPIC to send messages to 'users' QUEUE
+    SnSUsersToSQSUsersSqsQueuePolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Sid: "allow-sns-users"
+              Effect: Allow
+              Principal: "*"
+              Resource: !GetAtt
+                - UsersToUsersSqsQueue
+                - Arn
+              Action: "SQS:SendMessage"
+              Condition:
+                ArnEquals:
+                  "aws:SourceArn": !Ref UsersSnsTopic 
+        Queues:
+          - Ref: UsersToUsersSqsQueue
+      DependsOn:
+        - UsersToUsersSubscription
+      
+
+
+    #### AUTO GENERATED TOPIC - 'interactions' 
+    #################################
+    InteractionsSnsTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:service}-${self:provider.stage}-interactions
+     
+
+
+    #### AUTO GENERATED QUEUE - 'users'
+    InteractionsToUsersSqsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-${self:provider.stage}-sns-interactions-to-sqs-users
+    
+    #### AUTO GENERATED - ATTACH 'interactions' TOPIC to 'users' QUEUE
+    InteractionsToUsersSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn: !Ref InteractionsSnsTopic
+        Endpoint: !GetAtt
+          - InteractionsToUsersSqsQueue
+          - Arn
+        Protocol: sqs
+      DependsOn:
+        - InteractionsSnsTopic
+        - InteractionsToUsersSqsQueue
+    
+    #### AUTO GENERATED - ALLOW 'interactions' TOPIC to send messages to 'users' QUEUE
+    SnSInteractionsToSQSUsersSqsQueuePolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Sid: "allow-sns-interactions"
+              Effect: Allow
+              Principal: "*"
+              Resource: !GetAtt
+                - InteractionsToUsersSqsQueue
+                - Arn
+              Action: "SQS:SendMessage"
+              Condition:
+                ArnEquals:
+                  "aws:SourceArn": !Ref InteractionsSnsTopic 
+        Queues:
+          - Ref: InteractionsToUsersSqsQueue
+      DependsOn:
+        - InteractionsToUsersSubscription
+      
+
+
+    #AUTO-END-TOPICS
+    
+    
+
 
     #######################################
     # User Service: Favourites Table
@@ -469,54 +605,6 @@ resources:
             KeyType: HASH 
         BillingMode: PAY_PER_REQUEST
    
-    ##########################################
-    # User Service: User SNS Topic
-    ##########################################
-    SNSUserTopic:
-      Type: AWS::SNS::Topic
-      Properties:
-        TopicName: ${self:service}-${self:provider.stage}-sns-user-topic
-
-
-    ###########################################################################
-    # Recipe Service: SNS User Topic -> SQS Recipe Queue & Policy
-    ###########################################################################
-    SQSUserTopicToRecipeQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${self:service}-${self:provider.stage}-sns-user-to-sqs-recipe-queue
-    UserTopicToRecipeQueueSubscription:
-      Type: AWS::SNS::Subscription
-      Properties:
-        TopicArn: !Ref SNSUserTopic
-        Endpoint: !GetAtt
-          - SQSUserTopicToRecipeQueue
-          - Arn
-        Protocol: sqs
-      DependsOn:
-        - SNSUserTopic
-        - SQSUserTopicToRecipeQueue
-    SnSUserToSQSRecipeQueuePolicy:
-      Type: AWS::SQS::QueuePolicy
-      Properties:
-        PolicyDocument:
-          Version: "2012-10-17"
-          Statement:
-            - Sid: "allow-sns-messages"
-              Effect: Allow
-              Principal: "*"
-              Resource: !GetAtt
-                - SQSUserTopicToRecipeQueue
-                - Arn
-              Action: "SQS:SendMessage"
-              Condition:
-                ArnEquals:
-                  "aws:SourceArn": !Ref SNSUserTopic
-        Queues:
-          - Ref: SQSUserTopicToRecipeQueue
-      DependsOn:
-        - UserTopicToRecipeQueueSubscription
-    
     #######################################
     # Recipe Service: Favourites Table
     ######################################      

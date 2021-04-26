@@ -5,7 +5,6 @@ module Generators
     def topics(topics)
       [].tap do |str|
         str << header('topics')
-
         topics.each do |topic, queues|
           str << topic(topic)
           str << topic_queues(topic, queues)
@@ -13,6 +12,28 @@ module Generators
 
         str << footer('topics')
       end.join("\n\n")
+    end
+
+    def topic_role_statements(topics)
+      [].tap do |str|
+        str << header('topic-role-statements')
+
+        topics.each do |topic, queues|
+          str << topic_role_statement(topic)
+        end
+
+        str << footer('topic-role-statements')
+      end.join("\n\n")
+    end
+
+    def topic_role_statement(topic)
+    %{
+    # ALLOW THE iamRole TO PUBLISH TO THE '#{topic}' SNS Topic
+    - Effect: "Allow"
+      Action:
+        - "SNS:Publish"
+      Resource: !Ref #{topic.capitalize}SnsTopic # !Ref returns the ARN of SNS topic in the resources element below:
+    }
     end
 
     def header(name)

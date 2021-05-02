@@ -27,8 +27,7 @@ module Generators
     end
 
     def topic_role_statement(topic)
-    %{
-    # ALLOW THE iamRole TO PUBLISH TO THE '#{topic}' SNS Topic
+%{    # ALLOW THE iamRole TO PUBLISH TO THE '#{topic}' SNS Topic
     - Effect: "Allow"
       Action:
         - "SNS:Publish"
@@ -37,17 +36,14 @@ module Generators
     end
 
     def header(name)
-      %{
-    #AUTO-BEGIN-#{name.upcase}
+  %{#AUTO-BEGIN-#{name.upcase}
     # IMPORTANT !!!!!!! 
     # Any content between here and AUTO-END-#{name.upcase} will be overwritten.
     }
     end
 
     def footer(name)
-      %{
-    #AUTO-END-#{name.upcase}
-    }
+%{    #AUTO-END-#{name.upcase}}
     end
   
     def topic(topic)

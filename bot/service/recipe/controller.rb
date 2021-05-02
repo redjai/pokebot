@@ -1,5 +1,4 @@
 require 'topic/topic'
-require 'topic/topic'
 
 module Service
   module Recipe

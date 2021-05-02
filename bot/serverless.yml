@@ -25,12 +25,10 @@ provider:
 
   iamRoleStatements:
     
-    
     #AUTO-BEGIN-TOPIC-ROLE-STATEMENTS
     # IMPORTANT !!!!!!! 
     # Any content between here and AUTO-END-TOPIC-ROLE-STATEMENTS will be overwritten.
     
-
 
     # ALLOW THE iamRole TO PUBLISH TO THE 'messages' SNS Topic
     - Effect: "Allow"
@@ -39,14 +37,12 @@ provider:
       Resource: !Ref MessagesSnsTopic # !Ref returns the ARN of SNS topic in the resources element below:
     
 
-
     # ALLOW THE iamRole TO PUBLISH TO THE 'recipes' SNS Topic
     - Effect: "Allow"
       Action:
         - "SNS:Publish"
       Resource: !Ref RecipesSnsTopic # !Ref returns the ARN of SNS topic in the resources element below:
     
-
 
     # ALLOW THE iamRole TO PUBLISH TO THE 'users' SNS Topic
     - Effect: "Allow"
@@ -55,7 +51,6 @@ provider:
       Resource: !Ref UsersSnsTopic # !Ref returns the ARN of SNS topic in the resources element below:
     
 
-
     # ALLOW THE iamRole TO PUBLISH TO THE 'interactions' SNS Topic
     - Effect: "Allow"
       Action:
@@ -63,9 +58,7 @@ provider:
       Resource: !Ref InteractionsSnsTopic # !Ref returns the ARN of SNS topic in the resources element below:
     
 
-
     #AUTO-END-TOPIC-ROLE-STATEMENTS
-    
 
     - Effect: "Allow"
       Action:
@@ -223,15 +216,6 @@ functions:
 
 resources:
   Resources:
-
-    
-      
-      
-      
-      
-    
-    
-    
     
     #AUTO-BEGIN-TOPICS
     # IMPORTANT !!!!!!! 
@@ -618,15 +602,7 @@ resources:
         - InteractionsToUsersSubscription
       
 
-
     #AUTO-END-TOPICS
-    
-    
-    
-    
-    
-    
-
 
     #######################################
     # User Service: Favourites Table

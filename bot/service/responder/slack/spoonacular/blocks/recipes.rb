@@ -1,9 +1,12 @@
+require_relative 'blocks'
+
 module Service
   module Responder
     module Slack
       module Spoonacular
         module Blocks
-          class Recipes 
+          class Recipes
+          include SlackBlocks 
 
             def initialize(bot_request)
               @bot_request = bot_request
@@ -28,39 +31,24 @@ module Service
 
             def recipe_block(recipe)
               recipe_section(recipe).tap do |section|
-                section['accessory'] = image_accessory(recipe) if recipe['image'] =~ URI::regexp
+                section['accessory'] = image_accessory(image_url: recipe['image'], alt_text: 'recipe image') if recipe['image'] =~ URI::regexp
               end
             end
 
             def recipe_section(recipe)
-              {
-                type: "section",
-                text: {
-                  type: "mrkdwn",
-                  text: "*#{recipe['title']}* #{favourite_icon?(recipe['id'])}\n#{recipe['extendedIngredients'].collect{|ing| ing['name']}.join(", ")}\n_ready in #{recipe["readyInMinutes"]} minutes_"
-                }
-              }
+              text_section(
+%{*#{recipe['title']}* #{favourite_icon?(recipe['id'])}
+#{recipe['extendedIngredients'].collect{|ing| ing['name']}.join(", ")}
+_ready in #{recipe["readyInMinutes"]} minutes_}
+              )
             end
 
-            def image_accessory(recipe)
-              {
-                type: "image",
-                image_url: recipe['image'],
-                alt_text: recipe['title']
-              }
+            def recipe_image(recipe)
+              image_accessory(image_url: recipe['image'], alt_text: recipe['title'])
             end
 
             def view_recipe_button_element(url)
-              {
-                "type": "button",
-                "text": {
-                  "type": "plain_text",
-                  "text": "View",
-                  "emoji": true
-                },
-                "value": "click_me_123",
-                "url": url 
-              }
+              button_element(text: "View", value: "click_me_123", options: {url: url})
             end
 
             def favourite_unfavourite_button_element(recipe_id)
@@ -68,44 +56,20 @@ module Service
             end
 
             def favourite_button_element(recipe_id)
-              {
-                "type": "button",
-                "text": {
-                  "type": "plain_text",
-                  "text": "Favourite",
-                  "emoji": true
-                },
-                "value": { interaction: 'favourite', data: recipe_id }.to_json,
-              }
+              button_element(text: "Favourite", value: { interaction: 'favourite', data: recipe_id }.to_json)
             end
 
             def unfavourite_button_element(recipe_id)
-              {
-                "type": "button",
-                "text": {
-                  "type": "plain_text",
-                  "text": "Unfavourite",
-                  "emoji": true
-                },
-                "value": { interaction: 'unfavourite', data: recipe_id }.to_json,
-              }
+              button_element(text: "Unfavourite", value: { interaction: 'unfavourite', data: recipe_id }.to_json)
             end
 
             def button_block(recipe)
-              {
-                "type": "actions",
-                "elements": [
-                  view_recipe_button_element(recipe['sourceUrl']),
-                  favourite_unfavourite_button_element(recipe['id']) 
-                ]
-              }
+              actions(
+                view_recipe_button_element(recipe['sourceUrl']),
+                favourite_unfavourite_button_element(recipe['id'])
+              ) 
             end
 
-            def divider_block
-              {
-                "type": "divider"
-              }
-            end
 
             def nav_block(query:, offset:, per_page:, total_results:)
               elements = []
@@ -119,10 +83,7 @@ module Service
               end
               
               if elements.size > 0
-                {
-                  "type": "actions",
-                  "elements": elements
-                }
+                actions(elements)
               end
             end
 
@@ -135,15 +96,7 @@ module Service
             end
 
             def nav_block_button(text, data)
-              {
-                "type": "button",
-                "text": {
-                  "type": "plain_text",
-                  "text": text,
-                  "emoji": true
-                },
-                "value": { interaction: 'next-recipes', data: data }.to_json,
-              }
+              button_element(text: text, value: { interaction: 'next-recipes', data: data }.to_json)
             end
             
             def favourite?(recipe_id)

@@ -1,3 +1,5 @@
+$: << File.expand_path(Dir.pwd)
+
 require 'yaml'
 require 'generators/topic'
 

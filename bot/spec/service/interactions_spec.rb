@@ -6,6 +6,14 @@ require 'topic/topic'
 
 describe Service::Interaction::Controller do
 
+  context 'user_update_requested' do
+    let(:slack_interaction_event){ build(:slack_interaction_user_update_requested) }
+  
+    it "should broadcast a user update requested event to the users topic" do
+      #puts slack_interaction_event.inspect
+    end
+  end
+
   context 'favourites' do
 
     let(:aws_records_event){ build(:slack_favourites_interaction_aws_event) }

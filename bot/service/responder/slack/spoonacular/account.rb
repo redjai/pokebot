@@ -19,10 +19,7 @@ module Service
                 blocks: Blocks::Account::Show.new(bot_request.data['user']).blocks,
               )
             when Topic::Users::ACCOUNT_EDIT_REQUESTED
-              ::Slack::Response.modal(
-                trigger_id: bot_request.context.trigger_id,
-                view: Blocks::Account::Edit.new(bot_request.context.trigger_id, bot_request).view 
-              )
+              ::Slack::Response.modal(bot_request.context.trigger_id, Blocks::Account::Edit.new(bot_request).view)
             else
               raise "Unexpected event #{bot_request}"
             end

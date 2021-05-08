@@ -26,6 +26,8 @@ module Service
         when Topic::Users::ACCOUNT_UPDATED
           require_relative 'slack/account/update'
           Service::Responder::Slack::Account.call(bot_request)
+        else
+          raise "unexpected request #{bot_request.name}"
         end
       end
     end

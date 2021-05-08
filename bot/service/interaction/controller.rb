@@ -9,6 +9,15 @@ module Service
       extend self
 
       def call(bot_request)
+        case bot_request.data['type']
+        when 'block_actions'
+          block_actions(bot_request)
+        when 'view_submission'
+          
+        end
+      end
+
+      def block_actions(bot_request)
         bot_request.data['actions'].each do |action|
           value = JSON.parse(action['value'])
           case value['interaction']
@@ -28,10 +37,17 @@ module Service
                                                                          )
             Topic::Sns.broadcast(topic: :recipes, request: bot_request)
           when 'edit-account'
-            bot_request.current = Topic::Users.account_edit(source: :interactions) 
+            bot_request.current = Topic::Users.account_edit_requested(source: :interactions) 
             Topic::Sns.broadcast(topic: :users, request: bot_request)
           end
+        end
+      end
 
+      def view_submission(bot_request)
+        case bot_request.context.private_metadata
+        when
+          bot_request.current = Topic::Users.account_update_requested(source: :interactions, state: bot_request.data['state']) 
+          Topic::Sns.broadcast(topic: :users, request: bot_request)
         end
       end
     end

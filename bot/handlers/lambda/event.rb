@@ -1,11 +1,14 @@
 require 'topic/event'
 require 'honeybadger'
+require 'logger'
+require_relative 'logger'
 
 module Lambda 
   module Event 
     extend self
    
     def process_sqs(aws_event:, controller:, accept: [])
+      Bot::LOGGER.debug(aws_event)      
       handler = SqsRecordsHandler.new(accept, controller) 
       handler.handle_records(aws_event['Records'])
     end
@@ -32,8 +35,8 @@ module Lambda
       end
 
       def handle_request(bot_request)
-        puts "Record in:"
-        puts bot_request.to_json
+        Bot::LOGGER.debug "Record in:"
+        Bot::LOGGER.debug bot_request.to_json
         if accept?(bot_request)
           require_controller
           if block_given?
@@ -42,7 +45,7 @@ module Lambda
             call(bot_request)
           end 
         else
-          puts "event #{bot_request.name} not accepted by this service. expected #{accepts}"
+          Bot::LOGGER.debug("event #{bot_request.name} not accepted by this service. expected #{accepts}")
         end
       end
 

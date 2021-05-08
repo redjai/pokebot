@@ -9,9 +9,9 @@ module Topic
     @@topics = {}
 
     def broadcast(topic:, request:)
-      puts "out:"
-      puts topic
-      puts request.to_json
+      Bot::LOGGER.debug("out:")
+      Bot::LOGGER.debug(topic)
+      Bot::LOGGER.debug(request.to_json)
       topic(topic: topic).publish( message: request.to_json )
     end
 

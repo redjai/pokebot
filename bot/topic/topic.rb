@@ -23,8 +23,8 @@ module Topic
     FAVOURITE_DESTROY = 'user-favourite-destroy'
     FAVOURITES_UPDATED = 'user-favourites-updated'
     
-    ACCOUNT_SHOW_REQUESTED = 'user-account-requested'
-    ACCOUNT_EDIT_REQUESTED = 'user-account-edit'
+    ACCOUNT_SHOW_REQUESTED = 'user-account-show-requested'
+    ACCOUNT_EDIT_REQUESTED = 'user-account-edit-requested'
     ACCOUNT_READ = 'user-account-read'
 
     ACOUNT_UPDATE_REQUESTED = 'user-account-update-requested' 
@@ -51,7 +51,7 @@ module Topic
       Topic::Event.new(source: source, name: Topic::Users::FAVOURITES_UPDATED, version: 1.0, data: data)      
     end
 
-    def account_requested(source:)
+    def account_show_requested(source:)
       data = {}
       Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_SHOW_REQUESTED, version: 1.0, data: data, intent: true)      
     end
@@ -63,9 +63,18 @@ module Topic
       Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_READ, version: 1.0, data: data)      
     end
 
-    def account_edit(source:)
+    def account_edit_requested(source:)
       data = {}
       Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_EDIT_REQUESTED, version: 1.0, data: data, intent: true)      
+    end
+
+    def account_update_requested(source:, name:, email:, kanbanize_username:)
+      data = {
+        name: name,
+        email: email,
+        kanabize_username: kanbanize_username
+      }
+      Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_UPDATE_REQUESTED, version: 1.0, data: data, intent: true)      
     end
     
     def account_updated(source:, user:)

@@ -42,9 +42,9 @@ FactoryBot.define do
       end
     end
 
-    trait :with_user_account_requested do
+    trait :with_user_account_show_requested do
       transient do
-        bot_event { build(:user_account_requested) }
+        bot_event { build(:user_account_show_requested) }
       end
     end
     
@@ -54,21 +54,21 @@ FactoryBot.define do
       end
     end
 
-    trait :with_user_account_edit do
+    trait :with_user_account_edit_requested do
       transient do
-        bot_event { build(:user_account_edit) }
+        bot_event { build(:user_account_edit_requested) }
       end
     end
     
-    trait :with_user_account_update do
+    trait :with_user_account_update_requested do
       transient do
-        bot_event { build(:user_account_update) }
+        bot_event { build(:user_account_update_requested) }
       end
     end
 
     trait :with_account_show_intent do
       transient do
-        trail { [ build(:user_account_requested).to_h ] }
+        trail { [ build(:user_account_show_requested).to_h ] }
       end
     end
     

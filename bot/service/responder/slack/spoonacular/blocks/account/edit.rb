@@ -1,3 +1,5 @@
+require_relative "../../../block_builder"
+
 module Service
   module Responder
     module Slack
@@ -6,46 +8,16 @@ module Service
           module Account
             class Edit
 
-              def initialize(trigger_id, bot_request)
-                @trigger_id = trigger_id
+              def initialize(bot_request)
+                @bot_request = bot_request 
               end
 
               def view
-                {
-                          "type": "modal",
-                   "callback_id": "modal-identifier",
-                         "title": {
-                            "type": "plain_text",
-                            "text": "Just a modal"
-                          },
-                         blocks: blocks
-                }
-
-              end
-
-              def blocks
-                [
-                  handle_section
-                ]
-              end
-
-              def handle_section
-                {
-                  "type": "section",
-                  "block_id": "section-identifier",
-                  "label": {
-                    "type": "plain_text",
-                    "text": "Label of input"
-                  },
-                  "element": {
-                    "type": "plain_text_input",
-                    "action_id": "plain_input",
-                    "placeholder": {
-                      "type": "plain_text",
-                      "text": "Enter some plain text"
-                    }
-                  }
-                }
+                modal = Service::Responder::Slack::Modal.new("Your account","edit-user-account" ,"Submit")
+                modal.add_input("name", "Your Name here", "edit-name")
+                modal.add_input("email", "Your Email here", "edit-email")
+                modal.add_input("kanbanize", "Your Kanbanize username here", "edit-kanbanize")
+                modal.view
               end
 
             end

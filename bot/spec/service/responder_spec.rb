@@ -70,13 +70,13 @@ describe Service::Responder::Controller do
 
     end
     
-    context 'account edit  intent' do
+    context 'account edit requested' do
 
-      let(:bot_request){ build(:bot_request, :with_user_account_read, :with_account_edit_intent) }
+      let(:bot_request){ build(:bot_request,  :with_user_account_read, trail: [ build(:user_account_edit_requested).to_h ]) }
       let(:trigger_id){ bot_request.context.trigger_id }
 
       it 'should respond to slack' do
-        expect(Slack::Response).to receive(:modal).with(trigger_id: trigger_id, view: kind_of(Hash))
+        expect(Slack::Response).to receive(:modal).with(trigger_id, kind_of(Hash))
         subject.call(bot_request)
       end
 

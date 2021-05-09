@@ -59,12 +59,6 @@ FactoryBot.define do
         bot_event { build(:user_account_edit_requested) }
       end
     end
-    
-    trait :with_user_account_update_requested do
-      transient do
-        bot_event { build(:user_account_update_requested) }
-      end
-    end
 
     trait :with_account_show_intent do
       transient do

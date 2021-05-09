@@ -41,18 +41,16 @@ FactoryBot.define do
   factory :user_account_update_requested, class: Topic::Event do
 
     source { :test_source }
-    handle { 'test handle' }
-    kanbanize_username { 'test-kanbanze-username' }
+    name { Faker::Name.name  }
+    email { Faker::Internet.email }
+    kanbanize_username { Faker::Internet.username }
 
-    initialize_with{ Topic::Users.account_update(source: source, handle: handle, kanbanize_username: kanbanize_username) }
+    initialize_with{ Topic::Users.account_update_requested(source: source, name: name, email: email, kanbanize_username: kanbanize_username) }
 
   end
 
-  factory :slack_command_account_requested_event, class: Topic::Event do
+  factory :slack_command_user_account_show_requested_event, class: Topic::Event do
     initialize_with{ Topic::Slack.command_event(slack_command_account_event) } 
   end
 
-  factory :slack_interaction_user_update_requested, class: Topic::Event do
-    initialize_with{ Topic::Slack.interaction_event(user_update_requested_view_submission) } 
-  end
 end

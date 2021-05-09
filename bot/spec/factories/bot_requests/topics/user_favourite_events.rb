@@ -54,7 +54,4 @@ FactoryBot.define do
 
   end
 
-  factory :slack_interaction_favourite_event, class: Topic::Event do
-    initialize_with{ Topic::Slack.interaction_event(slack_favourites_interaction_event) } 
-  end
 end

@@ -1,7 +1,6 @@
 require 'topic/sns'
 require 'topic/topic'
-require 'topic/topic'
-require 'topic/topic'
+require_relative 'view_submissions/user_account_update_requested'
 
 module Service
   module Interaction
@@ -13,7 +12,9 @@ module Service
         when 'block_actions'
           block_actions(bot_request)
         when 'view_submission'
-          
+          view_submission(bot_request)  
+        else
+          raise "unexpected type #{bot_request.data['type']}"
         end
       end
 
@@ -45,9 +46,8 @@ module Service
 
       def view_submission(bot_request)
         case bot_request.context.private_metadata
-        when
-          bot_request.current = Topic::Users.account_update_requested(source: :interactions, state: bot_request.data['state']) 
-          Topic::Sns.broadcast(topic: :users, request: bot_request)
+        when 'edit-user-account'
+          Service::Interaction::ViewSubmission::UserAccountUpdateRequested.call(bot_request)
         end
       end
     end

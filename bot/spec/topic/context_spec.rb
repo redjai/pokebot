@@ -47,7 +47,7 @@ describe Topic::SlackContext do
   context 'slash command' do
 
     subject{ described_class.from_slack_command(command_event) }
-    let(:command_event){ build(:slack_command_account_requested_event) }
+    let(:command_event){ build(:slack_command_user_account_show_requested_event) }
     let(:slack_id){ command_event.record['data']['user_id'].first }
     let(:channel){ command_event.record['data']['channel_id'].first }
     let(:response_url){ command_event.record['data']['response_url'].first }
@@ -106,33 +106,61 @@ describe Topic::SlackContext do
   context 'slack interaction' do
 
     subject{ described_class.from_slack_interaction(interaction_event) }
-
-    let(:interaction_event){ build(:slack_interaction_favourite_event) }
-    let(:slack_id){ interaction_event.record['data']['user']['id'] }
-    let(:channel){ interaction_event.record['data']['container']['channel_id'] }
-    let(:response_url){ interaction_event.record['data']['response_url'] }
-    let(:trigger_id){ interaction_event.record['data']['trigger_id'] }
-    let(:message_ts){ interaction_event.record['data']['container']['message_ts'] } 
-
-    it 'should populate the context' do
-      expect(subject.slack_id).to eq slack_id
-    end
-
-    it 'should populate the context channel' do
-      expect(subject.channel).to eq channel
-    end
     
-    it 'should populate the context response_url' do
-      expect(subject.response_url).to eq response_url 
+    context 'block_actions' do
+
+      let(:interaction_event){ build(:slack_interaction_favourite_recipe_event) }
+      let(:slack_id){ interaction_event.record['data']['user']['id'] }
+      let(:channel){ interaction_event.record['data']['container']['channel_id'] }
+      let(:response_url){ interaction_event.record['data']['response_url'] }
+      let(:trigger_id){ interaction_event.record['data']['trigger_id'] }
+      let(:message_ts){ interaction_event.record['data']['container']['message_ts'] } 
+
+      it 'should populate the context slack_id' do
+        expect(subject.slack_id).to eq slack_id
+      end
+
+      it 'should populate the context channel' do
+        expect(subject.channel).to eq channel
+      end
+      
+      it 'should populate the context response_url' do
+        expect(subject.response_url).to eq response_url 
+      end
+
+      it 'should assign a message_ts' do
+        expect(subject.message_ts).to eq message_ts 
+      end
+
+      it 'should assign a trigger_id' do
+        expect(subject.trigger_id).to eq trigger_id
+      end
+
     end
 
-    it 'should assign a message_ts' do
-      expect(subject.message_ts).to eq message_ts 
-    end
+    context 'view submissions' do
 
-    it 'should assign a trigger_id' do
-      expect(subject.trigger_id).to eq trigger_id
-    end
+      let(:interaction_event){ build(:slack_interaction_user_account_update_event) }
+      let(:private_metadata){ interaction_event.record['data']['view']['private_metadata'] }
+      let(:slack_id){ interaction_event.record['data']['user']['id'] }
+      let(:response_url){ interaction_event.record['data']['response_url'] }
+      let(:trigger_id){ interaction_event.record['data']['trigger_id'] }
 
+      it 'should populate the context slack_id' do
+        expect(subject.slack_id).to eq slack_id
+      end
+
+      it 'should populate private metadata' do
+        expect(subject.private_metadata).to eq private_metadata
+      end
+      
+      it 'should populate the context response_url' do
+        expect(subject.response_url).to eq response_url 
+      end
+
+      it 'should assign a trigger_id' do
+        expect(subject.trigger_id).to eq trigger_id
+      end
+    end
   end 
 end 

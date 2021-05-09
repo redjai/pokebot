@@ -31,6 +31,8 @@ GEM
     diff-lcs (1.4.4)
     factory_bot (6.1.0)
       activesupport (>= 5.0.0)
+    faker (2.17.0)
+      i18n (>= 1.6, < 2)
     hashdiff (1.0.1)
     honeybadger (4.7.3)
     i18n (1.8.9)
@@ -68,9 +70,10 @@ DEPENDENCIES
   aws-sdk-sns
   climate_control
   factory_bot
+  faker
   honeybadger
   rspec
   webmock
 
 BUNDLED WITH
-   2.1.4
+   2.2.13

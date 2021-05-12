@@ -72,7 +72,7 @@ module Topic
       data = {
         name: name,
         email: email,
-        kanabize_username: kanbanize_username
+        kanbanize_username: kanbanize_username
       }
       Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_UPDATE_REQUESTED, version: 1.0, data: data, intent: true)      
     end

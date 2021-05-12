@@ -11,4 +11,30 @@ describe Service::Interaction::Controller do
     subject.call(bot_request)
   end
 
+  context 'payload data' do
+
+    before do
+      allow(Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request) 
+      subject.call(bot_request)
+    end
+
+    let(:event){ build(:slack_interaction_user_account_update_event) }
+    let(:values){ event.record['data']['view']['state']['values'] }
+    let(:email){ values["Uoe"]["edit-email"]["value"] }
+    let(:name){ values['jr4']['edit-name']['value'] }
+    let(:kanbanize){ values['jIvj']['edit-kanbanize']['value'] }
+
+    it 'should extract the email from the view submission' do
+      expect(bot_request.data[:email]).to eq email 
+    end
+    
+    it 'should extract the name from the view submission' do
+      expect(bot_request.data[:name]).to eq name 
+    end
+
+    it 'should extract the kanbanize from the view submission' do
+      expect(bot_request.data[:kanbanize_username]).to eq kanbanize 
+    end
+  end
+
 end

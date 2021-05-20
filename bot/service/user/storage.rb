@@ -12,12 +12,12 @@ module Service
         @@dynamo_resource = Aws::DynamoDB::Resource.new(options)
       end
 
-      def remove_favourite(user_id, recipe_id)
+      def remove_favourite(slack_id, recipe_id)
         begin 
           dynamo_resource.client.update_item(
             {
               key: {
-                "user_id" => user_id 
+                "user_id" => slack_id 
               },  
               update_expression: 'DELETE #favourites :recipe_id',
               expression_attribute_names: {
@@ -36,12 +36,12 @@ module Service
         end
       end
 
-      def add_favourite(user_id, recipe_id)
+      def add_favourite(slack_id, recipe_id)
         begin 
           dynamo_resource.client.update_item(
             {
               key: {
-                "user_id" => user_id 
+                "user_id" => slack_id 
               },  
               update_expression: 'ADD #favourites :empty_set',
               expression_attribute_names: {
@@ -62,21 +62,23 @@ module Service
         end
       end
 
-      def update_account(user_id, handle, kanbanize_username)
+      def update_account(slack_id:, handle:, kanbanize_username:, email:)
         begin 
           dynamo_resource.client.update_item(
             {
               key: {
-                "user_id" => user_id 
+                "user_id" => slack_id 
               },  
-              update_expression: 'SET #handle = :handle, #kanbanize_username = :kanbanize_username',
+              update_expression: 'SET #handle = :handle, #kanbanize_username = :kanbanize_username, #email = :email',
               expression_attribute_names: {
                 '#handle': 'handle',
-                '#kanbanize_username': 'kanbanize_username'
+                '#kanbanize_username': 'kanbanize_username',
+                '#email': 'email'
               },
               expression_attribute_values: {
                 ':handle': handle,
-                ':kanbanize_username': kanbanize_username 
+                ':kanbanize_username': kanbanize_username,
+                ':email': email 
               },
               table_name: ENV['FAVOURITES_TABLE_NAME'],
               return_values: 'UPDATED_NEW'
@@ -88,12 +90,12 @@ module Service
         end
       end
 
-      def destroy(user_id)
+      def destroy(slack_id)
         begin 
           dynamo_resource.client.delete_item(
             {
               key: {
-                "user_id" => user_id 
+                "user_id" => slack_id 
               },  
               table_name: ENV['FAVOURITES_TABLE_NAME']
             }
@@ -104,10 +106,10 @@ module Service
         end
       end
 
-      def read(user_id)
+      def read(slack_id)
         dynamo_resource.client.query({
           expression_attribute_values: {
-            ":u1" => user_id
+            ":u1" => slack_id
           },
           key_condition_expression: "user_id = :u1", 
           table_name: ENV['FAVOURITES_TABLE_NAME'],

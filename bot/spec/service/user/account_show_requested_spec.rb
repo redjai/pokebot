@@ -40,7 +40,7 @@ describe Service::User::Controller do
     context 'user exists' do
 
       before(:each) do
-        Service::User::Storage.update_account(bot_request.context.slack_id, nil, nil)
+        Service::User::Storage.update_account(slack_id: bot_request.context.slack_id, email: nil, kanbanize_username: nil, handle: nil)
       end
 
       it 'should change the event from requested to found' do

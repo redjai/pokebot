@@ -19,6 +19,9 @@ module Service
         when Topic::Users::ACCOUNT_EDIT_REQUESTED
           require_relative 'account/read'
           Service::User::Account::Read.call(bot_request)
+        when Topic::Users::ACCOUNT_UPDATE_REQUESTED
+          require_relative 'account/update'
+          Service::User::Account::Update.call(bot_request)
         end
       end
     end

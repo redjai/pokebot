@@ -45,7 +45,7 @@ FactoryBot.define do
     email { Faker::Internet.email }
     kanbanize_username { Faker::Internet.username }
 
-    initialize_with{ Topic::Users.account_update_requested(source: source, name: name, email: email, kanbanize_username: kanbanize_username) }
+    initialize_with{ Topic::Users.account_update_requested(source: source, handle: name, email: email, kanbanize_username: kanbanize_username) }
 
   end
 

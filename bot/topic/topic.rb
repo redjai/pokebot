@@ -68,18 +68,20 @@ module Topic
       Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_EDIT_REQUESTED, version: 1.0, data: data, intent: true)      
     end
 
-    def account_update_requested(source:, name:, email:, kanbanize_username:)
+    def account_update_requested(source:, handle:, email:, kanbanize_username:)
       data = {
-        name: name,
-        email: email,
-        kanbanize_username: kanbanize_username
+        'handle' => handle,
+        'email' => email,
+        'kanbanize_username' => kanbanize_username
       }
       Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_UPDATE_REQUESTED, version: 1.0, data: data, intent: true)      
     end
     
-    def account_updated(source:, user:)
+    def account_updated(source:, handle:, email:, kanbanize_username:)
       data = {
-        user: user
+        'handle' => handle,
+        'email' => email,
+        'kanbanize_username' => kanbanize_username
       }
       Topic::Event.new(source: source, name: Topic::Users::ACCOUNT_UPDATED, version: 1.0, data: data)      
     end

@@ -4,7 +4,9 @@ require 'topic/sns'
 
 describe Service::User::Controller do
 
-  let(:bot_request){ build(:bot_request, current: Topic::Users.favourite_new(source: :interactions, favourite_recipe_id:  favourite)) }
+  let(:slack_id){ 'test-slack-id-1234' }
+  let(:context){ build(:block_actions_interaction_context, slack_id: slack_id) } # ensures a consistent slack id for users in the spec
+  let(:bot_request){ build(:bot_request, context: context, current: Topic::Users.favourite_new(source: :interactions, favourite_recipe_id:  favourite)) }
   let(:table){ 'test-user-table' } 
   let(:favourite){ "234567" }
   let(:item){ Service::User::Storage.read bot_request.context.slack_id } 
@@ -57,7 +59,8 @@ describe Service::User::Controller do
     context 'user exists' do
 
       let(:existing_favourite){ "987654" }
-      let(:previous_bot_request){ build(:bot_request, current: Topic::Users.favourite_new(source: :interactions, favourite_recipe_id:  existing_favourite)) }
+      let(:previous_context){ build(:block_actions_interaction_context, slack_id: slack_id) } # ensures a consistent slack id for users in the spec
+      let(:previous_bot_request){ build(:bot_request, context: previous_context, current: Topic::Users.favourite_new(source: :interactions, favourite_recipe_id:  existing_favourite)) }
       
       before(:each) do
         allow(Topic::Sns).to receive(:broadcast)

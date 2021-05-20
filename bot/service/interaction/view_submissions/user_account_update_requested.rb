@@ -9,7 +9,7 @@ module Service
           values = bot_request.data['view']['state']['values'].values
           bot_request.current = Topic::Users.account_update_requested(
             source: :interactions,
-            name: extract_from_values(values: values, extract: :name),
+            handle: extract_from_values(values: values, extract: :handle),
             email: extract_from_values(values: values, extract: :email),
             kanbanize_username: extract_from_values(values: values, extract: :kanbanize)
           )  

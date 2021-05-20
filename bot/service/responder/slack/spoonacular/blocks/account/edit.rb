@@ -14,7 +14,7 @@ module Service
 
               def view
                 modal = Service::Responder::Slack::Modal.new("Your account","edit-user-account" ,"Submit")
-                modal.add_input("name", "Your Name here", "edit-name")
+                modal.add_input("handle", "Your Name here", "edit-handle")
                 modal.add_input("email", "Your Email here", "edit-email")
                 modal.add_input("kanbanize", "Your Kanbanize username here", "edit-kanbanize")
                 modal.view

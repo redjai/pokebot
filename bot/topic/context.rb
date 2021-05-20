@@ -13,10 +13,18 @@ module Topic
     end
 
     def self.from_slack_command(command)
-      new(
+      _from_slack_command(
         slack_id: command.record['data']['user_id'].first, 
         channel: command.record['data']['channel_id'].first,
         response_url: command.record['data']['response_url'].first
+      )
+    end
+    
+    def self._from_slack_command(slack_id:, channel:, response_url:)
+      new(
+        slack_id: slack_id, 
+        channel: channel,
+        response_url: response_url
       )
     end
 
@@ -25,6 +33,13 @@ module Topic
       new(
         slack_id: api_event.record['data']['event']['user'], 
         channel: api_event.record['data']['event']['channel']
+      )
+    end
+    
+    def self._from_slack_event(slack_id:, channel:)
+      new(
+        slack_id: slack_id, 
+        channel: channel
       )
     end
 
@@ -38,7 +53,7 @@ module Topic
     end
 
     def self.from_slack_block_actions_interaction(record)
-      new(
+      _from_slack_block_actions_interaction(
         slack_id: record.record['data']['user']['id'], 
         channel: record.record['data']['container']['channel_id'],
         message_ts: record.record['data']['container']['message_ts'],
@@ -46,13 +61,32 @@ module Topic
         trigger_id: record.record['data']['trigger_id']
       )
     end
+    
+    def self._from_slack_block_actions_interaction(slack_id:, channel:, message_ts:, response_url:, trigger_id:)
+      new(
+        slack_id: slack_id, 
+        channel: channel,
+        message_ts: message_ts,
+        response_url: response_url,
+        trigger_id: trigger_id
+      )
+    end
 
     def self.from_slack_view_submission_interaction(record)
-      new(
+      _from_slack_view_submission_interaction(
         slack_id: record.record['data']['user']['id'], 
         trigger_id: record.record['data']['trigger_id'],
         response_url: record.record['data']['response_url'],
         private_metadata: record.record['data']['view']['private_metadata']
+      )
+    end
+    
+    def self._from_slack_view_submission_interaction(slack_id:, response_url:, trigger_id:, private_metadata:)
+      new(
+        slack_id: slack_id, 
+        response_url: response_url,
+        trigger_id: trigger_id,
+        private_metadata: private_metadata
       )
     end
     

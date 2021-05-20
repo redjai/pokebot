@@ -52,7 +52,7 @@ describe Service::User::Controller do
 
       before(:each) do
         allow(Topic::Sns).to receive(:broadcast)
-        Service::User::Storage.update_account(bot_request.context.slack_id, nil, nil)
+        Service::User::Storage.update_account(slack_id: bot_request.context.slack_id, email: nil, handle: nil, kanbanize_username: nil)
       end
       
       it 'should broadcast to the user topic' do

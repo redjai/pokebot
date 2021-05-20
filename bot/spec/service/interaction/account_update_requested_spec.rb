@@ -20,20 +20,20 @@ describe Service::Interaction::Controller do
 
     let(:event){ build(:slack_interaction_user_account_update_event) }
     let(:values){ event.record['data']['view']['state']['values'] }
-    let(:email){ values["Uoe"]["edit-email"]["value"] }
-    let(:name){ values['jr4']['edit-name']['value'] }
-    let(:kanbanize){ values['jIvj']['edit-kanbanize']['value'] }
+    let(:email){ values["mdHf"]["edit-email"]["value"] }
+    let(:name){ values['vMsh']['edit-handle']['value'] }
+    let(:kanbanize){ values['2jv+N']['edit-kanbanize']['value'] }
 
     it 'should extract the email from the view submission' do
-      expect(bot_request.data[:email]).to eq email 
+      expect(bot_request.data['email']).to eq email 
     end
     
     it 'should extract the name from the view submission' do
-      expect(bot_request.data[:name]).to eq name 
+      expect(bot_request.data['handle']).to eq name 
     end
 
     it 'should extract the kanbanize from the view submission' do
-      expect(bot_request.data[:kanbanize_username]).to eq kanbanize 
+      expect(bot_request.data['kanbanize_username']).to eq kanbanize 
     end
   end
 

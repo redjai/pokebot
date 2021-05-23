@@ -11,7 +11,7 @@ module Service
           Service::User::Storage.update_account(
                                                   slack_id: bot_request.context.slack_id,
                                                   handle: bot_request.data['handle'],
-                                                  kanbanize_username: bot_request.data['handle'],
+                                                  kanbanize_username: bot_request.data['kanbanize_username'],
                                                   email: bot_request.data['email']
                                                ).tap do |user|
                                                  bot_request.current = Topic::Users.account_updated(source: :user, 

@@ -1,11 +1,11 @@
-require_relative '../../block_builder'
+require_relative '../../blocks/builder'
 
 module Service
   module Responder
     module Slack
-      module Spoonacular
-        module Blocks
-          class Recipes
+      module Views
+        module Recipes
+          class Index
           include Service::Responder::Slack::BlockBuilder
 
             def initialize(bot_request)

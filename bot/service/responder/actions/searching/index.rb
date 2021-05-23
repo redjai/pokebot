@@ -2,15 +2,15 @@ require 'slack/response'
 
 module Service
   module Responder
-    module Slack
-      module Spoonacular
-        module Favourites
+    module Actions 
+      module Searching
+        module Index
         extend self
 
           def call(bot_request)
             ::Slack::Response.respond(
               channel: bot_request.context.channel, 
-              text: "favourites updated, you have #{bot_request.data['favourite_recipe_ids'].count} favourites. You can see them with the command /favourites",
+              text: ":smiley:  _#{bot_request.data['text']}_...\n...helping you is what I do !",
             )
           end
         end

@@ -89,15 +89,16 @@ module Service
          	}
         end
 
-        def add_input(label, text, action_id)
+        def add_input(label:, initial_value:, placeholder:, action_id:)
           blocks << {
             "type" => "input",
             "element" => {
               "type" => "plain_text_input",
               "action_id" => action_id,
+              "initial_value" => initial_value,
               "placeholder" => {
                 "type" => "plain_text",
-                "text" => text
+                "text" => placeholder
               }
             },
             "label" => {

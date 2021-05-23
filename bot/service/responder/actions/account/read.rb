@@ -1,13 +1,13 @@
 require 'slack/response'
 require 'topic/topic'
-require_relative 'blocks/account/show'
-require_relative 'blocks/account/edit'
+require_relative '../../slack/views/account/show'
+require_relative '../../slack/views/account/edit'
 
 module Service
   module Responder
-    module Slack
-      module Spoonacular
-        module Account 
+    module Actions
+      module Account
+        module Read 
         extend self
           
           def call(bot_request)
@@ -16,10 +16,10 @@ module Service
               ::Slack::Response.respond(
                 channel: bot_request.context.channel, 
                 text: 'your account:',
-                blocks: Blocks::Account::Show.new(bot_request.data['user']).blocks,
+                blocks: Service::Responder::Slack::Views::Account::Show.new(bot_request.data['user']).blocks,
               )
             when Topic::Users::ACCOUNT_EDIT_REQUESTED
-              ::Slack::Response.modal(bot_request.context.trigger_id, Blocks::Account::Edit.new(bot_request).view)
+              ::Slack::Response.modal(bot_request.context.trigger_id, Service::Responder::Slack::Views::Account::Edit.new(bot_request).view)
             else
               raise "Unexpected event #{bot_request}"
             end

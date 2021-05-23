@@ -22,6 +22,7 @@ provider:
     REGION: ${self:provider.region}
     GEM_PATH: /opt/ruby/2.5.0
     HONEYBADGER_API_KEY: ${file(config.${self:provider.stage}.yml):honeybadger_api_key}
+    BOT_ENV: ${self:provider.stage}
 
   iamRoleStatements:
     
@@ -49,13 +50,6 @@ provider:
       Action:
         - "SNS:Publish"
       Resource: !Ref UsersSnsTopic # !Ref returns the ARN of SNS topic in the resources element below:
-    
-
-    # ALLOW THE iamRole TO PUBLISH TO THE 'interactions' SNS Topic
-    - Effect: "Allow"
-      Action:
-        - "SNS:Publish"
-      Resource: !Ref InteractionsSnsTopic # !Ref returns the ARN of SNS topic in the resources element below:
     
 
     #AUTO-END-TOPIC-ROLE-STATEMENTS
@@ -548,58 +542,6 @@ resources:
           - Ref: UsersToUsersSqsQueue
       DependsOn:
         - UsersToUsersSubscription
-      
-
-
-    #### AUTO GENERATED TOPIC - 'interactions' 
-    #################################
-    InteractionsSnsTopic:
-      Type: AWS::SNS::Topic
-      Properties:
-        TopicName: ${self:service}-${self:provider.stage}-interactions
-     
-
-
-    #### AUTO GENERATED QUEUE - 'users'
-    InteractionsToUsersSqsQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${self:service}-${self:provider.stage}-sns-interactions-to-sqs-users
-    
-    #### AUTO GENERATED - ATTACH 'interactions' TOPIC to 'users' QUEUE
-    InteractionsToUsersSubscription:
-      Type: AWS::SNS::Subscription
-      Properties:
-        TopicArn: !Ref InteractionsSnsTopic
-        Endpoint: !GetAtt
-          - InteractionsToUsersSqsQueue
-          - Arn
-        Protocol: sqs
-      DependsOn:
-        - InteractionsSnsTopic
-        - InteractionsToUsersSqsQueue
-    
-    #### AUTO GENERATED - ALLOW 'interactions' TOPIC to send messages to 'users' QUEUE
-    SnSInteractionsToSQSUsersSqsQueuePolicy:
-      Type: AWS::SQS::QueuePolicy
-      Properties:
-        PolicyDocument:
-          Version: "2012-10-17"
-          Statement:
-            - Sid: "allow-sns-interactions"
-              Effect: Allow
-              Principal: "*"
-              Resource: !GetAtt
-                - InteractionsToUsersSqsQueue
-                - Arn
-              Action: "SQS:SendMessage"
-              Condition:
-                ArnEquals:
-                  "aws:SourceArn": !Ref InteractionsSnsTopic 
-        Queues:
-          - Ref: InteractionsToUsersSqsQueue
-      DependsOn:
-        - InteractionsToUsersSubscription
       
 
     #AUTO-END-TOPICS

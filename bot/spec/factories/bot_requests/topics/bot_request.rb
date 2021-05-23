@@ -48,7 +48,7 @@ FactoryBot.define do
     slack_id { generate :slack_id }
     response_url { generate :response_url }
     trigger_id { generate :trigger_id }
-    private_metadata { 'test-private-metadata' }
+    private_metadata { {'intent' => 'test-intent', 'context' => {}}.to_json  }
 
     initialize_with{ Topic::SlackContext._from_slack_view_sumission_interaction(slack_id: slack_id, channel: channel, response_url: response_url, trigger_id: trigger_id, message_ts: message_ts) }
   end

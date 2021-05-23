@@ -19,6 +19,7 @@ module Service
                 blocks: Service::Responder::Slack::Views::Account::Show.new(bot_request.data['user']).blocks,
               )
             when Topic::Users::ACCOUNT_EDIT_REQUESTED
+              ::Slack::Response.delete(channel: bot_request.context.channel, ts: bot_request.context.message_ts)
               ::Slack::Response.modal(bot_request.context.trigger_id, Service::Responder::Slack::Views::Account::Edit.new(bot_request).view)
             else
               raise "Unexpected event #{bot_request}"

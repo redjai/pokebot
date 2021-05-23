@@ -45,9 +45,11 @@ module Service
       end
 
       def view_submission(bot_request)
-        case bot_request.context.private_metadata
-        when 'edit-user-account'
+        case bot_request.context.private_metadata['intent']
+        when 'update-user-account'
           Service::Interaction::ViewSubmission::UserAccountUpdateRequested.call(bot_request)
+        else
+          raise "unknown view submission #{bot_request.context.private_metadata['intent']}"
         end
       end
     end

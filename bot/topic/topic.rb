@@ -28,7 +28,7 @@ module Topic
     ACCOUNT_READ = 'user-account-read'
 
     ACCOUNT_UPDATE_REQUESTED = 'user-account-update-requested' 
-    ACCOUNT_UPDATED = 'user-account-update'
+    ACCOUNT_UPDATED = 'user-account-updated'
 
     def favourite_new(source:, favourite_recipe_id:)
       data = {

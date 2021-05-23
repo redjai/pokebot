@@ -141,7 +141,7 @@ describe Topic::SlackContext do
     context 'view submissions' do
 
       let(:interaction_event){ build(:slack_interaction_user_account_update_event) }
-      let(:private_metadata){ interaction_event.record['data']['view']['private_metadata'] }
+      let(:private_metadata){ JSON.parse(interaction_event.record['data']['view']['private_metadata']) }
       let(:slack_id){ interaction_event.record['data']['user']['id'] }
       let(:response_url){ interaction_event.record['data']['response_url'] }
       let(:trigger_id){ interaction_event.record['data']['trigger_id'] }

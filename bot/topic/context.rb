@@ -1,7 +1,7 @@
 module Topic
   class SlackContext
       
-    attr_accessor :slack_id, :channel, :response_url, :message_ts, :trigger_id, :private_metadata
+    attr_accessor :slack_id, :channel, :response_url, :message_ts, :trigger_id
 
     def initialize(slack_id:, channel: nil, response_url: nil, message_ts: nil, trigger_id: nil, private_metadata: nil)
       @slack_id = slack_id
@@ -10,6 +10,10 @@ module Topic
       @message_ts = message_ts
       @trigger_id = trigger_id
       @private_metadata = private_metadata
+    end
+
+    def private_metadata
+      JSON.parse(@private_metadata)
     end
 
     def self.from_slack_command(command)

@@ -76,6 +76,7 @@ describe Service::Responder::Controller do
       let(:trigger_id){ bot_request.context.trigger_id }
 
       it 'should respond to slack' do
+        expect(Slack::Response).to receive(:delete).with(channel: bot_request.context.channel, ts: bot_request.context.message_ts)
         expect(Slack::Response).to receive(:modal).with(trigger_id, kind_of(Hash))
         subject.call(bot_request)
       end

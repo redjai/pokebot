@@ -2,5 +2,12 @@ require 'logger'
 
 module Bot
   LOGGER = Logger.new($stdout)
-  #LOGGER.level = Logger::INFO
+  case ENV['BOT_ENV']
+  when 'development'
+    LOGGER.level = Logger::DEBUG
+  when 'test'
+    LOGGER.level = Logger::WARN
+  when 'production'
+    LOGGER.level = Logger::INFO
+  end
 end

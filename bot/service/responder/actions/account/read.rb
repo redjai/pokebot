@@ -22,7 +22,7 @@ module Service
               ::Slack::Response.delete(channel: bot_request.context.channel, ts: bot_request.context.message_ts)
               ::Slack::Response.modal(bot_request.context.trigger_id, Service::Responder::Slack::Views::Account::Edit.new(bot_request).view)
             else
-              raise "Unexpected event #{bot_request}"
+              raise "Unexpected intent #{bot_request.intent['name']}"
             end
           end
         end

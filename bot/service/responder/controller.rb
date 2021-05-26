@@ -24,8 +24,8 @@ module Service
           require_relative 'actions/account/read'
           Service::Responder::Actions::Account::Read.call(bot_request)
         when Topic::Users::ACCOUNT_UPDATED
-          require_relative 'slack/account/updated'
-          Service::Responder::Account.call(bot_request)
+          require_relative 'actions/account/updated'
+          Service::Responder::Actions::Account::Updated.call(bot_request)
         else
           raise "unexpected request #{bot_request.name}"
         end

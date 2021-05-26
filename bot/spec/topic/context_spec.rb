@@ -9,23 +9,25 @@ describe Topic::SlackContext do
     let(:response_url){ 'test-response_url' } 
     let(:slack_id){ 'test-slack_id' } 
     let(:trigger_id){ 'test-trigger' }
+    let(:private_metadata){ 'test-trigger' }
     let(:to_h){ 
       {
         'channel' => channel, 
         'message_ts' => message_ts, 
         'response_url' => response_url, 
         'slack_id' => slack_id, 
-        'trigger_id' => trigger_id
+        'trigger_id' => trigger_id,
+        'private_metadata' => private_metadata
       }
     }
 
     context 'to_h' do
-
       subject{ Topic::SlackContext.new(slack_id: slack_id, 
                                         channel: channel, 
                                      message_ts: message_ts, 
                                      trigger_id: trigger_id,
-                                   response_url: response_url)  }
+                                   response_url: response_url,
+                                   private_metadata: private_metadata)  }
 
       it 'should export to a hash' do
         expect(subject.to_h).to eq to_h

@@ -1,3 +1,4 @@
+require 'json'
 module Topic
   class SlackContext
       
@@ -111,7 +112,8 @@ module Topic
         'channel' => @channel,
         'message_ts' => @message_ts,
         'response_url' => @response_url,
-        'trigger_id' => @trigger_id
+        'trigger_id' => @trigger_id,
+        'private_metadata' => @private_metadata
       }
     end
   end

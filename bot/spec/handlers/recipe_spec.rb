@@ -1,7 +1,6 @@
 require 'handlers/recipes'
 require 'service/recipe/controller'
-require 'request/events/topic'
-require 'request/events/topic'
+require 'request/events/user'
 
 describe 'handler' do
 

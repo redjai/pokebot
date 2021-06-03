@@ -1,4 +1,4 @@
-require 'request/events/topic'
+require 'request/events/user'
 
 module Service
   module Recipe

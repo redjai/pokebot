@@ -1,5 +1,5 @@
 require 'request/event'
-require 'request/events/topic'
+require 'request/events/slack'
 require_relative '../../fixtures/aws_events/interaction_api/user_update_requested_view_submission'
 require_relative '../../fixtures/aws_events/interaction_api/favourites_interaction_aws_event'
 

@@ -1,4 +1,4 @@
-require 'request/events/topic'
+require 'request/events/user'
 require 'service/user/controller'
 require 'topic/sns'
 

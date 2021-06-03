@@ -1,5 +1,5 @@
 require 'topic/sns'
-require 'request/events/topic'
+require 'request/events/user'
 
 module Service
   module Command 

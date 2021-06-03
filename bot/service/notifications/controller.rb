@@ -1,5 +1,5 @@
 require 'slack/response'
-require 'request/events/topic'
+require 'request/events/user'
 
 module Service
   module Notifications 

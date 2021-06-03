@@ -1,7 +1,7 @@
 require 'aws-sdk-dynamodb'
 require 'topic/sns'
 require_relative '../storage'
-require 'request/events/topic'
+require 'request/events/user'
 
 module Service
   module User

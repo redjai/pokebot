@@ -1,5 +1,5 @@
 require 'slack/response'
-require 'request/events/topic'
+require 'request/events/user'
 require_relative '../../slack/views/account/show'
 require_relative '../../slack/views/account/edit'
 

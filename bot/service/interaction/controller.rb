@@ -1,5 +1,5 @@
 require 'topic/sns'
-require 'request/events/topic'
+require 'request/events/user'
 require_relative 'view_submissions/user_account_update_requested'
 
 module Service

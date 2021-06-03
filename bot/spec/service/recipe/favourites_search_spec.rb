@@ -2,7 +2,7 @@ require 'service/recipe/controller'
 require 'json'
 require 'topic/sns'
 require 'service/recipe/user'
-require 'request/events/topic'
+require 'request/events/recipe'
 
 describe Service::Recipe::Controller do
 

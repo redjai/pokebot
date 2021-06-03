@@ -4,7 +4,7 @@ describe Service::Recipe::Controller do
   
   let(:slack_id){ 'test-slack-id-1234' }
   let(:context){ build(:block_actions_interaction_context, slack_id: slack_id) }
-  let(:bot_request){ build(:bot_request, :with_user_favourites_updated, context: context) }
+  let(:bot_request){ build(:bot_request, :with_event_context, :with_user_favourites_updated, context: context) }
   let(:table){ 'test-recipe-user-table' } 
   let(:favourites){ bot_request.data['favourite_recipe_ids']  }
   let(:item){ Service::Recipe::User.read bot_request.context.slack_id } 

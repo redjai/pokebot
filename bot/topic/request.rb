@@ -3,7 +3,7 @@ module Topic
     
     attr_reader :current, :context
 
-    def initialize(context:, current:, trail: [])
+    def initialize(current:, context: Topic::SlackContext.new, trail: [])
       @context = context
       @current = current.to_h
       @trail = trail

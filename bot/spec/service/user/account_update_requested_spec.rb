@@ -10,7 +10,7 @@ describe Service::User::Controller do
   let(:handle){ bot_request.data['handle'] }
   let(:email){ bot_request.data['email'] }
   let(:kanbanize_username){ bot_request.data['kanbanize_username'] }
-  let(:bot_request){ build(:bot_request, :with_user_account_update_requested) }
+  let(:bot_request){ build(:bot_request, :with_event_context, :with_user_account_update_requested) }
   
   table!('test-user-table')
   

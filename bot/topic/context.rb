@@ -4,7 +4,7 @@ module Topic
       
     attr_accessor :slack_id, :channel, :response_url, :message_ts, :trigger_id
 
-    def initialize(slack_id:, channel: nil, response_url: nil, message_ts: nil, trigger_id: nil, private_metadata: nil)
+    def initialize(slack_id: nil, channel: nil, response_url: nil, message_ts: nil, trigger_id: nil, private_metadata: nil)
       @slack_id = slack_id
       @channel = channel
       @response_url = response_url

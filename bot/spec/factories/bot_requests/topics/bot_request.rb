@@ -58,9 +58,13 @@ FactoryBot.define do
       bot_event { build(:bot_event) }
     end
 
-    context { build(:event_context)  }
+    context { Topic::SlackContext.new }
     current { bot_event } 
     trail { [ build(:bot_event).to_h ] }
+    
+    trait :with_event_context do
+      context{ build(:event_context) }
+    end
 
     trait :with_command_context do
       context{ build(:command_context) }

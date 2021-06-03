@@ -9,7 +9,7 @@ describe Service::Recipe::Controller do
 
     context 'recipes found' do
 
-      let(:bot_request){ build(:bot_request, current: Topic::Recipes.search_requested(query: query, source: 'intent')) }
+      let(:bot_request){ build(:bot_request, :with_event_context, current: Topic::Recipes.search_requested(query: query, source: 'intent')) }
       let(:complex_search_uri){ 'https://api.spoonacular.com/recipes/complexSearch' }
       let(:query){ 'beef rendang' }
       let(:offset){ 0 }

@@ -16,7 +16,7 @@ describe Service::User::Controller do
       allow(Topic::Sns).to receive(:broadcast)
     end
     
-    let(:bot_request){ build(:bot_request, :with_user_account_show_requested) }
+    let(:bot_request){ build(:bot_request, :with_event_context, :with_user_account_show_requested) }
 
     context 'user does not exist' do
 

@@ -1,6 +1,6 @@
 require 'service/message/controller'
 require 'topic/sns'
-require 'request/events/topic'
+require 'request/events/slack'
 require 'request/event'
 
 describe Service::Message::Controller do

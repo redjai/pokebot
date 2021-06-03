@@ -1,5 +1,5 @@
 require 'service/command/controller'
-require 'request/events/topic'
+require 'request/events/slack'
 
 describe Service::Command::Controller do
 

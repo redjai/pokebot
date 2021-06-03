@@ -1,6 +1,6 @@
-require 'request/events/topic'
+require 'request/events/slack'
 require 'service/command/controller'
-require 'request/events/topic'
+
 
 module Command 
   class Handler

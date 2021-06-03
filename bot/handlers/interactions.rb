@@ -1,4 +1,4 @@
-require 'request/events/topic'
+require 'request/events/slack'
 require 'service/interaction/controller'
 
 module Interactions

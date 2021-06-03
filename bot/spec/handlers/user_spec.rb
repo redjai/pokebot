@@ -1,6 +1,6 @@
 require 'handlers/user'
 require 'service/user/controller'
-require 'request/events/topic'
+
 
 describe 'handler' do
 

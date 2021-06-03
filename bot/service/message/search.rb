@@ -1,7 +1,7 @@
 require 'topic/sns'
 require 'handlers/lambda/http_response'
 require 'slack/authentication'
-require 'request/events/topic'
+require 'request/events/message'
 
 module Service
   module Message 

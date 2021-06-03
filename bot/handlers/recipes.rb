@@ -1,5 +1,5 @@
 require 'handlers/lambda/event'
-require 'request/events/topic'
+
 
 module Recipes
   class Handler

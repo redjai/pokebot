@@ -1,6 +1,4 @@
 require 'handlers/responder'
-require 'request/events/topic'
-require 'request/events/topic'
 require 'service/responder/controller'
 
 describe Responder::Handler do

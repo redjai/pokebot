@@ -1,5 +1,4 @@
 require 'request/event'
-require 'request/events/topic'
 
 FactoryBot.define do
 

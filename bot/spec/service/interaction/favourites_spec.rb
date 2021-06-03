@@ -1,6 +1,5 @@
 require 'service/interaction/controller'
 require 'topic/sns'
-require 'request/events/topic'
 require 'request/event'
 
 describe Service::Interaction::Controller do

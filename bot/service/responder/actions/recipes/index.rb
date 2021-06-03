@@ -1,5 +1,4 @@
 require 'slack/response'
-require 'request/events/topic'
 require_relative '../../slack/views/recipes/index'
 
 module Service

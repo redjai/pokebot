@@ -1,4 +1,3 @@
-require 'request/events/topic'
 require 'service/interaction/controller'
 require 'topic/sns'
 

@@ -1,6 +1,7 @@
 require 'request/event'
 require 'request/events/slack'
 require 'request/events/recipe'
+require 'request/events/message'
 
 module TopicHelper
   extend Request::Base

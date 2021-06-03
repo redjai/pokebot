@@ -1,6 +1,6 @@
 
 require 'handlers/test'
-require 'request/events/topic'
+
 
 describe Test::Handler do
 

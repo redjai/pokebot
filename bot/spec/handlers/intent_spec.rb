@@ -1,6 +1,6 @@
 require 'handlers/intent'
 require 'service/intent/controller'
-require 'request/events/topic'
+
 
 describe 'handler' do
 

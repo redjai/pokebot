@@ -1,5 +1,4 @@
 require 'slack/response'
-require 'request/events/topic'
 
 module Service
   module Responder

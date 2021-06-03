@@ -1,6 +1,5 @@
 
 require 'handlers/lambda/event'
-require 'request/events/topic'
 
 module Test  
   class Handler

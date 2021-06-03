@@ -1,5 +1,5 @@
 require 'service/command/controller'
-require 'topic/topic'
+require 'request/events/topic'
 
 describe Service::Command::Controller do
 
@@ -10,7 +10,7 @@ describe Service::Command::Controller do
   context 'favourites' do
 
     let(:aws_event){ build(:slack_command_favourite_aws_event) }
-    let(:bot_request){ Topic::Slack.command_request(aws_event) }
+    let(:bot_request){ ::Request::Events::Slack.command_request(aws_event) }
 
 
     it 'should call favourites' do
@@ -21,7 +21,7 @@ describe Service::Command::Controller do
     it 'should emit a favourite requested event' do
       expect{ 
         subject.call(bot_request)
-      }.to change{ bot_request.name }.from(Topic::Slack::SHORTCUT_API_REQUEST).to(Topic::Recipes::FAVOURITES_SEARCH_REQUESTED) 
+      }.to change{ bot_request.name }.from(::Request::Events::Slack::SHORTCUT_API_REQUEST).to(::Request::Events::Recipes::FAVOURITES_SEARCH_REQUESTED) 
     end
 
   end
@@ -29,7 +29,7 @@ describe Service::Command::Controller do
   context 'account' do
 
     let(:aws_event){ build(:slack_command_account_aws_event) }
-    let(:bot_request){ Topic::Slack.command_request(aws_event) }
+    let(:bot_request){ ::Request::Events::Slack.command_request(aws_event) }
 
     it 'should call favourites' do
       expect(Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request)
@@ -39,7 +39,7 @@ describe Service::Command::Controller do
     it 'should emit an account edit event' do
       expect{ 
         subject.call(bot_request)
-      }.to change{ bot_request.name }.from(Topic::Slack::SHORTCUT_API_REQUEST).to(Topic::Users::ACCOUNT_SHOW_REQUESTED) 
+      }.to change{ bot_request.name }.from(::Request::Events::Slack::SHORTCUT_API_REQUEST).to(::Request::Events::Users::ACCOUNT_SHOW_REQUESTED) 
     end
   end
 

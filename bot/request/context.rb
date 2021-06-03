@@ -1,5 +1,5 @@
 require 'json'
-module Topic
+module Request 
   class SlackContext
       
     attr_accessor :slack_id, :channel, :response_url, :message_ts, :trigger_id

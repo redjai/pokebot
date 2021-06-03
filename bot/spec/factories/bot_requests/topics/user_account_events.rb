@@ -1,21 +1,21 @@
-require 'topic/event'
-require 'topic/topic'
+require 'request/event'
+require 'request/events/topic'
 
 module TopicHelper
-  extend Topic::Base
+  extend Request::Base
 end
 
 FactoryBot.define do
 
-  factory :user_account_show_requested, class: Topic::Event do
+  factory :user_account_show_requested, class: ::Request::Event do
 
     source { :test_source }
 
-    initialize_with{ Topic::Users.account_show_requested(source: source) }
+    initialize_with{ ::Request::Events::Users.account_show_requested(source: source) }
 
   end
 
-  factory :user_account_read, class: Topic::Event do
+  factory :user_account_read, class: ::Request::Event do
 
     source { :test_source }
 
@@ -26,31 +26,31 @@ FactoryBot.define do
       user_id { 'user-id-123' }
     end
 
-    initialize_with{ Topic::Users.account_read(source: source, user: user) }
+    initialize_with{ ::Request::Events::Users.account_read(source: source, user: user) }
 
   end
 
-  factory :user_account_edit_requested, class: Topic::Event do
+  factory :user_account_edit_requested, class: ::Request::Event do
 
     source { :test_source }
 
-    initialize_with{ Topic::Users.account_edit_requested(source: source) }
+    initialize_with{ ::Request::Events::Users.account_edit_requested(source: source) }
 
   end
 
-  factory :user_account_update_requested, class: Topic::Event do
+  factory :user_account_update_requested, class: ::Request::Event do
 
     source { :test_source }
     name { Faker::Name.name  }
     email { Faker::Internet.email }
     kanbanize_username { Faker::Internet.username }
 
-    initialize_with{ Topic::Users.account_update_requested(source: source, handle: name, email: email, kanbanize_username: kanbanize_username) }
+    initialize_with{ ::Request::Events::Users.account_update_requested(source: source, handle: name, email: email, kanbanize_username: kanbanize_username) }
 
   end
 
-  factory :slack_command_user_account_show_requested_event, class: Topic::Event do
-    initialize_with{ Topic::Slack.command_event(slack_command_account_event) } 
+  factory :slack_command_user_account_show_requested_event, class: ::Request::Event do
+    initialize_with{ ::Request::Events::Slack.command_event(slack_command_account_event) } 
   end
 
 end

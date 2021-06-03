@@ -1,14 +1,14 @@
 require 'service/intent/controller'
 require 'topic/sns'
-require 'topic/event'
-require 'topic/topic'
-require 'topic/topic'
+require 'request/event'
+require 'request/events/topic'
+require 'request/events/topic'
 
 describe Service::Intent::Controller do
 
   context 'recipe search' do
 
-    let(:bot_request){ build(:bot_request, current: Topic::Messages.received(source: :messages, text: 'beef rendang')) }
+    let(:bot_request){ build(:bot_request, current: ::Request::Events::Messages.received(source: :messages, text: 'beef rendang')) }
 
     it 'sets the correct data' do
       allow(Topic::Sns).to receive(:broadcast).with(topic: :recipes, request: bot_request)
@@ -21,7 +21,7 @@ describe Service::Intent::Controller do
       allow(Topic::Sns).to receive(:broadcast).with(topic: :recipes, request: bot_request)
       expect{ 
         subject.call(bot_request)
-      }.to change { bot_request.name }.from(Topic::Messages::RECEIVED).to(Topic::Recipes::SEARCH_REQUESTED)
+      }.to change { bot_request.name }.from(::Request::Events::Messages::RECEIVED).to(::Request::Events::Recipes::SEARCH_REQUESTED)
     end
 
     it 'should brodacast the event to the intent topic' do
@@ -33,7 +33,7 @@ describe Service::Intent::Controller do
 
   context 'favourite search' do
     
-    let(:bot_request){ build(:bot_request, current: Topic::Messages.received(source: :messages, text: 'favourite')) }
+    let(:bot_request){ build(:bot_request, current: ::Request::Events::Messages.received(source: :messages, text: 'favourite')) }
 
     it 'sets the correct data' do
       allow(Topic::Sns).to receive(:broadcast).with(topic: :recipes, request: bot_request)
@@ -46,7 +46,7 @@ describe Service::Intent::Controller do
       allow(Topic::Sns).to receive(:broadcast).with(topic: :recipes, request: bot_request)
       expect{ 
         subject.call(bot_request)
-      }.to change { bot_request.name }.from(Topic::Messages::RECEIVED).to(Topic::Recipes::FAVOURITES_SEARCH_REQUESTED)
+      }.to change { bot_request.name }.from(::Request::Events::Messages::RECEIVED).to(::Request::Events::Recipes::FAVOURITES_SEARCH_REQUESTED)
     end
 
     it 'should brodacast the event to the intent topic' do

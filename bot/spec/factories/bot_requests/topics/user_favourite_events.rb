@@ -1,40 +1,40 @@
-require 'topic/event'
-require 'topic/topic'
+require 'request/event'
+require 'request/events/topic'
 
 module TopicHelper
-  extend Topic::Base
+  extend Request::Base
 end
 
 FactoryBot.define do
   
-  factory :user_favourite_new, class: Topic::Event do
+  factory :user_favourite_new, class: ::Request::Event do
 
     source { :test_source }
     favourite_recipe_id { 'test-recipe-id-123' }
 
-    initialize_with{ Topic::Users.favourite_new(source: source, favourite_recipe_id: favourite_recipe_id) }
+    initialize_with{ ::Request::Events::Users.favourite_new(source: source, favourite_recipe_id: favourite_recipe_id) }
 
   end
 
-  factory :user_favourite_destroy, class: Topic::Event do
+  factory :user_favourite_destroy, class: ::Request::Event do
 
     source { :test_source }
     favourite_recipe_id { 'test-recipe-id-123' }
 
-    initialize_with{ Topic::Users.favourite_new(source: source, favourite_recipe_id: favourite_recipe_id) }
+    initialize_with{ ::Request::Events::Users.favourite_new(source: source, favourite_recipe_id: favourite_recipe_id) }
 
   end
 
-  factory :user_favourites_updated, class: Topic::Event do
+  factory :user_favourites_updated, class: ::Request::Event do
 
     source { :test_source }
     favourite_recipe_ids { [ generate(:recipe_id) ] }
 
-    initialize_with{ Topic::Users.favourites_updated(source: source, favourite_recipe_ids: favourite_recipe_ids) }
+    initialize_with{ ::Request::Events::Users.favourites_updated(source: source, favourite_recipe_ids: favourite_recipe_ids) }
 
   end
   
-  factory :favourites_found, class: Topic::Event do
+  factory :favourites_found, class: ::Request::Event do
 
     source { :test_source }
     recipes { Factory::Support::Spoonacular.information_bulk_beef_rendang }
@@ -44,7 +44,7 @@ FactoryBot.define do
     per_page { }
     total_results { }
 
-    initialize_with{ Topic::Recipes.found( source: source, 
+    initialize_with{ ::Request::Events::Recipes.found( source: source, 
                                           recipes: recipes, 
                                             query: query, 
                              favourite_recipe_ids: favourite_recipe_ids, 

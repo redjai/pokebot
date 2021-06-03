@@ -1,4 +1,4 @@
-require 'topic/topic'
+require 'request/events/topic'
 require 'service/user/controller'
 require 'topic/sns'
 require 'service/user/storage'
@@ -28,7 +28,7 @@ describe Service::User::Controller do
       it 'should create an account update event' do
         expect{
           subject.call(bot_request)
-        }.to change{ bot_request.name }.from(Topic::Users::ACCOUNT_EDIT_REQUESTED).to(Topic::Users::ACCOUNT_READ)
+        }.to change{ bot_request.name }.from(::Request::Events::Users::ACCOUNT_EDIT_REQUESTED).to(::Request::Events::Users::ACCOUNT_READ)
       end  
 
       it 'should not create a new  user' do
@@ -63,7 +63,7 @@ describe Service::User::Controller do
       it 'should create an account update event' do
         expect{
           subject.call(bot_request)
-        }.to change{ bot_request.name }.from(Topic::Users::ACCOUNT_EDIT_REQUESTED).to(Topic::Users::ACCOUNT_READ)
+        }.to change{ bot_request.name }.from(::Request::Events::Users::ACCOUNT_EDIT_REQUESTED).to(::Request::Events::Users::ACCOUNT_READ)
       end  
 
       it 'should create a new user user' do

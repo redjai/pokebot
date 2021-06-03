@@ -1,4 +1,4 @@
-require 'topic/event'
+require 'request/event'
 require 'honeybadger'
 require 'logger'
 require_relative 'logger'
@@ -69,7 +69,7 @@ module Lambda
         @accepts ||= begin
           @accept_definition.collect do |topic, events|
             events.collect do |event|
-              Class.const_get("Topic::#{topic.to_s.capitalize}::#{event.upcase}")
+              Class.const_get("::Request::Events::#{topic.to_s.capitalize}::#{event.upcase}")
             end
           end.flatten
        end
@@ -89,7 +89,7 @@ module Lambda
       def sqs_record_bot_request(aws_record)
         record = data(aws_record)
         event = JSON.parse(record["Message"])
-        Topic::Request.new current: event['current'], trail: event['trail'], context: Topic::SlackContext.from_h(event['context'])
+        ::Request::Request.new current: event['current'], trail: event['trail'], context: ::Request::SlackContext.from_h(event['context'])
       end
 
       def data(aws_event)

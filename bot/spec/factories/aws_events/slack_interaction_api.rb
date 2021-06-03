@@ -1,6 +1,6 @@
 require_relative '../fixtures/aws_events/interaction_api/favourites_interaction_aws_event'
 require_relative '../fixtures/aws_events/interaction_api/more_results_interaction_event'
-require 'topic/base'
+require 'request/base'
 
 FactoryBot.define do
 

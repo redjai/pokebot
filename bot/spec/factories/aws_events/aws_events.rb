@@ -1,7 +1,7 @@
-require 'topic/base'
+require 'request/base'
 
 module TopicHelper
-  extend Topic::Base
+  extend Request::Base
 
 end
 

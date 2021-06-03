@@ -1,4 +1,4 @@
-require 'topic/topic'
+require 'request/events/topic'
 require 'service/interaction/controller'
 
 module Interactions
@@ -6,7 +6,7 @@ module Interactions
     def self.handle(event:, context:)
       Bot::LOGGER.debug(event)
       begin
-        bot_request = Topic::Slack.interaction_request(event)
+        bot_request = ::Request::Events::Slack.interaction_request(event)
         Bot::LOGGER.debug(bot_request.data.inspect) # payload is encrypted
         Service::Interaction::Controller.call(bot_request)
         { statusCode: 204 }

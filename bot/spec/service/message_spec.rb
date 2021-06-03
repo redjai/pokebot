@@ -1,12 +1,12 @@
 require 'service/message/controller'
 require 'topic/sns'
-require 'topic/topic'
-require 'topic/event'
+require 'request/events/topic'
+require 'request/event'
 
 describe Service::Message::Controller do
 
   let(:aws_records_event){ build(:slack_api_request_aws_event, text: "<USER> test message") }
-  let(:bot_request){ Topic::Slack.api_request(aws_records_event) }
+  let(:bot_request){ ::Request::Events::Slack.api_request(aws_records_event) }
 
   it 'should strip the user from the slack message text and add it to the event' do
     allow(Topic::Sns).to receive(:broadcast).with(topic: :messages, request: bot_request)
@@ -19,7 +19,7 @@ describe Service::Message::Controller do
     allow(Topic::Sns).to receive(:broadcast).with(topic: :messages, request: bot_request)
     expect{ 
       subject.call(bot_request)
-    }.to change { bot_request.name }.from(Topic::Slack::EVENT_API_REQUEST).to(Topic::Messages::RECEIVED)
+    }.to change { bot_request.name }.from(::Request::Events::Slack::EVENT_API_REQUEST).to(::Request::Events::Messages::RECEIVED)
   end
 
   it 'should broadcast the event to the messages topic' do

@@ -1,4 +1,4 @@
-describe Topic::Request do
+describe ::Request::Request do
 
   
 end

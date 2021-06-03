@@ -1,6 +1,6 @@
-require 'topic/event'
+require 'request/event'
 require 'handlers/lambda/event'
-require 'topic/topic'
+require 'request/events/topic'
 
 module User
   class Handler

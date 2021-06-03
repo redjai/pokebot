@@ -1,7 +1,7 @@
 require 'handlers/recipes'
 require 'service/recipe/controller'
-require 'topic/topic'
-require 'topic/topic'
+require 'request/events/topic'
+require 'request/events/topic'
 
 describe 'handler' do
 
@@ -11,10 +11,10 @@ describe 'handler' do
   
   context 'recipe search' do
 
-    let(:bot_event){ Topic::Recipes.search_requested(source: :intent, query: 'beef rendang') }
+    let(:bot_event){ ::Request::Events::Recipes.search_requested(source: :intent, query: 'beef rendang') }
 
     it 'should call the controller with a bot event' do
-      expect(Service::Recipe::Controller).to receive(:call).with(kind_of(Topic::Request))
+      expect(Service::Recipe::Controller).to receive(:call).with(kind_of(::Request::Request))
       Recipes::Handler.handle(event: aws_records_event, context: context)
     end
 
@@ -22,10 +22,10 @@ describe 'handler' do
 
   context 'favourites search' do
 
-    let(:bot_event){ Topic::Recipes.favourites_requested(source: :intent) }
+    let(:bot_event){ ::Request::Events::Recipes.favourites_requested(source: :intent) }
 
     it 'should call the controller with a bot event' do
-      expect(Service::Recipe::Controller).to receive(:call).with(kind_of(Topic::Request))
+      expect(Service::Recipe::Controller).to receive(:call).with(kind_of(::Request::Request))
       Recipes::Handler.handle(event: aws_records_event, context: context)
     end
 
@@ -33,10 +33,10 @@ describe 'handler' do
   
   context 'favourites updated' do
 
-    let(:bot_event){ Topic::Users.favourites_updated(source: :intent, favourite_recipe_ids: ['12345','45678']) }
+    let(:bot_event){ ::Request::Events::Users.favourites_updated(source: :intent, favourite_recipe_ids: ['12345','45678']) }
 
     it 'should call the controller with a bot event' do
-      expect(Service::Recipe::Controller).to receive(:call).with(kind_of(Topic::Request))
+      expect(Service::Recipe::Controller).to receive(:call).with(kind_of(::Request::Request))
       Recipes::Handler.handle(event: aws_records_event, context: context)
     end
 

@@ -1,12 +1,12 @@
-require 'topic/topic'
+require 'request/events/topic'
 require 'service/command/controller'
-require 'topic/topic'
+require 'request/events/topic'
 
 module Command 
   class Handler
     def self.handle(event:, context:)
       begin
-        bot_request = Topic::Slack.command_request(event)
+        bot_request = ::Request::Events::Slack.command_request(event)
         Service::Command::Controller.call(bot_request)
         { statusCode: 204 }
       rescue StandardError => e

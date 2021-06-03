@@ -1,7 +1,7 @@
 def handler(service)
 %{
 require 'handlers/lambda/event'
-require 'topic/topic'
+require 'request/events/topic'
 
 module #{service.capitalize}  
   class Handler
@@ -53,7 +53,7 @@ end
 def spec(service)
 %{
 require 'handlers/#{service}'
-require 'topic/topic'
+require 'request/events/topic'
 
 describe #{service.capitalize}::Handler do
 

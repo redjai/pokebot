@@ -1,6 +1,6 @@
 require 'handlers/responder'
-require 'topic/topic'
-require 'topic/topic'
+require 'request/events/topic'
+require 'request/events/topic'
 require 'service/responder/controller'
 
 describe Responder::Handler do
@@ -11,7 +11,7 @@ describe Responder::Handler do
     let(:aws_event){ build(:aws_records_event, bot_request: bot_request) }
 
     it 'should call the service controller' do
-      expect(Service::Responder::Controller).to receive(:call).with(kind_of(Topic::Request))
+      expect(Service::Responder::Controller).to receive(:call).with(kind_of(::Request::Request))
       Responder::Handler.handle(event: aws_event, context: {})
     end      
 
@@ -23,7 +23,7 @@ describe Responder::Handler do
     let(:aws_event){ build(:aws_records_event, bot_request: bot_request) }
 
     it 'should call the service controller' do
-      expect(Service::Responder::Controller).to receive(:call).with(kind_of(Topic::Request))
+      expect(Service::Responder::Controller).to receive(:call).with(kind_of(::Request::Request))
       Responder::Handler.handle(event: aws_event, context: {})
     end      
 
@@ -35,7 +35,7 @@ describe Responder::Handler do
     let(:aws_event){ build(:aws_records_event, bot_request: bot_request) }
 
     it 'should call the service controller' do
-      expect(Service::Responder::Controller).to receive(:call).with(kind_of(Topic::Request))
+      expect(Service::Responder::Controller).to receive(:call).with(kind_of(::Request::Request))
       Responder::Handler.handle(event: aws_event, context: {})
     end      
 

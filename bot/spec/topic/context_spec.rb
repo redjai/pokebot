@@ -1,7 +1,7 @@
-require 'topic/event'
-require 'topic/base'
+require 'request/event'
+require 'request/base'
 
-describe Topic::SlackContext do
+describe ::Request::SlackContext do
 
   context 'to and from h' do
     let(:channel){ 'test-channel' } 
@@ -22,7 +22,7 @@ describe Topic::SlackContext do
     }
 
     context 'to_h' do
-      subject{ Topic::SlackContext.new(slack_id: slack_id, 
+      subject{ ::Request::SlackContext.new(slack_id: slack_id, 
                                         channel: channel, 
                                      message_ts: message_ts, 
                                      trigger_id: trigger_id,
@@ -36,7 +36,7 @@ describe Topic::SlackContext do
     end
 
     context 'from_h' do
-      subject{ Topic::SlackContext.from_h(to_h) }
+      subject{ ::Request::SlackContext.from_h(to_h) }
 
       it 'should assign slack_id' do
         expect(subject.slack_id).to eq slack_id

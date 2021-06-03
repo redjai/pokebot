@@ -1,9 +1,9 @@
-module Topic
+module Request 
   class Request 
     
     attr_reader :current, :context
 
-    def initialize(current:, context: Topic::SlackContext.new, trail: [])
+    def initialize(current:, context: ::Request::SlackContext.new, trail: [])
       @context = context
       @current = current.to_h
       @trail = trail

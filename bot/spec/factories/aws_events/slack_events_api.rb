@@ -1,9 +1,9 @@
 require_relative '../fixtures/aws_events/events_api/recipe_search_api_event'
 require_relative '../fixtures/aws_events/events_api/challenge'
-require 'topic/base'
+require 'request/base'
 
 module TopicHelper
-  extend Topic::Base
+  extend Request::Base
 
 end
 

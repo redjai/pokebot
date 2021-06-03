@@ -2,7 +2,7 @@ require_relative 'request'
 require_relative 'context'
 require 'json'
 
-module Topic
+module Request 
   class Event
     
     attr_reader :record, :intent

@@ -1,4 +1,4 @@
-require 'topic/topic'
+require 'request/events/topic'
 require 'service/user/controller'
 require 'topic/sns'
 require 'service/user/storage'
@@ -27,7 +27,7 @@ describe Service::User::Controller do
       it 'should change the event from requested to found' do
         expect{
           subject.call(bot_request)
-        }.to change { bot_request.name }.from(Topic::Users::ACCOUNT_SHOW_REQUESTED).to(Topic::Users::ACCOUNT_READ)
+        }.to change { bot_request.name }.from(::Request::Events::Users::ACCOUNT_SHOW_REQUESTED).to(::Request::Events::Users::ACCOUNT_READ)
       end
 
       it 'should set nil user data' do
@@ -46,7 +46,7 @@ describe Service::User::Controller do
       it 'should change the event from requested to found' do
         expect{
           subject.call(bot_request)
-        }.to change { bot_request.name }.from(Topic::Users::ACCOUNT_SHOW_REQUESTED).to(Topic::Users::ACCOUNT_READ)
+        }.to change { bot_request.name }.from(::Request::Events::Users::ACCOUNT_SHOW_REQUESTED).to(::Request::Events::Users::ACCOUNT_READ)
       end
       
       it 'should set the found user data' do

@@ -1,6 +1,6 @@
 require 'handlers/intent'
 require 'service/intent/controller'
-require 'topic/topic'
+require 'request/events/topic'
 
 describe 'handler' do
 
@@ -9,7 +9,7 @@ describe 'handler' do
   let(:context){ {} }
 
   it 'should call the controller with a bot event' do
-    expect(Service::Intent::Controller).to receive(:call).with(kind_of(Topic::Request))
+    expect(Service::Intent::Controller).to receive(:call).with(kind_of(::Request::Request))
     Intent::Handler.handle(event: aws_records_event, context: context)
   end
 

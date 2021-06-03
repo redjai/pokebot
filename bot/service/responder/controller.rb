@@ -11,19 +11,19 @@ module Service
 
       def respond_to_slack(bot_request)
         case bot_request.name
-        when Topic::Recipes::FOUND
+        when ::Request::Events::Recipes::FOUND
           require_relative 'actions/recipes/index'
           Service::Responder::Actions::Recipes::Index.call(bot_request)
-        when Topic::Messages::RECEIVED
+        when ::Request::Events::Messages::RECEIVED
           require_relative 'actions/searching/index'
           Service::Responder::Actions::Searching::Index.call(bot_request)
-        when Topic::Users::FAVOURITES_UPDATED
+        when ::Request::Events::Users::FAVOURITES_UPDATED
           require_relative 'actions/favourites/updated'
           Service::Responder::Actions::Favourites::Updated.call(bot_request)
-        when Topic::Users::ACCOUNT_READ
+        when ::Request::Events::Users::ACCOUNT_READ
           require_relative 'actions/account/read'
           Service::Responder::Actions::Account::Read.call(bot_request)
-        when Topic::Users::ACCOUNT_UPDATED
+        when ::Request::Events::Users::ACCOUNT_UPDATED
           require_relative 'actions/account/updated'
           Service::Responder::Actions::Account::Updated.call(bot_request)
         else

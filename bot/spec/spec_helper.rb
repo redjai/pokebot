@@ -3,7 +3,7 @@ $: << File.dirname(File.expand_path('..',__FILE__))
 require 'factory_bot'
 require 'climate_control'
 require 'webmock/rspec'
-require 'handlers/lambda/logger'
+require 'handlers/processors/logger'
 require 'faker'
 
 WebMock.disable_net_connect!(allow_localhost: true) #we are using dynamodb with localhost

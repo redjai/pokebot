@@ -1,13 +1,13 @@
 def handler(service)
 %{
-require 'handlers/lambda/event'
-require 'request/events/topic'
+require 'handlers/processors/sqs'
+
 
 module #{service.capitalize}  
   class Handler
     def self.handle(event:, context:)
-      puts event
-      Lambda::Event.process_sqs(aws_event: event, controller: :#{service}, accept: {
+      Bot::LOGGER.debug(event)
+      Processors::Sqs.process_sqs(aws_event: event, controller: :#{service}, accept: {
         # topic: %w{ event1 event2 },
       })
     end
@@ -53,7 +53,7 @@ end
 def spec(service)
 %{
 require 'handlers/#{service}'
-require 'request/events/topic'
+
 
 describe #{service.capitalize}::Handler do
 

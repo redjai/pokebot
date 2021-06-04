@@ -1,5 +1,5 @@
 require 'topic/sns'
-require 'handlers/lambda/http_response'
+require 'handlers/processors/http_response'
 require_relative 'search'
 
 module Service

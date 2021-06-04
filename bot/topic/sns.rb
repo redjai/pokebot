@@ -1,4 +1,4 @@
-require 'handlers/lambda/event'
+require 'handlers/processors/sqs'
 require 'aws-sdk-sns'
 require 'json'
 

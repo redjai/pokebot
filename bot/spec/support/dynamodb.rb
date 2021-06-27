@@ -1,12 +1,23 @@
 require 'aws-sdk-dynamodb'
 
-ENV['DYNAMO_ENDPOINT'] = 'https://localhost:4566' 
-ENV['VERIFY_SSL_PEER'] = 'false'
 
-def table!(table)
+def stringify_keys(hash)
+  n = hash.map do |k,v|
+    v_str = if v.instance_of? Hash
+              Hash[v.stringify_keys(v)]
+            else
+              v
+            end
+
+    [k.to_s, v_str]
+  end
+  Hash[n]
+end
+
+def table!(const, table)
   around do |example|
     DbSpec.create_table(table) 
-    ClimateControl.modify FAVOURITES_TABLE_NAME: table do
+    ClimateControl.modify const => table do
       example.run
     end
     DbSpec.delete_table(table)
@@ -72,6 +83,25 @@ module DbSpec
         attribute_definitions: [
           {
             attribute_name: 'user_id',
+            attribute_type: 'S'
+          }
+        ],
+        provisioned_throughput: {
+          read_capacity_units: 10,
+          write_capacity_units: 10
+        }
+      },
+      'test-clients-table' => {
+        table_name: 'test-clients-table',
+        key_schema: [
+          {
+            attribute_name: 'client_id',
+            key_type: 'HASH'  # Partition key.
+          }
+        ],
+        attribute_definitions: [
+          {
+            attribute_name: 'client_id',
             attribute_type: 'S'
           }
         ],

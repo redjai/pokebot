@@ -93,7 +93,8 @@ custom:
   config: ${file(config.${self:provider.stage}.yml)}
   favourites_table: ${self:service}-${self:provider.stage}-favourites-service-favourites
   recipe_favourites_table: ${self:service}-${self:provider.stage}-recipe-service-favourites
- 
+  kanbanize_boards_table: ${self:service}-${self.provider.stage}-kanbanize-boards
+
 functions:
   messages:
     handler: handlers/messages.Messages::Handler.handle
@@ -207,6 +208,18 @@ functions:
     environment:
       FAVOURITES_TABLE_NAME: ${self:custom.favourites_table}
       USERS_TOPIC_ARN: !Ref UsersSnsTopic
+
+  kanbanize:
+    handler: handlers/kanbanize.Kanbanize::Handler.handle
+    layers:
+      - {Ref: GemsLambdaLayer}
+    events:
+      - schedule: 
+          name: 'kanbanize-transitions-blocks-activities'
+          description: 'test-rate-schedule'
+          rate: rate(2 minutes)
+          input:
+            action: 'transition-blocked-activities'
 
 resources:
   Resources:
@@ -575,5 +588,21 @@ resources:
             AttributeType: S
         KeySchema:
           - AttributeName: user_id
+            KeyType: HASH 
+        BillingMode: PAY_PER_REQUEST
+    
+    #######################################
+    # Kanbanize Boards Table
+    ######################################      
+    RecipeFavouritesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.kanbanize_boards_table}
+        AttributeDefinitions:
+          -
+            AttributeName: board_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: board_id
             KeyType: HASH 
         BillingMode: PAY_PER_REQUEST

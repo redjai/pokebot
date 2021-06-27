@@ -32,7 +32,7 @@ describe Service::Recipe::Controller do
       let(:information_bulk_uri){ 'https://api.spoonacular.com/recipes/informationBulk' }
       let(:table) { 'test-recipe-user-table' }
 
-      table!('test-recipe-user-table')
+      table!(:FAVOURITES_TABLE_NAME,'test-recipe-user-table')
 
       around do |example|
         ClimateControl.modify SPOONACULAR_API_KEY: api_key do

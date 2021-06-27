@@ -143,6 +143,18 @@ FactoryBot.define do
       end
     end
 
+    trait :with_kanbanize_import_transition_activities do
+      transient do
+        bot_event { build(:kanbanize_import_transition_activities) }
+      end
+    end
+
+    trait :with_activities_imported do
+      transient do
+        bot_event { build(:activities_imported) }
+      end
+    end
+
     initialize_with{ ::Request::Request.new(current: current, context: context, trail: trail) }
   end
 

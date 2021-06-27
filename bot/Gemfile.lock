@@ -19,6 +19,13 @@ GEM
     aws-sdk-dynamodb (1.59.0)
       aws-sdk-core (~> 3, >= 3.112.0)
       aws-sigv4 (~> 1.1)
+    aws-sdk-kms (1.44.0)
+      aws-sdk-core (~> 3, >= 3.112.0)
+      aws-sigv4 (~> 1.1)
+    aws-sdk-s3 (1.96.1)
+      aws-sdk-core (~> 3, >= 3.112.0)
+      aws-sdk-kms (~> 1)
+      aws-sigv4 (~> 1.1)
     aws-sdk-sns (1.38.0)
       aws-sdk-core (~> 3, >= 3.112.0)
       aws-sigv4 (~> 1.1)
@@ -67,6 +74,7 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk-dynamodb
+  aws-sdk-s3
   aws-sdk-sns
   climate_control
   factory_bot
@@ -76,4 +84,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   2.2.13
+   2.2.17

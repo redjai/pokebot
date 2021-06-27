@@ -12,7 +12,7 @@ describe Service::User::Controller do
   let(:kanbanize_username){ bot_request.data['kanbanize_username'] }
   let(:bot_request){ build(:bot_request, :with_event_context, :with_user_account_update_requested) }
   
-  table!('test-user-table')
+  table!(:FAVOURITES_TABLE_NAME,'test-user-table')
   
   context 'update requested' do
 

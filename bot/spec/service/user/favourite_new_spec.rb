@@ -11,7 +11,7 @@ describe Service::User::Controller do
   let(:favourite){ "234567" }
   let(:item){ Service::User::Storage.read bot_request.context.slack_id } 
   
-  table!('test-user-table')
+  table!(:FAVOURITES_TABLE_NAME,'test-user-table')
 
   context 'recipes' do
 

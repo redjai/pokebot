@@ -8,7 +8,7 @@ describe Service::User::Controller do
   let(:table){ 'test-user-table' } 
   let(:user){ Service::User::Storage.read bot_request.context.slack_id } 
   
-  table!('test-user-table')
+  table!(:FAVOURITES_TABLE_NAME,'test-user-table')
 
   context 'user requests account show' do
 

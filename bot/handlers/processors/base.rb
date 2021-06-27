@@ -10,12 +10,7 @@ module Processors
       Bot::LOGGER.debug "Record in:"
       Bot::LOGGER.debug bot_request.to_json
       if accept?(bot_request)
-        require_controller
-        if block_given?
-          yield bot_request
-        else
-          call(bot_request)
-        end 
+        call(bot_request)
       else
         Bot::LOGGER.debug("event #{bot_request.name} not accepted by this service. expected #{accepts}")
       end
@@ -26,6 +21,7 @@ module Processors
     end
 
     def call(bot_request)
+      require_controller
       controller.call(bot_request)
     end
 

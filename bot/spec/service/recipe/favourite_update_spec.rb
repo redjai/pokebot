@@ -9,7 +9,7 @@ describe Service::Recipe::Controller do
   let(:favourites){ bot_request.data['favourite_recipe_ids']  }
   let(:item){ Service::Recipe::User.read bot_request.context.slack_id } 
   
-  table!('test-recipe-user-table')
+  table!(:FAVOURITES_TABLE_NAME,'test-recipe-user-table')
 
   context 'user does not exist' do
     

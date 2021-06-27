@@ -20,13 +20,13 @@ module Service
         bot_request.current = ::Request::Events::Kanbanize.activities_imported(
           source: :kanbanize,
           activities: activities(
+            kanbanize_api_key: client.kanbanize_api_key,
+            subdomain: client.subdomain,
             board_id: client.board_id,
             event_type: bot_request.data['event_type']
           ),
           board_id: client.board_id
         )
-        
-        puts bot_request.data['activities'].inspect
 
         set_last_board(client.id, client.board_id)
 
@@ -36,13 +36,13 @@ module Service
         )
       end
 
-      def activities(board_id:, event_type:, date_range: yesterday) 
-        uri = uri(function: :get_board_activities)
+      def activities(kanbanize_api_key:, subdomain:, board_id:, event_type:, date_range: yesterday) 
+        uri = uri(subdomain: subdomain, function: :get_board_activities)
         activities = []
         page = 1
         loop do
           body = body(board_id: board_id, from_date: date_range[:from], to_date: date_range[:to], event_type: event_type, page: page)
-          result = post(uri: uri, body: body)
+          result = post(kanbanize_api_key: kanbanize_api_key, uri: uri, body: body)
           activities += result['activities']
           break unless result["allactivities"].to_i > page.to_i * page_size.to_i
           page += 1

@@ -9,4 +9,6 @@ topics:
     - responder
     - recipes
     - users
+  kanbanize:
+    - kanbanize
 

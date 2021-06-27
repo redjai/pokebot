@@ -12,6 +12,14 @@ module Service
           @client = data
         end
 
+        def kanbanize_api_key
+          @client['kanbanize_api_key']
+        end
+
+        def subdomain
+          @client['subdomain']
+        end
+
         def id
           @client['client_id']
         end
@@ -36,12 +44,14 @@ module Service
         @@dynamo_resource = Aws::DynamoDB::Resource.new(options)
       end
 
-      def create_client(client_id, board_ids)
+      def create_client(client_id, board_ids, kanbanize_api_key, subdomain)
         dynamo_resource.client.put_item(
           {
             item: {
               "client_id" => client_id,
-              "board_ids" => board_ids
+              "board_ids" => board_ids,
+              "kanbanize_api_key" => kanbanize_api_key,
+              "subdomain" => subdomain 
             },
             table_name: ENV['KANBANIZE_CLIENTS_TABLE_NAME']
           }

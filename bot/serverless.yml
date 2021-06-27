@@ -52,6 +52,13 @@ provider:
       Resource: !Ref UsersSnsTopic # !Ref returns the ARN of SNS topic in the resources element below:
     
 
+    # ALLOW THE iamRole TO PUBLISH TO THE 'kanbanize' SNS Topic
+    - Effect: "Allow"
+      Action:
+        - "SNS:Publish"
+      Resource: !Ref KanbanizeSnsTopic # !Ref returns the ARN of SNS topic in the resources element below:
+    
+
     #AUTO-END-TOPIC-ROLE-STATEMENTS
 
     - Effect: "Allow"
@@ -82,6 +89,20 @@ provider:
         Fn::GetAtt:
           - RecipeFavouritesTable
           - Arn
+    - Effect: "Allow"
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:BatchGetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:BatchWriteItem
+      Resource:
+        Fn::GetAtt:
+          - KanbanizeClientsTable
+          - Arn
 
 layers:
   gems:
@@ -93,7 +114,7 @@ custom:
   config: ${file(config.${self:provider.stage}.yml)}
   favourites_table: ${self:service}-${self:provider.stage}-favourites-service-favourites
   recipe_favourites_table: ${self:service}-${self:provider.stage}-recipe-service-favourites
-  kanbanize_boards_table: ${self:service}-${self.provider.stage}-kanbanize-boards
+  kanbanize_clients_table: ${self:service}-${self:provider.stage}-kanbanize-clients
 
 functions:
   messages:
@@ -214,12 +235,21 @@ functions:
     layers:
       - {Ref: GemsLambdaLayer}
     events:
+      - sqs:
+         arn:
+           Fn::GetAtt:
+             - KanbanizeToKanbanizeSqsQueue
+             - Arn
       - schedule: 
           name: 'kanbanize-transitions-blocks-activities'
           description: 'test-rate-schedule'
           rate: rate(2 minutes)
           input:
-            action: 'transition-blocked-activities'
+            client_id: 'livelink'
+            action: 'kanbanize-import-activities'
+    environment:
+      KANBANIZE_CLIENTS_TABLE_NAME: ${self:custom.kanbanize_clients_table}
+      KANBANIZE_TOPIC_ARN: !Ref KanbanizeSnsTopic
 
 resources:
   Resources:
@@ -557,6 +587,58 @@ resources:
         - UsersToUsersSubscription
       
 
+
+    #### AUTO GENERATED TOPIC - 'kanbanize' 
+    #################################
+    KanbanizeSnsTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:service}-${self:provider.stage}-kanbanize
+     
+
+
+    #### AUTO GENERATED QUEUE - 'kanbanize'
+    KanbanizeToKanbanizeSqsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-${self:provider.stage}-sns-kanbanize-to-sqs-kanbanize
+    
+    #### AUTO GENERATED - ATTACH 'kanbanize' TOPIC to 'kanbanize' QUEUE
+    KanbanizeToKanbanizeSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn: !Ref KanbanizeSnsTopic
+        Endpoint: !GetAtt
+          - KanbanizeToKanbanizeSqsQueue
+          - Arn
+        Protocol: sqs
+      DependsOn:
+        - KanbanizeSnsTopic
+        - KanbanizeToKanbanizeSqsQueue
+    
+    #### AUTO GENERATED - ALLOW 'kanbanize' TOPIC to send messages to 'kanbanize' QUEUE
+    SnSKanbanizeToSQSKanbanizeSqsQueuePolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Sid: "allow-sns-kanbanize"
+              Effect: Allow
+              Principal: "*"
+              Resource: !GetAtt
+                - KanbanizeToKanbanizeSqsQueue
+                - Arn
+              Action: "SQS:SendMessage"
+              Condition:
+                ArnEquals:
+                  "aws:SourceArn": !Ref KanbanizeSnsTopic 
+        Queues:
+          - Ref: KanbanizeToKanbanizeSqsQueue
+      DependsOn:
+        - KanbanizeToKanbanizeSubscription
+      
+
     #AUTO-END-TOPICS
 
     #######################################
@@ -592,17 +674,17 @@ resources:
         BillingMode: PAY_PER_REQUEST
     
     #######################################
-    # Kanbanize Boards Table
+    # Kanbanize Clients Table
     ######################################      
-    RecipeFavouritesTable:
+    KanbanizeClientsTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.kanbanize_boards_table}
+        TableName: ${self:custom.kanbanize_clients_table}
         AttributeDefinitions:
           -
-            AttributeName: board_id
+            AttributeName: client_id
             AttributeType: S
         KeySchema:
-          - AttributeName: board_id
+          - AttributeName: client_id
             KeyType: HASH 
         BillingMode: PAY_PER_REQUEST

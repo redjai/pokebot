@@ -8,8 +8,10 @@ describe Service::Kanbanize::ImportBoardActivities do
   table!(:KANBANIZE_CLIENTS_TABLE_NAME, 'test-clients-table') 
 
   let(:client_id) { bot_request.data['client_id'] }
+  let(:kanbanize_api_key){ 'test-api-key' }
+  let(:subdomain){ 'test-subdomain' }
 
-  let!(:kanbanize_client){ described_class.create_client(client_id, ["11","12","17"]) ; described_class.get_client(client_id) }
+  let!(:kanbanize_client){ described_class.create_client(client_id, ["11","12","17"], kanbanize_api_key, subdomain) ; described_class.get_client(client_id) }
 
   let(:from_date){ (Date.today - 1).strftime("%Y-%m-%d")  }
   let(:to_date){ (Date.today).strftime("%Y-%m-%d")  }
@@ -37,9 +39,9 @@ describe Service::Kanbanize::ImportBoardActivities do
 
   before do
     allow(Topic::Sns).to receive(:broadcast).with(topic: :kanbanize, request: bot_request)
-    expect(Service::Kanbanize::ImportBoardActivities).to receive(:post).with(uri: uri, body: body1).and_return(response_1)
-    expect(Service::Kanbanize::ImportBoardActivities).to receive(:post).with(uri: uri, body: body2).and_return(response_2)
-    expect(Service::Kanbanize::ImportBoardActivities).to receive(:post).with(uri: uri, body: body3).and_return(response_3)
+    expect(Service::Kanbanize::ImportBoardActivities).to receive(:post).with(uri: uri, body: body1, kanbanize_api_key: kanbanize_api_key).and_return(response_1)
+    expect(Service::Kanbanize::ImportBoardActivities).to receive(:post).with(uri: uri, body: body2, kanbanize_api_key: kanbanize_api_key).and_return(response_2)
+    expect(Service::Kanbanize::ImportBoardActivities).to receive(:post).with(uri: uri, body: body3, kanbanize_api_key: kanbanize_api_key).and_return(response_3)
   end
 
   context 'pagination' do

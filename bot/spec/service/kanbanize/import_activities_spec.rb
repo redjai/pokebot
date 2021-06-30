@@ -1,7 +1,7 @@
 require 'service/kanbanize/controller'
 require 'topic/sns'
 require 'request/event'
-
+require 'service/kanbanize/import_board_activities'
 
 describe Service::Kanbanize::ImportBoardActivities do
 
@@ -13,8 +13,8 @@ describe Service::Kanbanize::ImportBoardActivities do
 
   let!(:kanbanize_client){ described_class.create_client(client_id, ["11","12","17"], kanbanize_api_key, subdomain) ; described_class.get_client(client_id) }
 
-  let(:from_date){ (Date.today - 1).strftime("%Y-%m-%d")  }
-  let(:to_date){ (Date.today).strftime("%Y-%m-%d")  }
+  let(:from_date){ (Date.today).strftime("%Y-%m-%d")  }
+  let(:to_date){ (Date.today + 1).strftime("%Y-%m-%d")  }
 
   let(:bot_request){ build(:bot_request, :with_kanbanize_import_transition_activities) } 
   let(:response_1){ { "allactivities" => "6", "page" => "1", "activities" => [build(:activity), build(:activity)] } }

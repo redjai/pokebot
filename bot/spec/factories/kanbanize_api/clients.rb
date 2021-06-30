@@ -1,3 +1,6 @@
+require 'service/kanbanize/api'
+require 'service/kanbanize/client'
+
 FactoryBot.define do
   factory :clienti, class: Service::Kanbanize::Storage::Client do
 

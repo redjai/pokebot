@@ -19,10 +19,12 @@ module Request
 
       def cron_event(aws_event)
         aws_event['date'] ||= Date.today.to_s
-        ::Request::Event.new(name: ::Request::Events::Cron::SCHEDULED_REQUEST,
-                       source: 'aws-cron',
-                      version: 1.0,
-                         data: aws_event)  
+        ::Request::Event.new(
+          name: ::Request::Events::Cron::SCHEDULED_REQUEST,
+          source: 'aws-cron',
+          version: 1.0,
+          data: aws_event
+        )  
       end
     end
   end

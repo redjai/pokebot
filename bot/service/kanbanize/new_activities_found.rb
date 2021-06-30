@@ -5,14 +5,24 @@ require 'aws-sdk-s3'
 
 module Service
   module Kanbanize
-    module BoardActivitiesImported # change this name 
+    module NewActivitiesFound # change this name 
       extend self
 
       def call(bot_request)
-        activities = Activities.new(bot_request.data['board_id'], bot_request.data['activities'])
+        activities = Activities.new(
+          bot_request.data['client_id'], 
+          bot_request.data['board_id'], 
+          bot_request.data['activities']
+        )
+
         activities.store_new_activities!
         
-        bot_request.current = activities.new_activities_event
+        bot_request.current = Request::Events::Kanbanize.new_activities_found(
+                                source: self.class.name, 
+                                client_id: bot_request.data['client_id'],
+                                board_id: bot_request.data['board_id'],
+                                activities: activities.to_a
+                              )
 
         Topic::Sns.broadcast(
           topic: :kanbanize,
@@ -32,9 +42,10 @@ module Service
         client.bucket(ENV['KANBANIZE_IMPORTS_BUCKET'])
       end
 
-      def initialize(board_id, activities)
+      def initialize(client_id, board_id, activities)
         @board_id = board_id
-        @activities = activities.collect{|a| Activity.new(board_id, a)}
+        @client_id = client_id
+        @activities = activities.collect{|a| Activity.new(client_id, board_id, a)}
       end
 
       def new_activities
@@ -58,10 +69,17 @@ module Service
 
       def new_activities_event
         Request::Events::Kanbanize.new_activities_found(
+          client_id: @client_id,
           source: self.class.name, 
           board_id: @board_id, 
           activities: new_activities.collect{ |new_activity| new_activity.data }
         )
+      end
+
+      def to_a
+        new_activities.collect do |activity|
+          activity.data
+        end
       end
 
     end
@@ -70,7 +88,8 @@ module Service
 
       attr_accessor :data
 
-      def initialize(board_id, activity)
+      def initialize(client_id, board_id, activity)
+        @client_id = client_id
         @board_id = board_id
         @data = activity
       end
@@ -96,11 +115,11 @@ module Service
       end
 
       def task_id
-        data['task_id']
+        data['taskid']
       end
 
       def key
-        File.join("imports", "activities", year.to_s, month.to_s, day.to_s, @board_id, task_id, file)
+        File.join("imports", "activities", year.to_s, month.to_s, day.to_s, @client_id, @board_id, task_id, file)
       end
 
       def file

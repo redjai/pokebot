@@ -1,8 +1,9 @@
 require 'service/kanbanize/controller'
 require 'topic/sns'
 require 'request/event'
+require 'service/kanbanize/new_activities_found'
 
-describe Service::Kanbanize::BoardActivitiesImported do
+describe Service::Kanbanize::NewActivitiesFound do
 
   setup_s3!
 
@@ -16,10 +17,11 @@ describe Service::Kanbanize::BoardActivitiesImported do
     
     context 'saving s3 files' do
       let(:board_id){ bot_request.data['board_id'] }
-      let(:activity1){ Service::Kanbanize::Activity.new(board_id, bot_request.data['activities'].first) }
-      let(:activity2){ Service::Kanbanize::Activity.new(board_id, bot_request.data['activities'].last) }
+      let(:client_id){ bot_request.data['client_id'] }
+      let(:activity1){ Service::Kanbanize::Activity.new(client_id, board_id, bot_request.data['activities'].first) }
+      let(:activity2){ Service::Kanbanize::Activity.new(client_id, board_id, bot_request.data['activities'].last) }
 
-      let(:found_activities){ {"activities" => [ activity1.data ], "board_id" => board_id } }
+      let(:found_activities){ {"client_id" => client_id, "activities" => [ activity1.data ], "board_id" => board_id } }
 
       before do
         allow(Topic::Sns).to receive(:broadcast).with(topic: :kanbanize, request: bot_request)

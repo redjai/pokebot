@@ -7,20 +7,22 @@ module Request
       extend self
       extend ::Request::Base
 
-      ACTIVITIES_IMPORTED = 'activities-imported'
-      NEW_ACTIVITIES_FOUND = 'new-activities-found'
+      ACTIVITIES_IMPORTED = 'activities_imported'
+      NEW_ACTIVITIES_FOUND = 'new_activities_found'
       
-      def activities_imported(source:, board_id:, activities:)
+      def activities_imported(source:, client_id:, board_id:, activities:)
         data = {
           'board_id' => board_id,
+          'client_id' => client_id,
           'activities' => activities
         }
         ::Request::Event.new(source: source, name: ::Request::Events::Kanbanize::ACTIVITIES_IMPORTED, version: 1.0, data: data)      
       end
       
-      def new_activities_found(source:, board_id:, activities:)
+      def new_activities_found(source:, client_id:, board_id:, activities:)
         data = {
           'board_id' => board_id,
+          'client_id' => client_id,
           'activities' => activities
         }
         ::Request::Event.new(source: source, name: ::Request::Events::Kanbanize::NEW_ACTIVITIES_FOUND, version: 1.0, data: data)      

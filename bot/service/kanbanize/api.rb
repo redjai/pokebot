@@ -1,16 +1,28 @@
 require 'net/http'
 require 'date'
 require 'json'
+require 'net/http'
 
 module Service
   module Kanbanize
     module Api # change this name 
 
+      class BadKanbanizeRequest < StandardError
+
+        attr_accessor :code
+
+        def initialize(code, message)
+          super(message)
+          @code = code
+        end
+
+      end
+
       def post(kanbanize_api_key:,uri:, body:)
         response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
           http.request(request(kanbanize_api_key: kanbanize_api_key, uri: uri, body: body))
         end
-        raise response.body unless response.code == "200"
+        raise BadKanbanizeRequest.new(response.code, response.body) unless response.code == "200"
         JSON.parse(response.body)
       end
 
@@ -27,6 +39,17 @@ module Service
         URI("https://#{subdomain}.kanbanize.com/index.php/api/kanbanize/#{function}/")
       end
 
+      def date_range(arg)
+        case arg
+        when :today
+          today
+        when :yesterday
+          yesterday
+        else
+          parse_date_range(arg)   
+        end
+      end
+
       def today
         {
           from: argdate(Date.today),
@@ -38,6 +61,14 @@ module Service
         {
           from: argdate(Date.today - 1),
           to: argdate(Date.today)
+        }
+      end
+
+      def parse_date_range(arg)
+        dates = arg.split(":")
+        { 
+          from: dates.first,
+          to: dates.last
         }
       end
 

@@ -25,7 +25,19 @@ provider:
     BOT_ENV: ${self:provider.stage}
 
   iamRoleStatements:
-    
+
+    - Effect: "Allow"
+      Action:
+        - "s3:ListBucket"
+      Resource:
+        - "Fn::GetAtt": [ KanbanizeImportBucket, Arn ]
+    - Effect: "Allow"
+      Action:
+        - "s3:*Object"
+      Resource:
+        - "Fn::Join": ['/', ["Fn::GetAtt": [ KanbanizeImportBucket, Arn ], '*']] # * is all objects
+
+
     #AUTO-BEGIN-TOPIC-ROLE-STATEMENTS
     # IMPORTANT !!!!!!! 
     # Any content between here and AUTO-END-TOPIC-ROLE-STATEMENTS will be overwritten.
@@ -115,6 +127,7 @@ custom:
   favourites_table: ${self:service}-${self:provider.stage}-favourites-service-favourites
   recipe_favourites_table: ${self:service}-${self:provider.stage}-recipe-service-favourites
   kanbanize_clients_table: ${self:service}-${self:provider.stage}-kanbanize-clients
+  kanbanize_imports_bucket: ${self:service}-${self:provider.stage}-kanbanize-imports
 
 functions:
   messages:
@@ -231,7 +244,24 @@ functions:
       USERS_TOPIC_ARN: !Ref UsersSnsTopic
 
   kanbanize:
-    handler: handlers/kanbanize.Kanbanize::Handler.handle
+    handler: handlers/kanbanize/cron.Kanbanize::Cron::Handler.handle
+    layers:
+      - {Ref: GemsLambdaLayer}
+    events:
+      - schedule: 
+          name: 'kanbanize-transitions-blocks-activities'
+          description: 'test-rate-schedule'
+          rate: cron(*/10 7-20 ? * 1-5 *) #note the ? (not *) for day of month is needed because we have set 1-5 for day of week. 
+          input:
+            client_id: 'livelink'
+            action: 'kanbanize-import-activities'
+    environment:
+      KANBANIZE_CLIENTS_TABLE_NAME: ${self:custom.kanbanize_clients_table}
+      KANBANIZE_TOPIC_ARN: !Ref KanbanizeSnsTopic
+      PAGE_SIZE: 30
+
+  kanbanize_sqs:
+    handler: handlers/kanbanize/sqs.Kanbanize::Sqs::Handler.handle
     layers:
       - {Ref: GemsLambdaLayer}
     events:
@@ -240,16 +270,10 @@ functions:
            Fn::GetAtt:
              - KanbanizeToKanbanizeSqsQueue
              - Arn
-      - schedule: 
-          name: 'kanbanize-transitions-blocks-activities'
-          description: 'test-rate-schedule'
-          rate: rate(2 minutes)
-          input:
-            client_id: 'livelink'
-            action: 'kanbanize-import-activities'
     environment:
       KANBANIZE_CLIENTS_TABLE_NAME: ${self:custom.kanbanize_clients_table}
       KANBANIZE_TOPIC_ARN: !Ref KanbanizeSnsTopic
+      KANBANIZE_IMPORTS_BUCKET: ${self:custom.kanbanize_imports_bucket}
 
 resources:
   Resources:
@@ -688,3 +712,12 @@ resources:
           - AttributeName: client_id
             KeyType: HASH 
         BillingMode: PAY_PER_REQUEST
+
+    #####################################
+    # Kanbanize Imports Bucket
+    ####################################a
+    
+    KanbanizeImportBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:service}-${self:provider.stage}-kanbanize-imports

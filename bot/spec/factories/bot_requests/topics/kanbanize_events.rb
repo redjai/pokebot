@@ -10,6 +10,7 @@ FactoryBot.define do
     data { 
       { 
         'board_id' => "11", 
+        'client_id' => 'testlink',
         "activities" => [ build(:activity), build(:activity) ] 
       } 
     } 

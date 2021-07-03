@@ -17,7 +17,19 @@ module Processors
     end
 
     def require_controller
-      require File.join("service", @controller_name.to_s, 'controller')
+      require File.join("service", @service.to_s, controller_file)
+    end
+
+    def controller_file
+      (@controller_name || 'controller').to_s
+    end
+
+    def controller_module
+      if @controller_name.nil?
+        'Controller'
+      else
+        @controller_name.to_s.split("_").map{|word| word.capitalize}.join
+      end
     end
 
     def call(bot_request)
@@ -26,7 +38,7 @@ module Processors
     end
 
     def controller
-      Class.const_get("Service::#{@controller_name.to_s.capitalize}::Controller")
+      Class.const_get("Service::#{@service.capitalize}::#{controller_module}")
     end
     
     def context(e)

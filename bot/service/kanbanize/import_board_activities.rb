@@ -24,7 +24,7 @@ module Service
             activities: activities(
               kanbanize_api_key: client.kanbanize_api_key,
               subdomain: client.subdomain,
-              board_id: client.board_id,
+              board_id: bot_request.data['board_id'] || client.board_id,
               event_type: bot_request.data['event_type'],
               date_range: date_range(bot_request.data['date_range'] || :today)
             ),
@@ -41,7 +41,7 @@ module Service
           Bot::LOGGER.info(e.inspect)  
           Bot::LOGGER.info(client.inspect)
         end
-        
+       
         set_last_board(client.id, client.board_id)
       end
 

@@ -155,6 +155,12 @@ FactoryBot.define do
       end
     end
 
+    trait :with_new_activities_found do
+      transient do
+        bot_event { build(:new_activities_found) }
+      end
+    end
+
     initialize_with{ ::Request::Request.new(current: current, context: context, trail: trail) }
   end
 

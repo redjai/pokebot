@@ -49,6 +49,19 @@ describe Service::Kanbanize::NewActivitiesFound do
           described_class.call(bot_request)
         }.to change{ bot_request.current['data'] }.from(bot_request.current['data']).to(found_activities) 
       end
+
+      context 'no new activitoes' do
+
+        before do
+          allow_any_instance_of(Aws::S3::Object).to receive(:exists?).and_return(true)
+          expect(Topic::Sns).to receive(:broadcast).never
+        end
+
+        it 'should not broadcast an event' do
+          described_class.call(bot_request)
+        end
+
+      end
     end
   end
 end

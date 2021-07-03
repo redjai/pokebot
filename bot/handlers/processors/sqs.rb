@@ -7,17 +7,18 @@ module Processors
   module Sqs
     extend self
    
-    def process_sqs(aws_event:, controller:, accept: [])
+    def process_sqs(aws_event:, service:, controller: nil, accept: [])
       Bot::LOGGER.debug(aws_event)      
-      handler = SqsRecordsHandler.new(accept, controller) 
+      handler = SqsRecordsHandler.new(accept, service, controller) 
       handler.handle_records(aws_event['Records'])
     end
 
     class SqsRecordsHandler
       include Processors::Base
 
-      def initialize(accepts, controller)
+      def initialize(accepts, service, controller)
         @accept_definition = accepts
+        @service = service
         @controller_name = controller
       end
 

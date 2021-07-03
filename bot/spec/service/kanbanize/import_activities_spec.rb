@@ -32,7 +32,7 @@ describe Service::Kanbanize::ImportBoardActivities do
   }
 
   around(:each) do |example|
-    ClimateControl.modify KANBANIZE_SUBDOMAIN: 'test-subdomain', KANBANIZE_API_KEY: 'test-api-key', PAGE_SIZE: "2" do
+    ClimateControl.modify KANBANIZE_SUBDOMAIN: subdomain, KANBANIZE_API_KEY: kanbanize_api_key, PAGE_SIZE: "2" do
       example.run
     end
   end

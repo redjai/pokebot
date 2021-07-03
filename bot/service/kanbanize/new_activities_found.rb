@@ -14,7 +14,7 @@ module Service
           bot_request.data['board_id'], 
           bot_request.data['activities']
         )
-
+        
         activities.store_new_activities!
         
         bot_request.current = Request::Events::Kanbanize.new_activities_found(
@@ -24,10 +24,12 @@ module Service
                                 activities: activities.to_a
                               )
 
-        Topic::Sns.broadcast(
-          topic: :kanbanize,
-          request: bot_request
-        ) 
+        if activities.new_activities.any?
+          Topic::Sns.broadcast(
+            topic: :kanbanize,
+            request: bot_request
+          )
+        end
       end
 
     end

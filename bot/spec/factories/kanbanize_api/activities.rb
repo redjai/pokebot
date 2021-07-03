@@ -1,7 +1,7 @@
 FactoryBot.define do
 
   factory :activity, class: Hash do
-    sequence(:task_id){|n| n.to_s }
+    sequence(:taskid){|n| n.to_s }
     author{ Faker::Internet.username }
     event { "Task moved" }
     text { "From 'Test.A 'to Test.Z'" }

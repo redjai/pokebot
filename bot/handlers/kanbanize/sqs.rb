@@ -7,7 +7,7 @@ module Kanbanize
       def self.handle(event:, context:)
         Processors::Sqs.process_sqs(
           aws_event: event, 
-          controller: :kanbanize, 
+          service: :kanbanize, 
           accept: { kanbanize: %w{ activities_imported new_activities_found } }
         )
       end

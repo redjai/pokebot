@@ -38,6 +38,18 @@ module Service
         )
 
         tasks.store!
+
+        bot_request.current = ::Request::Events::Kanbanize.tasks_imported(
+          source: self.class.name, 
+          client_id: client.id, 
+          board_id: bot_request.data['board_id'],
+          tasks: ids.collect{ |id| { "task_id" => id } } 
+        )
+
+        Topic::Sns.broadcast(
+          topic: :kanbanize,
+          request: bot_request
+        ) 
       end
 
       class Tasks

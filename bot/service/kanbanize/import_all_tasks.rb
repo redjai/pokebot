@@ -7,62 +7,117 @@ module Service
   module Kanbanize
     module ImportAllTasks # change this name 
       extend self
-      extend Service::Kanbanize::Api
       extend Service::Kanbanize::Storage
 
       def call(bot_request)
         client = get_client(bot_request.data['client_id'])
-        
-        uri = uri(subdomain: client.subdomain, function: :get_all_tasks)  
-
-        response = post(
-          kanbanize_api_key: client.kanbanize_api_key, 
-          uri: uri,
-          body: {
-            boardid: bot_request.data['board_id']
-          } 
-        )
-
-        response = response.is_a?(Hash) ? [response] : response
-
-        bot_request.current = ::Request::Events::Kanbanize.new_activities_found(
-          client_id: bot_request.data['client_id'],
-          source: self.class.name, 
-          board_id: bot_request.data['board_id'], 
-          activities: response.collect{ |task| { "taskid" => task['taskid']} }
-        )
-
+ 
+        tasks = if bot_request.data['archive']
+          ArchiveTasks.new(client, bot_request)
+        else
+          Tasks.new(client, bot_request)        
+        end
+      
         Topic::Sns.broadcast(
           topic: :kanbanize,
-          request: bot_request
+          request: tasks.new_activities_found 
         )
       end
 
-      class Tasks
+      class TaskBase
+        include Service::Kanbanize::Api
 
-        def initialize(client_id, board_id, tasks)
-          @client_id = client_id
-          @board_id = board_id
-          @tasks = tasks
+        def initialize(client, bot_request)
+          @client = client
+          @bot_request = bot_request
         end
 
-        def store!
-          @tasks.each do |task|
-            object = bucket.object(key(task['taskid'])) 
-            object.put(body: task.to_json)
+        def get_all_tasks_uri
+          uri(subdomain: @client.subdomain, function: :get_all_tasks)
+        end
+
+        def taskids
+          response.collect{ |task| { "taskid" => task['taskid']} }
+        end
+
+        def new_activities_found
+          @bot_request.current = ::Request::Events::Kanbanize.new_activities_found(
+            client_id: @bot_request.data['client_id'],
+            source: self.class.name, 
+            board_id: @bot_request.data['board_id'], 
+            activities: taskids
+          )
+          @bot_request
+        end
+      end
+
+      class ArchiveTasks < TaskBase
+        
+        DEFAULT_PAGE_SIZE = 30
+
+        def response
+          page = 1
+          tasks = []
+          loop do
+            body = body(page)
+            result = post(kanbanize_api_key: @client.kanbanize_api_key, uri: get_all_tasks_uri, body: body)
+            tasks += result['task']
+            break unless result["numberoftasks"].to_i > page.to_i * page_size.to_i
+            page += 1
           end
+          tasks 
         end
 
-        def resource 
-          @resource ||= Aws::S3::Resource.new(region: ENV['REGION'])
+        def page_size
+          ENV['PAGE_SIZE'] || DEFAULT_PAGE_SIZE
         end
 
-        def bucket
-          resource.bucket(ENV['KANBANIZE_IMPORTS_BUCKET'])
+        def body(page)
+          dates = @bot_request.data['archive'].split(":")
+          {
+             boardid: @bot_request.data['board_id'],
+             fromdate: dates.first, 
+             todate: argdate(Date.parse(dates.last) + 1),
+             container: 'archive',
+             page: page
+          }
         end
 
-        def key(task_id)
-          File.join("tasks", @client_id, @board_id, "#{task_id}.json")
+      end
+
+      class Tasks < TaskBase
+        include Service::Kanbanize::Api
+
+        def initialize(client, bot_request)
+          @client = client
+          @bot_request = bot_request
+        end
+
+
+        def response
+          [
+            post(
+              kanbanize_api_key: @client.kanbanize_api_key, 
+              uri: get_all_tasks_uri,
+              body: body 
+            )
+          ].flatten
+        end
+
+        def body
+          {
+             boardid: @bot_request.data['board_id']
+          }
+        end
+
+        def new_activities_found
+          @bot_request.current = ::Request::Events::Kanbanize.new_activities_found(
+            client_id: @bot_request.data['client_id'],
+            source: self.class.name, 
+            board_id: @bot_request.data['board_id'], 
+            activities: taskids
+          )
+          @bot_request
         end
 
       end

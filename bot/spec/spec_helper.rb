@@ -1,3 +1,8 @@
+ENV['S3_FORCE_STYLE_PATH'] = 'YES'
+ENV['DYNAMO_ENDPOINT'] = 'https://localhost:4566' 
+ENV['VERIFY_SSL_PEER'] = 'false'
+ENV['REGION'] = 'eu-west-1'
+
 $: << File.dirname(File.expand_path('..',__FILE__))
 
 require 'factory_bot'
@@ -6,10 +11,6 @@ require 'webmock/rspec'
 require 'handlers/processors/logger'
 require 'faker'
 require 'aws-sdk-s3'
-
-ENV['DYNAMO_ENDPOINT'] = 'https://localhost:4566' 
-ENV['VERIFY_SSL_PEER'] = 'false'
-ENV['REGION'] = 'eu-west-1'
 
 Aws.config.update({
   endpoint: 'http://localhost:4566',

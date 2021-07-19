@@ -2,7 +2,7 @@ require 'handlers/processors/sqs'
 require 'request/events/kanbanize'
 
 module Kanbanize
-  module Sqs 
+  module Imports 
     class Handler
       def self.handle(event:, context:)
         Processors::Sqs.process_sqs(

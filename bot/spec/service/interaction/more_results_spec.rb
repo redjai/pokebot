@@ -1,7 +1,7 @@
 require 'service/interaction/controller'
 require 'topic/sns'
 require 'request/event'
-require 'request/events/recipe'
+require 'request/events/recipes'
 
 describe Service::Interaction::Controller do
   context 'more results' do

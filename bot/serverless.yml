@@ -1,5 +1,8 @@
 
-service: pokebot 
+service: gerty
+
+plugins:
+  - serverless-ruby-layer
 
 frameworkVersion: '2'
 
@@ -25,6 +28,22 @@ provider:
     BOT_ENV: ${self:provider.stage}
 
   iamRoleStatements:
+
+    - Effect: "Allow"
+      Action:
+        - "rds-data:*"
+      Resource: "*"
+
+    - Effect: "Allow"
+      Action:
+        - "secretsmanager:*"
+      Resource: "*"
+
+    - Effect: Allow
+      Action:
+        - "rds-db:connect"
+      Resource: 
+        - "arn:aws:rds-db:eu-west-1:154682513313:dbuser:cluster-JQWIOQ5JMHESWHSWLDLGMIQXV4/redqueen_master"
 
     - Effect: "Allow"
       Action:
@@ -116,24 +135,18 @@ provider:
           - KanbanizeClientsTable
           - Arn
 
-layers:
-  gems:
-    path: ../layers/gems
-    compatibleRuntimes:
-      - ruby2.5
-
 custom:
   config: ${file(config.${self:provider.stage}.yml)}
   favourites_table: ${self:service}-${self:provider.stage}-favourites-service-favourites
   recipe_favourites_table: ${self:service}-${self:provider.stage}-recipe-service-favourites
   kanbanize_clients_table: ${self:service}-${self:provider.stage}-kanbanize-clients
   kanbanize_imports_bucket: ${self:service}-${self:provider.stage}-kanbanize-imports
+  rubyLayer:
+    use_docker: true
 
 functions:
   messages:
     handler: handlers/messages.Messages::Handler.handle
-    layers:
-      - {Ref: GemsLambdaLayer}
     events:
       - httpApi:
           method: POST 
@@ -144,8 +157,6 @@ functions:
 
   intent:
     handler: handlers/intent.Intent::Handler.handle
-    layers:
-      - {Ref: GemsLambdaLayer}
     events:    
       - sqs:
          arn:
@@ -157,8 +168,6 @@ functions:
 
   recipe:
     handler: handlers/recipes.Recipes::Handler.handle
-    layers:
-      - {Ref: GemsLambdaLayer}
     events:
       - sqs:
          arn:
@@ -177,8 +186,6 @@ functions:
 
   responder:
     handler: handlers/responder.Responder::Handler.handle
-    layers:
-      - {Ref: GemsLambdaLayer}
     events:
       - sqs:
          arn:
@@ -196,19 +203,16 @@ functions:
              - UsersToResponderSqsQueue
              - Arn
     environment:
-      BOT_USER_OAUTH_ACCESS_TOKEN: ${file(config.${self:provider.stage}.yml):bot_user_oauth_access_token}  
+      BOT_USER_OAUTH_ACCESS_TOKEN: ${file(config.${self:provider.stage}.yml):bot_user_oauth_access_token}
+      KANBANIZE_CLIENTS_TABLE_NAME: ${self:custom.kanbanize_clients_table}  
 
   notifier:
     handler: handlers/notifier.Notifier::Handler.handle
-    layers:
-      - {Ref: GemsLambdaLayer}
     environment:
       POKEBOT_TESTER_NOTIFICATION_URI: ${file(config.${self:provider.stage}.yml):pokebot_tester_notification_uri}  
   
   interactions:
     handler: handlers/interactions.Interactions::Handler.handle
-    layers:
-      - {Ref: GemsLambdaLayer}
     events:
       - httpApi:
           method: POST 
@@ -219,8 +223,6 @@ functions:
 
   command:
     handler: handlers/command.Command::Handler.handle
-    layers:
-      - {Ref: GemsLambdaLayer}
     events:
       - httpApi:
           method: POST 
@@ -231,8 +233,6 @@ functions:
   
   user:
     handler: handlers/user.User::Handler.handle
-    layers:
-      - {Ref: GemsLambdaLayer}
     events:
       - sqs:
          arn:
@@ -243,10 +243,8 @@ functions:
       FAVOURITES_TABLE_NAME: ${self:custom.favourites_table}
       USERS_TOPIC_ARN: !Ref UsersSnsTopic
 
-  kanbanize:
+  kanbanize_cron:
     handler: handlers/kanbanize/cron.Kanbanize::Cron::Handler.handle
-    layers:
-      - {Ref: GemsLambdaLayer}
     events:
       - schedule: 
           name: 'kanbanize-transitions-blocks-activities'
@@ -260,30 +258,33 @@ functions:
       KANBANIZE_CLIENTS_TABLE_NAME: ${self:custom.kanbanize_clients_table}
       KANBANIZE_TOPIC_ARN: !Ref KanbanizeSnsTopic
       PAGE_SIZE: 30
+      DATE_RANGE_OFFSET: 0
 
-  kanbanize_sqs:
-    handler: handlers/kanbanize/sqs.Kanbanize::Sqs::Handler.handle
-    layers:
-      - {Ref: GemsLambdaLayer}
+  kanbanize_imports:
+    handler: handlers/kanbanize/imports.Kanbanize::Imports::Handler.handle
     events:
       - sqs:
          arn:
            Fn::GetAtt:
-             - KanbanizeToKanbanizeSqsQueue
+             - KanbanizeToKanbanizeImportsSqsQueue
              - Arn
     environment:
       KANBANIZE_CLIENTS_TABLE_NAME: ${self:custom.kanbanize_clients_table}
       KANBANIZE_TOPIC_ARN: !Ref KanbanizeSnsTopic
+      USERS_TOPIC_ARN: !Ref UsersSnsTopic
       KANBANIZE_IMPORTS_BUCKET: ${self:custom.kanbanize_imports_bucket}
 
   kanbanize_util:
     handler: handlers/kanbanize/util.Kanbanize::Util::Handler.handle
-    layers:
-      - {Ref: GemsLambdaLayer}
     environment:
       KANBANIZE_CLIENTS_TABLE_NAME: ${self:custom.kanbanize_clients_table}
       KANBANIZE_TOPIC_ARN: !Ref KanbanizeSnsTopic
       PAGE_SIZE: 30
+      KANBANIZE_DB_HOST: ${self:custom.config.kanbanize_database.host}
+      KANBANIZE_DB_USERNAME:  ${self:custom.config.kanbanize_database.username}
+      KANBANIZE_DB_PASSWORD:  ${self:custom.config.kanbanize_database.password}
+      KANBANIZE_DB_DATABASE:  ${self:custom.config.kanbanize_database.database}
+
 
 resources:
   Resources:
@@ -631,27 +632,27 @@ resources:
      
 
 
-    #### AUTO GENERATED QUEUE - 'kanbanize'
-    KanbanizeToKanbanizeSqsQueue:
+    #### AUTO GENERATED QUEUE - 'kanbanize_imports'
+    KanbanizeToKanbanizeImportsSqsQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: ${self:service}-${self:provider.stage}-sns-kanbanize-to-sqs-kanbanize
+        QueueName: ${self:service}-${self:provider.stage}-sns-kanbanize-to-sqs-kanbanize_imports
     
-    #### AUTO GENERATED - ATTACH 'kanbanize' TOPIC to 'kanbanize' QUEUE
-    KanbanizeToKanbanizeSubscription:
+    #### AUTO GENERATED - ATTACH 'kanbanize' TOPIC to 'kanbanize_imports' QUEUE
+    KanbanizeToKanbanizeImportsSubscription:
       Type: AWS::SNS::Subscription
       Properties:
         TopicArn: !Ref KanbanizeSnsTopic
         Endpoint: !GetAtt
-          - KanbanizeToKanbanizeSqsQueue
+          - KanbanizeToKanbanizeImportsSqsQueue
           - Arn
         Protocol: sqs
       DependsOn:
         - KanbanizeSnsTopic
-        - KanbanizeToKanbanizeSqsQueue
+        - KanbanizeToKanbanizeImportsSqsQueue
     
-    #### AUTO GENERATED - ALLOW 'kanbanize' TOPIC to send messages to 'kanbanize' QUEUE
-    SnSKanbanizeToSQSKanbanizeSqsQueuePolicy:
+    #### AUTO GENERATED - ALLOW 'kanbanize' TOPIC to send messages to 'kanbanize_imports' QUEUE
+    SnSKanbanizeToSQSKanbanizeImportsSqsQueuePolicy:
       Type: AWS::SQS::QueuePolicy
       Properties:
         PolicyDocument:
@@ -661,16 +662,16 @@ resources:
               Effect: Allow
               Principal: "*"
               Resource: !GetAtt
-                - KanbanizeToKanbanizeSqsQueue
+                - KanbanizeToKanbanizeImportsSqsQueue
                 - Arn
               Action: "SQS:SendMessage"
               Condition:
                 ArnEquals:
                   "aws:SourceArn": !Ref KanbanizeSnsTopic 
         Queues:
-          - Ref: KanbanizeToKanbanizeSqsQueue
+          - Ref: KanbanizeToKanbanizeImportsSqsQueue
       DependsOn:
-        - KanbanizeToKanbanizeSubscription
+        - KanbanizeToKanbanizeImportsSubscription
       
 
     #AUTO-END-TOPICS

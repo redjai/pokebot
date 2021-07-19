@@ -44,6 +44,7 @@ module Processors
         @accepts ||= begin
           @accept_definition.collect do |topic, events|
             events.collect do |event|
+              require "request/events/#{topic}"
               Class.const_get("::Request::Events::#{topic.to_s.capitalize}::#{event.upcase}")
             end
           end.flatten

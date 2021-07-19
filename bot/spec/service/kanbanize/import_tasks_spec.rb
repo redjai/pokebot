@@ -2,6 +2,7 @@ require 'service/kanbanize/controller'
 require 'topic/sns'
 require 'request/event'
 require 'service/kanbanize/import_tasks'
+require 'storage/kanbanize/task'
 
 describe Service::Kanbanize::ImportTasks do
 
@@ -20,8 +21,7 @@ describe Service::Kanbanize::ImportTasks do
   let(:uri){ URI("https://test-subdomain.kanbanize.com/index.php/api/kanbanize/get_task_details/") }
 
   let(:task1){ {'taskid' => "1", "task" => "stuff"} }
-  let(:tasks){ Service::Kanbanize::ImportTasks::Tasks.new(client_id, board_id, []) } 
-  let(:key1){ tasks.key(task1['taskid']) }
+  let(:key1){ Storage::Kanbanize::TaskData.new(client_id: client_id, board_id: board_id, task: task1).key }
 
   around(:each) do |example|
     ClimateControl.modify KANBANIZE_SUBDOMAIN: subdomain, KANBANIZE_API_KEY: kanbanize_api_key, PAGE_SIZE: "2" do
@@ -39,7 +39,7 @@ describe Service::Kanbanize::ImportTasks do
     let(:response){ [ task1, task2 ] }
     let(:task_id){ bot_request.data['activities'].collect{|act| act['taskid'] } }  
     let(:task2){ {'taskid' => "2", "task" => "more stuff"}}
-    let(:key2){ tasks.key(task2['taskid']) }
+    let(:key2){ Storage::Kanbanize::TaskData.new(client_id: client_id, board_id: board_id, task: task2).key }
     
     context 'saving s3 files' do
 

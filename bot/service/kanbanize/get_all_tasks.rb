@@ -1,5 +1,5 @@
 require 'net/http'
-require_relative 'api'
+require_relative 'net/api'
 
 module Service
   module Kanbanize

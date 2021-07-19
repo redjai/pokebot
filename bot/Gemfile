@@ -3,11 +3,15 @@
 source "https://rubygems.org"
 
 gem 'honeybadger'
-gem 'factory_bot'
-gem 'rspec'
-gem 'aws-sdk-sns'
-gem 'aws-sdk-s3'
-gem 'aws-sdk-dynamodb'
-gem 'climate_control'
-gem 'webmock'
-gem 'faker'
+
+group :test, :development do
+    gem 'factory_bot'
+    gem 'rspec'
+    gem 'aws-sdk-sns'
+    gem 'aws-sdk-s3'
+    gem 'aws-sdk-dynamodb'
+    gem 'climate_control'
+    gem 'webmock'
+    gem 'faker'
+end
+

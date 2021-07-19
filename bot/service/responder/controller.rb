@@ -26,6 +26,11 @@ module Service
         when ::Request::Events::Users::ACCOUNT_UPDATED
           require_relative 'actions/account/updated'
           Service::Responder::Actions::Account::Updated.call(bot_request)
+        when ::Request::Events::Kanbanize::NEW_ACTIVITIES_FOUND
+          require_relative 'actions/firehose/activities'
+          require_relative 'actions/firehose/blockages'
+          Service::Responder::Actions::Firehose::Activities.call(bot_request)
+          Service::Responder::Actions::Firehose::Blockages.call(bot_request)
         else
           raise "unexpected request #{bot_request.name}"
         end

@@ -2,6 +2,7 @@ require 'service/kanbanize/controller'
 require 'topic/sns'
 require 'request/event'
 require 'service/kanbanize/new_activities_found'
+require 'storage/kanbanize/activity'
 
 describe Service::Kanbanize::NewActivitiesFound do
 
@@ -9,22 +10,19 @@ describe Service::Kanbanize::NewActivitiesFound do
 
   let(:bot_request){ build(:bot_request, :with_activities_imported) } 
 
-  before do
-    
-  end
-
   context 'no prior activities exist that day' do
     
     context 'saving s3 files' do
       let(:board_id){ bot_request.data['board_id'] }
       let(:client_id){ bot_request.data['client_id'] }
-      let(:activity1){ Service::Kanbanize::Activity.new(client_id, board_id, bot_request.data['activities'].first) }
-      let(:activity2){ Service::Kanbanize::Activity.new(client_id, board_id, bot_request.data['activities'].last) }
+      let(:store){ Storage::Kanbanize::ActivityS3 }
+      let(:activity1){ Storage::Kanbanize::ActivityData.new(client_id, board_id, bot_request.data['activities'].first) }
+      let(:activity2){ Storage::Kanbanize::ActivityData.new(client_id, board_id, bot_request.data['activities'].last) }
 
       let(:found_activities){ {"client_id" => client_id, "activities" => [ activity1.data ], "board_id" => board_id } }
 
       before do
-        allow(Topic::Sns).to receive(:broadcast).with(topic: :kanbanize, request: bot_request)
+        allow(Topic::Sns).to receive(:broadcast).with(topic: [:kanbanize, :users], request: bot_request)
         SpecHelper::S3.bucket.object(activity2.key).put(body: activity2.to_json)
       end
 
@@ -35,12 +33,12 @@ describe Service::Kanbanize::NewActivitiesFound do
       end
 
       it 'should broadcast only the created activity  to sns' do
-        expect(Topic::Sns).to receive(:broadcast).with(topic: :kanbanize, request: bot_request).once
+        expect(Topic::Sns).to receive(:broadcast).with(topic: [:kanbanize, :users], request: bot_request).once
         described_class.call(bot_request)
       end
       
       it 'should NOT save the created activity to s3' do
-        expect_any_instance_of(Service::Kanbanize::Activities).to receive(:store_activity).once
+        expect_any_instance_of(Aws::S3::Object).to receive(:put).with(body: bot_request.data['activities'].last.to_json).never
         described_class.call(bot_request)
       end
 

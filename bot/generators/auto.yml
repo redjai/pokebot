@@ -10,5 +10,5 @@ topics:
     - recipes
     - users
   kanbanize:
-    - kanbanize
+    - kanbanize_imports
 

@@ -1,8 +1,7 @@
-require 'service/kanbanize/api'
-require 'service/kanbanize/client'
+require 'storage/kanbanize/client'
 
 FactoryBot.define do
-  factory :clienti, class: Service::Kanbanize::Storage::Client do
+  factory :clienti, class: Storage::Kanbanize::Client do
 
     client_id { "test-client-1" }
     boards { ["11", "12", "13"] }

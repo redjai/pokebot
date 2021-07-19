@@ -1,5 +1,5 @@
-require 'request/events/user'
-require 'request/events/recipe'
+require 'request/events/users'
+require 'request/events/recipes'
 
 module Service
   module Recipe

@@ -1,7 +1,7 @@
 require 'service/intent/controller'
 require 'topic/sns'
 require 'request/event'
-require 'request/events/message'
+require 'request/events/messages'
 
 describe Service::Intent::Controller do
 

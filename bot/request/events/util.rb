@@ -8,7 +8,8 @@ module Request
     extend ::Request::Base
 
       module Actions
-        IMPORT_ALL_TASKS = 'import-all-tasks'    
+        IMPORT_ALL_TASKS = 'import-all-tasks'
+        DB_MIGRATE = 'db-migrate'    
       end
 
       MANUAL_REQUEST = 'manual-request'

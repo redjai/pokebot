@@ -8,7 +8,7 @@ module Request
       extend ::Request::Base
 
       ACTIVITIES_IMPORTED = 'activities_imported'
-      TASKS_IMPORTED = 'tasks-imported'
+      TASKS_IMPORTED = 'tasks_imported'
       NEW_ACTIVITIES_FOUND = 'new_activities_found'
       
       def activities_imported(source:, client_id:, board_id:, activities:)

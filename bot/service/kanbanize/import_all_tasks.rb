@@ -1,7 +1,7 @@
 require 'date'
 require 'aws-sdk-s3'
-require_relative 'api'
-require_relative 'client'
+require_relative 'net/api'
+require 'storage/kanbanize/client'
 
 module Service
   module Kanbanize

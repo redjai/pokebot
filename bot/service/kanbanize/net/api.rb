@@ -1,4 +1,3 @@
-require 'net/http'
 require 'date'
 require 'json'
 require 'net/http'
@@ -52,8 +51,8 @@ module Service
 
       def today
         {
-          from: argdate(Date.today),
-          to: argdate(Date.today + 1)
+          from: argdate(Date.today - ENV['DATE_RANGE_OFFSET'].to_i),
+          to: argdate(Date.today  - ENV['DATE_RANGE_OFFSET'].to_i + 1)
         }
       end
 

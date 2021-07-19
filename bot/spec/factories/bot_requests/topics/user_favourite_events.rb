@@ -1,6 +1,6 @@
 require 'request/event'
-require 'request/events/user'
-require 'request/events/recipe'
+require 'request/events/users'
+require 'request/events/recipes'
 
 module TopicHelper
   extend Request::Base

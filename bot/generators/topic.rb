@@ -1,3 +1,11 @@
+class String
+
+  def camel_case
+    self.split('_').collect(&:capitalize).join
+  end
+
+end
+
 module Generators
   module Resources
   extend self
@@ -31,7 +39,7 @@ module Generators
     - Effect: "Allow"
       Action:
         - "SNS:Publish"
-      Resource: !Ref #{topic.capitalize}SnsTopic # !Ref returns the ARN of SNS topic in the resources element below:
+      Resource: !Ref #{topic.camel_case}SnsTopic # !Ref returns the ARN of SNS topic in the resources element below:
     }
     end
 
@@ -50,7 +58,7 @@ module Generators
      %{
     #### AUTO GENERATED TOPIC - '#{topic}' 
     #################################
-    #{topic.capitalize}SnsTopic:
+    #{topic.camel_case}SnsTopic:
       Type: AWS::SNS::Topic
       Properties:
         TopicName: ${self:service}-${self:provider.stage}-#{topic}
@@ -66,26 +74,26 @@ module Generators
     def queue(topic, queue)
       %{
     #### AUTO GENERATED QUEUE - '#{queue}'
-    #{topic.capitalize}To#{queue.capitalize}SqsQueue:
+    #{topic.camel_case}To#{queue.camel_case}SqsQueue:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${self:service}-${self:provider.stage}-sns-#{topic}-to-sqs-#{queue}
     
     #### AUTO GENERATED - ATTACH '#{topic}' TOPIC to '#{queue}' QUEUE
-    #{topic.capitalize}To#{queue.capitalize}Subscription:
+    #{topic.camel_case}To#{queue.camel_case}Subscription:
       Type: AWS::SNS::Subscription
       Properties:
-        TopicArn: !Ref #{topic.capitalize}SnsTopic
+        TopicArn: !Ref #{topic.camel_case}SnsTopic
         Endpoint: !GetAtt
-          - #{topic.capitalize}To#{queue.capitalize}SqsQueue
+          - #{topic.camel_case}To#{queue.camel_case}SqsQueue
           - Arn
         Protocol: sqs
       DependsOn:
-        - #{topic.capitalize}SnsTopic
-        - #{topic.capitalize}To#{queue.capitalize}SqsQueue
+        - #{topic.camel_case}SnsTopic
+        - #{topic.camel_case}To#{queue.camel_case}SqsQueue
     
     #### AUTO GENERATED - ALLOW '#{topic}' TOPIC to send messages to '#{queue}' QUEUE
-    SnS#{topic.capitalize}ToSQS#{queue.capitalize}SqsQueuePolicy:
+    SnS#{topic.camel_case}ToSQS#{queue.camel_case}SqsQueuePolicy:
       Type: AWS::SQS::QueuePolicy
       Properties:
         PolicyDocument:
@@ -95,16 +103,16 @@ module Generators
               Effect: Allow
               Principal: "*"
               Resource: !GetAtt
-                - #{topic.capitalize}To#{queue.capitalize}SqsQueue
+                - #{topic.camel_case}To#{queue.camel_case}SqsQueue
                 - Arn
               Action: "SQS:SendMessage"
               Condition:
                 ArnEquals:
-                  "aws:SourceArn": !Ref #{topic.capitalize}SnsTopic 
+                  "aws:SourceArn": !Ref #{topic.camel_case}SnsTopic 
         Queues:
-          - Ref: #{topic.capitalize}To#{queue.capitalize}SqsQueue
+          - Ref: #{topic.camel_case}To#{queue.camel_case}SqsQueue
       DependsOn:
-        - #{topic.capitalize}To#{queue.capitalize}Subscription
+        - #{topic.camel_case}To#{queue.camel_case}Subscription
       }
     end
   end

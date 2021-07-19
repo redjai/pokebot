@@ -1,6 +1,6 @@
 require 'net/http'
-require_relative 'api'
-require_relative 'client'
+require_relative 'net/api'
+require 'storage/kanbanize/client'
 require 'request/events/kanbanize'
 require 'topic/sns'
 
@@ -9,7 +9,7 @@ module Service
     module ImportBoardActivities # change this name 
       extend self
       extend Service::Kanbanize::Api
-      extend Service::Kanbanize::Storage
+      extend Storage::Kanbanize
 
       DEFAULT_PAGE_SIZE = 30
 

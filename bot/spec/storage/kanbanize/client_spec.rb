@@ -1,6 +1,6 @@
-require 'service/kanbanize/client'
+require 'storage/kanbanize/client'
 
-describe Service::Kanbanize::Storage::Client do
+describe Storage::Kanbanize::Client do
 
   let(:last_board_id){ 2 }
   let(:board_ids){ [3] }

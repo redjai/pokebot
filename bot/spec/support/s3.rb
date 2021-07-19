@@ -4,8 +4,8 @@ module SpecHelper
   module S3
 
     ENV['KANBANIZE_IMPORTS_BUCKET'] = 'test-import-data-bucket'
-
-    @@resource ||= Aws::S3::Resource.new(region: ENV['REGION'], force_path_style: true)
+ 
+    @@resource ||= Aws::S3::Resource.new(region: ENV['REGION'], force_path_style: (ENV['S3_FORCE_STYLE_PATH'] == 'YES'))
 
     def self.exists?(key)
       bucket.object(key).exists?

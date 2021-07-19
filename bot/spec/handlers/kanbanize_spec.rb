@@ -1,5 +1,5 @@
 require 'handlers/kanbanize/cron'
-require 'handlers/kanbanize/sqs'
+require 'handlers/kanbanize/imports'
 require 'service/kanbanize/new_activities_found'
 require 'service/kanbanize/import_board_activities'
 require 'service/kanbanize/import_tasks'
@@ -17,7 +17,7 @@ describe Kanbanize::Cron::Handler do
 
 end
 
-describe Kanbanize::Sqs::Handler do
+describe Kanbanize::Imports::Handler do
 
   let(:aws_event){ build(:aws_records_event, bot_request: bot_request) }
   let(:context){ {} }
@@ -28,7 +28,7 @@ describe Kanbanize::Sqs::Handler do
     
     it 'should call the kanbanize service controller' do
       expect(Service::Kanbanize::NewActivitiesFound).to receive(:call).with(::Request::Request)
-      Kanbanize::Sqs::Handler.handle(event: aws_event, context: context)
+      Kanbanize::Imports::Handler.handle(event: aws_event, context: context)
     end
 
   end
@@ -39,7 +39,7 @@ describe Kanbanize::Sqs::Handler do
     
     it 'should call the kanbanize service controller' do
       expect(Service::Kanbanize::ImportTasks).to receive(:call).with(::Request::Request)
-      Kanbanize::Sqs::Handler.handle(event: aws_event, context: context)
+      Kanbanize::Imports::Handler.handle(event: aws_event, context: context)
     end
 
   end

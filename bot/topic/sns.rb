@@ -12,7 +12,9 @@ module Topic
       Bot::LOGGER.debug("out:")
       Bot::LOGGER.debug(topic)
       Bot::LOGGER.debug(request.to_json)
-      topic(topic: topic).publish( message: request.to_json )
+      [topic].flatten.each do |t|
+        topic(topic: t).publish( message: request.to_json )
+      end
     end
 
     private

@@ -1,7 +1,7 @@
 require 'topic/sns'
 require_relative 'api/information_bulk_search'
 require_relative '../user'
-require 'request/events/recipe'
+require 'request/events/recipes'
 
 module Service
   module Recipe

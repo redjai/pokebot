@@ -11,16 +11,14 @@ describe Service::Intent::Controller do
 
     it 'sets the correct data' do
       allow(Topic::Sns).to receive(:broadcast).with(topic: :recipes, request: bot_request)
-      expect{ 
-        subject.call(bot_request)
-      }.to change { bot_request.data }.from(bot_request.data).to({"query"=>"beef rendang", "page"=>{"offset"=>0, "per_page"=>10}})
+      subject.call(bot_request)
+      expect(bot_request.next.first[:current]['data']).to eq({"query"=>"beef rendang", "page"=>{"offset"=>0, "per_page"=>10}})
     end
 
     it 'set the correct event type' do
       allow(Topic::Sns).to receive(:broadcast).with(topic: :recipes, request: bot_request)
-      expect{ 
-        subject.call(bot_request)
-      }.to change { bot_request.name }.from(::Request::Events::Messages::RECEIVED).to(::Request::Events::Recipes::SEARCH_REQUESTED)
+      subject.call(bot_request)
+      expect(bot_request.next.first[:current]['name']).to eq ::Request::Events::Recipes::SEARCH_REQUESTED
     end
 
     it 'should brodacast the event to the intent topic' do
@@ -36,16 +34,14 @@ describe Service::Intent::Controller do
 
     it 'sets the correct data' do
       allow(Topic::Sns).to receive(:broadcast).with(topic: :recipes, request: bot_request)
-      expect{ 
-        subject.call(bot_request)
-      }.to change { bot_request.data }.from(bot_request.data).to({offset: 0})
+      subject.call(bot_request)
+      expect(bot_request.next.first[:current]['data']).to eq({offset: 0})
     end
 
     it 'set the correct event type' do
       allow(Topic::Sns).to receive(:broadcast).with(topic: :recipes, request: bot_request)
-      expect{ 
-        subject.call(bot_request)
-      }.to change { bot_request.name }.from(::Request::Events::Messages::RECEIVED).to(::Request::Events::Recipes::FAVOURITES_SEARCH_REQUESTED)
+      subject.call(bot_request)
+      expect(bot_request.next.first[:current]['name']).to eq Request::Events::Recipes::FAVOURITES_SEARCH_REQUESTED
     end
 
     it 'should brodacast the event to the intent topic' do

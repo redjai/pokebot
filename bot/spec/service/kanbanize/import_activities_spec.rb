@@ -56,12 +56,12 @@ describe Service::Kanbanize::ImportBoardActivities do
 
     it 'should aggregate all activities' do
       described_class.call(bot_request)
-      expect(bot_request.data['activities']).to eq activities 
+      expect(bot_request.next.first[:current]['data']['activities']).to eq activities 
     end
 
     it 'should include board_id' do
       described_class.call(bot_request)
-      expect(bot_request.data['board_id']).to eq kanbanize_client.board_id 
+      expect(bot_request.next.first[:current]['data']['board_id']).to eq kanbanize_client.board_id 
     end
   end
 

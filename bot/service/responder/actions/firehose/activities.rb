@@ -1,5 +1,5 @@
 require 'date'
-require 'storage/kanbanize/client'
+require 'storage/kanbanize/dynamodb/client'
 
 module Service
     module Responder
@@ -7,7 +7,7 @@ module Service
         module Firehose
           module Activities
           extend self
-          extend Storage::Kanbanize
+          extend Storage::Kanbanize::DynamoDB
 
             def call(bot_request)
 

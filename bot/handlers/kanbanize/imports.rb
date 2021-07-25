@@ -8,7 +8,7 @@ module Kanbanize
         Processors::Sqs.process_sqs(
           aws_event: event, 
           service: :kanbanize, 
-          accept: { kanbanize: %w{ activities_imported new_activities_found } }
+          accept: { kanbanize: %w{ activities_imported new_activities_found tasks_found archived_tasks_found tasks_imported } }
         )
       end
     end

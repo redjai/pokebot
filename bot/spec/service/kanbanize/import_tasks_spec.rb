@@ -2,7 +2,7 @@ require 'service/kanbanize/controller'
 require 'topic/sns'
 require 'request/event'
 require 'service/kanbanize/import_tasks'
-require 'storage/kanbanize/task'
+require 'storage/kanbanize/s3/task'
 
 describe Service::Kanbanize::ImportTasks do
 

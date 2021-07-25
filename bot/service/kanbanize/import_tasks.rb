@@ -1,22 +1,25 @@
 require 'date'
 require 'aws-sdk-s3'
 require_relative 'net/api'
-require 'storage/kanbanize/client'
-require 'storage/kanbanize/task'
+require 'storage/kanbanize/dynamodb/client'
+require 'storage/kanbanize/s3/task'
 
+# this service imports task details for any new activities found that day
 module Service
   module Kanbanize
-    module ImportTasks # change this name 
+    module ImportTasks
       extend self
       extend Service::Kanbanize::Api
-      extend Storage::Kanbanize
+      extend Storage::Kanbanize::DynamoDB
 
       def call(bot_request)
         client = get_client(bot_request.data['client_id'])
+
+        collection = bot_request.data['activities'] ||  bot_request.data['tasks']
         
-        ids = bot_request.data['activities'].collect do |activity|
+        ids = collection.collect do |activity|
           activity['taskid']
-        end.uniq
+        end.uniq # lets not import the same task multiple times if there is more than one activity.
 
         uri = uri(subdomain: client.subdomain, function: :get_task_details)  
 
@@ -38,10 +41,15 @@ module Service
         )
 
         response.each do |task|
-          store.store!(task)
+          case bot_request.data['archived']
+          when 'yes'
+            store.archive!(task)
+          else
+            store.store!(task)
+          end
         end
         
-        bot_request.current = ::Request::Events::Kanbanize.tasks_imported(
+        bot_request.events << ::Request::Events::Kanbanize.tasks_imported(
           source: self.class.name, 
           client_id: client.id, 
           board_id: bot_request.data['board_id'],

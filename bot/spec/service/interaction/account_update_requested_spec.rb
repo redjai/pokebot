@@ -24,15 +24,15 @@ describe Service::Interaction::Controller do
     let(:kanbanize){ values['6y0']['edit-kanbanize']['value'] }
 
     it 'should extract the email from the view submission' do
-      expect(bot_request.data['email']).to eq email 
+      expect(bot_request.next.first[:current]['data']['email']).to eq email 
     end
     
     it 'should extract the name from the view submission' do
-      expect(bot_request.data['handle']).to eq name 
+      expect(bot_request.next.first[:current]['data']['handle']).to eq name 
     end
 
     it 'should extract the kanbanize from the view submission' do
-      expect(bot_request.data['kanbanize_username']).to eq kanbanize 
+      expect(bot_request.next.first[:current]['data']['kanbanize_username']).to eq kanbanize 
     end
   end
 

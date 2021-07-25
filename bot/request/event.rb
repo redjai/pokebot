@@ -21,6 +21,10 @@ module Request
                  }
     end
 
+    def data
+      @record['data']
+    end
+
     def name
       @record['name']
     end

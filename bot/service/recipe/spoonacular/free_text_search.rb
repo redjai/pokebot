@@ -16,7 +16,7 @@ module Service
                                                                                           bot_request.data['page']['offset'], 
                                                                                           bot_request.data['page']['per_page']
                                                                                        )
-          bot_request.current = ::Request::Events::Recipes::found(
+          bot_request.events << ::Request::Events::Recipes::found(
                               source: :recipes,
                              recipes: information_bulk_result(complex_search),
                 favourite_recipe_ids: Service::Recipe::User.recipe_ids(bot_request.context.slack_id),

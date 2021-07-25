@@ -8,7 +8,7 @@ module Request
     extend ::Request::Base
 
       module Actions
-        IMPORT_ALL_TASKS = 'import-all-tasks'
+        FIND_TASKS = 'find-tasks'
         DB_MIGRATE = 'db-migrate'    
       end
 
@@ -19,7 +19,6 @@ module Request
       end
 
       def util_event(aws_event)
-        aws_event['date'] ||= Date.today.to_s
         ::Request::Event.new(
           name: ::Request::Events::Util::MANUAL_REQUEST,
           source: aws_event['source'],

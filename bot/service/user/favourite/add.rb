@@ -12,7 +12,7 @@ module Service
         def call(bot_request)
           updates = Service::User::Storage.add_favourite(bot_request.context.slack_id, bot_request.data['favourite_recipe_id']) 
           if updates
-            bot_request.current = ::Request::Events::Users.favourites_updated(source: :user, 
+            bot_request.events << ::Request::Events::Users.favourites_updated(source: :user, 
                                                        favourite_recipe_ids: updates['attributes']['favourites'].collect{|id| id })
             Topic::Sns.broadcast(
                                   topic: :users,

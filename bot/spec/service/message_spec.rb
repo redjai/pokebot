@@ -11,16 +11,14 @@ describe Service::Message::Controller do
 
   it 'should strip the user from the slack message text and add it to the event' do
     allow(Topic::Sns).to receive(:broadcast).with(topic: :messages, request: bot_request)
-    expect{ 
-      subject.call(bot_request)
-    }.to change { bot_request.data }.from(bot_request.data).to({"text"=>"test message"})
+    subject.call(bot_request)
+    expect(bot_request.next.first[:current]['data']).to eq ({"text"=>"test message"})
   end
   
   it 'should update the event name to message received' do
     allow(Topic::Sns).to receive(:broadcast).with(topic: :messages, request: bot_request)
-    expect{ 
-      subject.call(bot_request)
-    }.to change { bot_request.name }.from(::Request::Events::Slack::EVENT_API_REQUEST).to(::Request::Events::Messages::RECEIVED)
+    subject.call(bot_request)
+    expect(bot_request.next.first[:current]['name']).to eq ::Request::Events::Messages::RECEIVED
   end
 
   it 'should broadcast the event to the messages topic' do

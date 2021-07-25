@@ -7,7 +7,7 @@ module Service
       extend self
       
       def call(bot_request)
-        bot_request.current = ::Request::Events::Recipes.favourites_requested(source: :intent)
+        bot_request.events << ::Request::Events::Recipes.favourites_requested(source: :intent)
         Topic::Sns.broadcast(
           topic: :recipes,
           request: bot_request 

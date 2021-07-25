@@ -1,5 +1,19 @@
 docker run --rm -it -p 4566:4566 -p 4571:4571 localstack/localstack -e "SERVICES=dynamodb,s3"
 
+uses the serverless-ruby-layer plugin:
+
+    rubyLayer:
+      use_docker: true
+      docker_yums:
+        - postgresql-devel
+      native_libs:
+        - /usr/lib64/libpq.so.5
+
+Note we don't need this in pur app as we are using aws-sdk-rdsdataservice and the data api for postgres datab ase access.
+
+
+
+
 # Gerty
 
 ![gerty](gerty.png)

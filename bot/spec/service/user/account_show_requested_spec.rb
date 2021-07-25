@@ -25,14 +25,13 @@ describe Service::User::Controller do
       end
 
       it 'should change the event from requested to found' do
-        expect{
-          subject.call(bot_request)
-        }.to change { bot_request.name }.from(::Request::Events::Users::ACCOUNT_SHOW_REQUESTED).to(::Request::Events::Users::ACCOUNT_READ)
+        subject.call(bot_request)
+        expect(bot_request.next.first[:current]['name']).to eq ::Request::Events::Users::ACCOUNT_READ
       end
 
       it 'should set nil user data' do
         subject.call(bot_request)
-        expect(bot_request.data).to eq( { 'user' =>  Service::User::Storage.nil_user })
+        expect(bot_request.next.first[:current]['data']).to eq( { 'user' =>  Service::User::Storage.nil_user })
       end
 
     end
@@ -44,14 +43,13 @@ describe Service::User::Controller do
       end
 
       it 'should change the event from requested to found' do
-        expect{
-          subject.call(bot_request)
-        }.to change { bot_request.name }.from(::Request::Events::Users::ACCOUNT_SHOW_REQUESTED).to(::Request::Events::Users::ACCOUNT_READ)
+        subject.call(bot_request)
+        expect(bot_request.next.first[:current]['name']).to eq ::Request::Events::Users::ACCOUNT_READ
       end
       
       it 'should set the found user data' do
         subject.call(bot_request)
-        expect(bot_request.data).to eq({ 'user' => user })
+        expect(bot_request.next.first[:current]['data']).to eq({ 'user' => user })
       end
     end
   end

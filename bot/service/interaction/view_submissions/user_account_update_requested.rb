@@ -7,7 +7,7 @@ module Service
 
         def call(bot_request)
           values = bot_request.data['view']['state']['values'].values
-          bot_request.current = ::Request::Events::Users.account_update_requested(
+          bot_request.events << ::Request::Events::Users.account_update_requested(
             source: :interactions,
             handle: extract_from_values(values: values, extract: :handle),
             email: extract_from_values(values: values, extract: :email),

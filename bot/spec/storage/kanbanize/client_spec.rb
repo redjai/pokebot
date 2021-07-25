@@ -1,6 +1,6 @@
-require 'storage/kanbanize/client'
+require 'storage/kanbanize/dynamodb/client'
 
-describe Storage::Kanbanize::Client do
+describe Storage::Kanbanize::DynamoDB::Client do
 
   let(:last_board_id){ 2 }
   let(:board_ids){ [3] }

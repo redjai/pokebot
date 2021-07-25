@@ -26,9 +26,8 @@ describe Service::User::Controller do
       end
 
       it 'should create an account update event' do
-        expect{
-          subject.call(bot_request)
-        }.to change{ bot_request.name }.from(::Request::Events::Users::ACCOUNT_EDIT_REQUESTED).to(::Request::Events::Users::ACCOUNT_READ)
+        subject.call(bot_request)
+        expect(bot_request.next.first[:current]['name']).to eq ::Request::Events::Users::ACCOUNT_READ
       end  
 
       it 'should not create a new  user' do
@@ -61,9 +60,8 @@ describe Service::User::Controller do
       end
 
       it 'should create an account update event' do
-        expect{
           subject.call(bot_request)
-        }.to change{ bot_request.name }.from(::Request::Events::Users::ACCOUNT_EDIT_REQUESTED).to(::Request::Events::Users::ACCOUNT_READ)
+          expect(bot_request.next.first[:current]['name']).to eq ::Request::Events::Users::ACCOUNT_READ
       end  
 
       it 'should create a new user user' do

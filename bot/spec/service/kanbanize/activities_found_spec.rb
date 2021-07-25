@@ -2,7 +2,7 @@ require 'service/kanbanize/controller'
 require 'topic/sns'
 require 'request/event'
 require 'service/kanbanize/new_activities_found'
-require 'storage/kanbanize/activity'
+require 'storage/kanbanize/s3/activity'
 
 describe Service::Kanbanize::NewActivitiesFound do
 
@@ -42,10 +42,9 @@ describe Service::Kanbanize::NewActivitiesFound do
         described_class.call(bot_request)
       end
 
-      it 'should change data' do
-        expect{
-          described_class.call(bot_request)
-        }.to change{ bot_request.current['data'] }.from(bot_request.current['data']).to(found_activities) 
+      it 'should add the activities found event' do
+        described_class.call(bot_request)
+        expect(bot_request.next.first[:current]['data']).to eq found_activities 
       end
 
       context 'no new activitoes' do

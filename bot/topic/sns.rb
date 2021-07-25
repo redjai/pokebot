@@ -11,9 +11,14 @@ module Topic
     def broadcast(topic:, request:)
       Bot::LOGGER.debug("out:")
       Bot::LOGGER.debug(topic)
-      Bot::LOGGER.debug(request.to_json)
+      request.next.each_with_index do |next_request, i|
+        Bot::LOGGER.debug("next event #{i}")
+        Bot::LOGGER.debug(next_request.to_json)
+      end
       [topic].flatten.each do |t|
-        topic(topic: t).publish( message: request.to_json )
+        request.next.each do |next_request|
+          topic(topic: t).publish( message: next_request.to_json )
+        end
       end
     end
 

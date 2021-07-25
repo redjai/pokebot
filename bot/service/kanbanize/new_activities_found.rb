@@ -1,8 +1,11 @@
 require 'request/events/kanbanize'
 require 'topic/sns'
 require 'date'
-require 'storage/kanbanize/activity'
+require 'storage/kanbanize/s3/activity'
 
+# all of todays activities are imported in 'import board activities'
+# this service saves these to s3 IF they haven't already been saved in an earlier request today
+# it then broadcasts any new activities imported. 
 module Service
   module Kanbanize
     module NewActivitiesFound # change this name 
@@ -21,7 +24,7 @@ module Service
       
         if new_activities.any?
 
-          bot_request.current = Request::Events::Kanbanize.new_activities_found(
+          bot_request.events << Request::Events::Kanbanize.new_activities_found(
                                 source: self.class.name, 
                                 client_id: bot_request.data['client_id'],
                                 board_id: bot_request.data['board_id'],

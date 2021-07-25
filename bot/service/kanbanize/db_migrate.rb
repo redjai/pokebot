@@ -1,22 +1,39 @@
 require 'aws-sdk-rdsdataservice'
 
+#  sls invoke -f kanbanize_util --stage development -d "{\"action\":\"db-migrate\",\"migration\":\"1\",\"klazz\":\"CreateHistoriesTable\",\"direction\":\"up\"}"
+
+class String
+  def camel_case
+    self.split('_').collect(&:capitalize).join
+  end
+end
+
 module Service
   module Kanbanize
     module DbMigrate
       extend self
 
-      def call(_)
+      def call(bot_request)
+        migration = bot_request.data['migration']
+        path = File.join("storage","kanbanize","postgres","migrations","#{migration}_*.rb")
+        file = Dir.glob(path).first
+
+        raise "cannot find a migration starting with '#{migration}_'" unless file
+        require file
+
+        klazz = Migrations.const_get(bot_request.data['klazz'])
+        direction = (bot_request.data['direction'] || :up)
+
         resource = Aws::RDSDataService::Resource.new(region: ENV['REGION'])
-        client = resource.client
-        puts client.execute_statement({
-          database: 'postgres',
-          resource_arn: "arn:aws:rds:eu-west-1:154682513313:cluster:redqueen-development",
-          secret_arn: "arn:aws:secretsmanager:eu-west-1:154682513313:secret:rds-db-credentials/cluster-JQWIOQ5JMHESWHSWLDLGMIQXV4/redqueen_master-3ZGPAH",
-          sql: "select * from users"
+        
+        resource.client.execute_statement({
+          database: ENV['KANBANIZE_DB_NAME'],
+          resource_arn: ENV['KANBANIZE_DB_CLUSTER'],
+          secret_arn: ENV['KANBANIZE_DB_SECRET_ARN'],
+          sql: klazz.new.send(direction.to_sym)
         })
       end
 
     end
   end
 end
-

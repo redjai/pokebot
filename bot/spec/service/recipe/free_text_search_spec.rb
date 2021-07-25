@@ -48,7 +48,7 @@ describe Service::Recipe::Controller do
       
       it 'should set the information_bulk data in the event as recipes' do
           subject.call(bot_request) 
-          expect(bot_request.data['recipes']).to eq information_bulk_response
+          expect(bot_request.next.first[:current]['data']['recipes']).to eq information_bulk_response
       end
 
       context 'favourites' do
@@ -58,13 +58,13 @@ describe Service::Recipe::Controller do
 
         it 'should return an empty list where the user does not exist' do
             subject.call(bot_request) 
-            expect(bot_request.data['favourite_recipe_ids']).to eq []
+            expect(bot_request.next.first[:current]['data']['favourite_recipe_ids']).to eq []
         end
 
         it 'should return the favourites as a list when the user does exist' do
             Service::Recipe::User.upsert(user_id, favourites)
             subject.call(bot_request) 
-            expect(bot_request.data['favourite_recipe_ids']).to eq favourites
+            expect(bot_request.next.first[:current]['data']['favourite_recipe_ids']).to eq favourites
         end
       end
 
@@ -72,7 +72,7 @@ describe Service::Recipe::Controller do
         
         it 'should assign the query' do
              subject.call(bot_request) 
-             expect(bot_request.data['query']).to eq "beef rendang"
+             expect(bot_request.next.first[:current]['data']['query']).to eq "beef rendang"
          end
 
       end
@@ -81,7 +81,7 @@ describe Service::Recipe::Controller do
 
         it 'should assign  offset, per_page and total_results as the page object' do
              subject.call(bot_request) 
-             expect(bot_request.data['page']).to eq({"offset"=>0, "per_page"=>10, "total_results"=>15}) 
+             expect(bot_request.next.first[:current]['data']['page']).to eq({"offset"=>0, "per_page"=>10, "total_results"=>15}) 
          end
       end
 

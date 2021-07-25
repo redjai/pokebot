@@ -9,7 +9,13 @@ module Request
       @trail = trail
     end
 
-    def data
+    def initialize_copy(other)
+      @context = other.context
+      @current = other.current
+      @trail = other.trail.dup
+    end
+
+    def data(index=0)
       current['data']
     end
 
@@ -27,29 +33,54 @@ module Request
       !intent.nil?
     end
 
-    def current=(event)
-      raise "intent #{intent.name} already set for this request" if event.intent && intent?
-      trail.unshift(@current.to_h)
-      @current = event.to_h
+    def events?
+      events.any?
+    end
+
+    def events
+      @events ||= EventArray.new
     end
 
     def trail
       @trail ||= []
     end
     
-    def to_json
-      to_h.to_json 
+    def next
+      @next ||= begin
+        next_trail = [@current] + @trail
+        events.collect do |event|
+          { 
+            current: event, 
+            trail: next_trail, 
+            context: @context.to_h 
+          }
+        end
+      end
     end
 
-    def to_h
-      { current: @current, trail: @trail, context: @context.to_h }
+    def to_json
+      { 
+        current: @current, 
+        trail: @trail, 
+        context: @context.to_h 
+      }.to_json
     end
 
     private
+
+    def _events
+      @events ||= []
+    end
 
     def all
       [@current] + trail 
     end
 
+  end
+
+  class EventArray < Array
+    def <<(event)
+      push event.to_h if event
+    end
   end
 end

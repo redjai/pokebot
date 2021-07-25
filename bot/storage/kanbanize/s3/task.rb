@@ -6,9 +6,13 @@ module Storage
     class HistoryDetail
 
       FROM_TO = Regexp.new("'([^']+)'")
-   
+
        def initialize(data)
          @data = data
+       end
+
+       def id
+        @data['historyid']
        end
 
        def event_type
@@ -31,14 +35,18 @@ module Storage
          @data['author']
        end
 
-       def entry_date_time
-         DateTime.parse(@data['entrydate'])
+       def timestamp
+         DateTime.parse(@data['entrydate']).to_time
+       end
+
+       def [](key)
+         from_to[key]
        end
 
        def from_to
          @from_to ||= begin
            cols = details.scan(FROM_TO)
-           raise "failed to parse from_to for #{details}" unless cols.first.first && cols.last.first
+           raise "failed to parse from_to for #{details}" unless cols.first && cols.last
            { 
              from: cols.first.first, 
              to: cols.last.first 
@@ -65,17 +73,15 @@ module Storage
         File.join("tasks", @client_id, @board_id, "#{id}.json")
       end
 
+      def archive_key
+        File.join("tasks", @client_id, @board_id, "archived", "#{id}.json")
+      end
+
       def history_details
         @history_details ||= @task['historydetails'].collect do |history_detail|
           HistoryDetail.new(history_detail)
         end
       end
-
-    end
-
-    class HistoryStore
-
-  
 
     end
 
@@ -90,11 +96,27 @@ module Storage
         @store ||= ImportBucket.new
       end
 
+      def archive!(task)
+        TaskData.new(client_id: @client_id, board_id: @board_id, task: task).tap do |data|
+          delete(data.key)
+          put(data.archive_key, task)
+        end
+      end
+
       def store!(task)
         TaskData.new(client_id: @client_id, board_id: @board_id, task: task).tap do |data|
-          object = store.bucket.object(data.key) 
-          object.put(body: task.to_json)
+          put(data.key, task)
         end
+      end
+
+      def put(key, task)
+        object = store.bucket.object(key) 
+        object.put(body: task.to_json)
+      end
+
+      def delete(key)
+        object = store.bucket.object(key)
+        object.delete if object.exists?
       end
 
     end
@@ -102,10 +124,10 @@ module Storage
     class TaskFetcher
 
       def store
-        @store ||= TaskS3.new(@client_id, @board_id)
+        @store ||= ImportBucket.new
       end
 
-      def iniitialize(client_id, board_id)
+      def initialize(client_id:, board_id:)
         @client_id = client_id
         @board_id = board_id
       end
@@ -113,7 +135,7 @@ module Storage
       def fetch(task_id)
         data = TaskData.new(client_id: @client_id, board_id: @board_id, task_id: task_id)
         object = store.bucket.object(data.key)
-        object.get.body.read
+        JSON.parse(object.get.body.read)
       end
 
     end

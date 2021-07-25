@@ -1,6 +1,6 @@
 require 'net/http'
 require_relative 'net/api'
-require 'storage/kanbanize/client'
+require 'storage/kanbanize/dynamodb/client'
 require 'request/events/kanbanize'
 require 'topic/sns'
 
@@ -9,7 +9,7 @@ module Service
     module ImportBoardActivities # change this name 
       extend self
       extend Service::Kanbanize::Api
-      extend Storage::Kanbanize
+      extend Storage::Kanbanize::DynamoDB
 
       DEFAULT_PAGE_SIZE = 30
 
@@ -19,7 +19,7 @@ module Service
 
         begin
 
-          bot_request.current = ::Request::Events::Kanbanize.activities_imported(
+          bot_request.events << ::Request::Events::Kanbanize.activities_imported(
             source: :kanbanize,
             activities: activities(
               kanbanize_api_key: client.kanbanize_api_key,

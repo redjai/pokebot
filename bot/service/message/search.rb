@@ -8,7 +8,7 @@ module Service
     module Search
       def self.call(bot_request)
 
-        bot_request.current = ::Request::Events::Messages.received(source: :messages, text: text(bot_request)) 
+        bot_request.events << ::Request::Events::Messages.received(source: :messages, text: text(bot_request)) 
 
         Topic::Sns.broadcast(
             topic: :messages,

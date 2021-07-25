@@ -11,6 +11,9 @@ module Service
         when Request::Events::Cron::Actions::KANBANIZE_IMPORT_ACTIVITIES 
           require_relative 'import_board_activities' # change this name
           Service::Kanbanize::ImportBoardActivities.call(bot_request) # change this name
+        when Request::Events::Util::Actions::FIND_TASKS
+          require_relative 'find_tasks'
+          Service::Kanbanize::FindTasks.call(bot_request)
         else
           Bot::LOGGER.error "unexpected action #{bot_request.data['action']}"
         end

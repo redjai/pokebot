@@ -5,10 +5,22 @@ module Storage
 
     class HistoryDetail
 
-      FROM_TO = Regexp.new("'([^']+)'")
+       FROM_TO = Regexp.new("'([^']+)'")
 
        def initialize(data)
          @data = data
+       end
+
+       def moved_column?
+        history_event == 'Task moved'  && details != "The task was reordered within the same board cell."
+       end
+
+       def created?
+        self.history_event == 'Task created'
+       end
+
+       def archived?
+        self.history_event == 'Task archived'
        end
 
        def id
@@ -16,7 +28,7 @@ module Storage
        end
 
        def event_type
-         @data['eventype']
+         @data['eventtype']
        end
 
        def history_event
@@ -29,6 +41,10 @@ module Storage
 
        def details 
          @data['details']
+       end
+
+       def details_sql_safe
+        @data['details'].gsub("'","`")
        end
 
        def author
@@ -46,7 +62,7 @@ module Storage
        def from_to
          @from_to ||= begin
            cols = details.scan(FROM_TO)
-           raise "failed to parse from_to for #{details}" unless cols.first && cols.last
+           raise "failed to parse from_to for task #{task_id} - #{details}" unless cols.first && cols.last
            { 
              from: cols.first.first, 
              to: cols.last.first 
@@ -127,15 +143,23 @@ module Storage
         @store ||= ImportBucket.new
       end
 
-      def initialize(client_id:, board_id:)
+      def initialize(client_id:, board_id:, archived:)
         @client_id = client_id
         @board_id = board_id
+        @archived = archived
       end
 
       def fetch(task_id)
         data = TaskData.new(client_id: @client_id, board_id: @board_id, task_id: task_id)
-        object = store.bucket.object(data.key)
-        JSON.parse(object.get.body.read)
+        key = @archived ? data.archive_key : data.key
+        object = store.bucket.object(key)
+
+        if object.exists? # sometimes this returns false when object exists - not sure why yet.
+          JSON.parse(object.get.body.read) 
+        else
+          Bot::LOGGER.info("cannot fetch task #{key} as exists? return false")
+          nil
+        end
       end
 
     end

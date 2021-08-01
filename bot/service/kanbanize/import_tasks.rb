@@ -53,7 +53,8 @@ module Service
           source: self.class.name, 
           client_id: client.id, 
           board_id: bot_request.data['board_id'],
-          tasks: ids.collect{ |id| { "task_id" => id } } 
+          tasks: ids.collect{ |id| { "task_id" => id } },
+          archived: bot_request.data['archived'] ? 'yes' : 'no'  
         )
 
         Topic::Sns.broadcast(

@@ -50,11 +50,12 @@ module Request
         ::Request::Event.new(source: source, name: ::Request::Events::Kanbanize::ARCHIVED_TASKS_FOUND, version: 1.0, data: data)      
       end
       
-      def tasks_imported(source:, client_id:, board_id:, tasks:)
+      def tasks_imported(source:, client_id:, board_id:, tasks:, archived: 'no')
         data = {
           'board_id' => board_id,
           'client_id' => client_id,
-          'tasks' => tasks
+          'tasks' => tasks,
+          'archived' => archived
         }
         ::Request::Event.new(source: source, name: ::Request::Events::Kanbanize::TASKS_IMPORTED, version: 1.0, data: data)      
       end

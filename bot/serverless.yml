@@ -271,6 +271,7 @@ functions:
       DATE_RANGE_OFFSET: 0
 
   kanbanize_imports:
+    timeout: 20
     handler: handlers/kanbanize/imports.Kanbanize::Imports::Handler.handle
     events:
       - sqs:

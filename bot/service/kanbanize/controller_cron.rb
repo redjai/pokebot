@@ -1,4 +1,5 @@
 require 'request/events/cron'
+require 'request/events/util'
 require 'request/events/kanbanize'
 
 module Service

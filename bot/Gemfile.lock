@@ -38,6 +38,7 @@ GEM
     concurrent-ruby (1.1.8)
     crack (0.4.5)
       rexml
+    descriptive_statistics (2.5.1)
     diff-lcs (1.4.4)
     factory_bot (6.1.0)
       activesupport (>= 5.0.0)
@@ -81,6 +82,7 @@ DEPENDENCIES
   aws-sdk-s3
   aws-sdk-sns
   climate_control
+  descriptive_statistics
   factory_bot
   faker
   honeybadger

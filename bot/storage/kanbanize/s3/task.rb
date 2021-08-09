@@ -11,7 +11,7 @@ module Storage
          @data = data
        end
 
-       def moved_column?
+       def moved?
         history_event == 'Task moved'  && details != "The task was reordered within the same board cell."
        end
 
@@ -24,7 +24,7 @@ module Storage
        end
 
        def id
-        @data['historyid']
+        @data['historyid'].to_i
        end
 
        def event_type
@@ -36,7 +36,7 @@ module Storage
        end
 
        def task_id
-         @data['taskid']
+         @data['taskid'].to_i
        end
 
        def details 

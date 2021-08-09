@@ -39,7 +39,7 @@ module Service
                                                                history_details: history_details
                                                             )
 
-          durations.store!
+          durations.store! if durations.valid?
 
         end
       end

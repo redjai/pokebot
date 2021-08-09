@@ -14,5 +14,6 @@ group :test, :development do
     gem 'climate_control'
     gem 'webmock'
     gem 'faker'
+    gem 'descriptive_statistics'
 end
 

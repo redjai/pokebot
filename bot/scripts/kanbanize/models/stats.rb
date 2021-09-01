@@ -1,4 +1,4 @@
-class TaskDurationStats
+class TaskActionStats
 
   attr_reader :cols
 

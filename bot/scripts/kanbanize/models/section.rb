@@ -9,42 +9,39 @@ class Section
   end
 
   def find_column(name)
-    all_columns.find{ |col| col.name == name }
+    names = name.split(".")
+    if names.count == 1
+      columns[names.first]
+    elsif names.count == 2
+      parent  = columns[names.first]
+      parent.children[names.last] if parent
+    else
+      raise "unexpected name #{name}"
+    end
   end
 
   def columns
-    @columns ||= []
+    @columns ||= ColumnsCollection.new
   end
 
   def queues
     all_columns.select{|column| column.queue? }
   end
 
+  def activities
+    @activities ||= Activities.new(all_columns)
+  end
+ 
   def stats
-    @stats ||= TaskDurationStats.new(all_columns).hydrate!
+    @stats ||= TaskActionStats.new(all_columns).hydrate!
   end
 
   def created
-    all_columns.collect{|col| col.created }.flatten
+    all_columns.collect{|col| col.task_durations.created }.flatten
   end
 
   def archived
     all_columns.collect{|col| col.archived }.flatten
-  end
-
-  def add_structural_column(position:, lcname:, flow_type:, children:)
-    parent_pos = (position.to_i * 100) + 100
-    if children
-      children.each do |child|
-        child['position'] = parent_pos + child['position'].to_i + 1
-      end
-    end
-    columns << Column.new(
-      position: parent_pos, 
-      lcname: lcname, 
-      flow_type: flow_type, 
-      children: children
-    )
   end
 
   def all_task_durations

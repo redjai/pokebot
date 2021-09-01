@@ -14,17 +14,26 @@ class Boards
       id = $1
       boards[id] = Board.new(id)
       board = boards[id]
-      structure["columns"].each do |column|
-        board.add_structural_column(
-          section: column['section'],
-          position: column['position'],
-          lcname: column['lcname'],
-          flow_type: column['flowtype'],
-          children: column['children']
+      structure["columns"].each do |scolumn|
+        section = board.find_section(scolumn['section'])
+        column = Column.new(
+          position: scolumn['position'], 
+          lcname: scolumn['lcname'], 
+          flow_type: scolumn['flow_type']
         )
+        scolumn.fetch('children',[]).each do |child|
+          column.children[child['lcname']] = Column.new(
+            position: child['position'], 
+            lcname: child['lcname'], 
+            flow_type: child['flow_type']
+          )
+        end
+        section.columns[scolumn['lcname']] = column
       end
     end
   end
+
+
 
   def structure_files
     Dir.glob("board_structures/*.json")
@@ -34,8 +43,8 @@ class Boards
     File.read(path)
   end
 
-  def add_board_column_task_duration(board_id, column, task, duration)
-    board(board_id).add_column_task_duration(column, task, duration)
+  def add_board_column_task_duration(board_id, column, task_id, duration)
+    board(board_id).add_column_task_duration(column, task_id, duration)
   end
 
   def board(board_id)
@@ -43,19 +52,26 @@ class Boards
   end
 
   def load_data(file)
-    CSV.foreach(file,{:headers=>:first_row}) do |row|
+    CSV.foreach(file,{headers: :first_row}) do |row|
       board = boards[row[0]]
+      
       entry_at = row[3] == 'NULL' ? nil : DateTime.parse(row[3]) 
       exit_at = row[4] == 'NULL' ? nil : DateTime.parse(row[4]) 
-      duration = (( DateTime.parse(row[4]).to_time - DateTime.parse(row[3]).to_time ) / 3600).round if row[3] != "NULL"  && row[4] != "NULL"
-      board.add_column_task_duration(
-        column: row[1], 
-        task: row[2], 
-        entry_at: entry_at , 
-        exit_at: exit_at, 
-        entry_history_event: row[5], 
+         
+      column = board.find_column(row[1])
+
+      next unless column
+
+      task_action = TaskAction.new(
+        entry_at: entry_at, 
+        exit_at: exit_at,
+        entry_history_event: row[5],
         exit_history_event: row[6]
       )
+
+      column.task_actions << task_action
+      task = board.tasks.add(row[2])
+      task.task_actions << task_action 
     end
   end
  

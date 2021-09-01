@@ -15,5 +15,6 @@ group :test, :development do
     gem 'webmock'
     gem 'faker'
     gem 'descriptive_statistics'
+    gem 'caxlsx'
 end
 

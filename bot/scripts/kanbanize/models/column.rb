@@ -4,20 +4,79 @@ require_relative 'task'
 require_relative 'activities'
 require_relative 'report_dates'
 
-class ColumnsCollection < Hash
+class ColumnsResult < Array
+
+  def actions_on(date)
+    actions = []
+    actions << first.task_actions.entries_on(date)
+    actions << last.task_actions.exits_on(date)
+    actions << collect{ |edge| edge.task_actions.waits_on(date) }
+    actions.flatten
+  end
+
+  def grouped_actions_on(date)
+    grouped = {}
+    actions_on(date).each do |action_on|
+      grouped[action_on] ||= 0
+      grouped[action_on] += 1
+    end
+    grouped
+  end
+
+  def actions_between(date_range)
+    date_range.collect do |date|
+      actions_on(date)
+    end.flatten.sort
+  end
+
+  def grouped_actions_between(date_range)
+    grouped = {}
+    actions_between(date_range).each do |action_on|
+      grouped[action_on] ||= 0
+      grouped[action_on] += 1
+    end
+    grouped
+  end
+
+end
+
+class ColumnsHash < Hash
 
   def ordered
     values.sort{ |a,b| a.position <=> b.position }
   end
 
-  def first
-    ordered.first
+  def edges
+    @edges ||= begin
+      edges = [] # can't use collect/flatten as we need a very specific order..
+      ordered.each do |column|
+        if column.children?
+          column.children.ordered.each do |child|
+            edges << child
+          end
+        else
+          edges << column
+        end 
+      end
+      ColumnsResult.new(edges)
+    end
   end
 
-  def last
-    ordered.last
+  def queues
+    @queues ||= begin
+      queues = []
+      ordered.each do |column|
+        if column.children?
+          column.children.ordered.each do |child|
+            queues << child if child.queue?
+          end
+        else
+          queues << column if column.queue?
+        end 
+      end
+      ColumnsResult.new(queues)
+    end
   end
-
 end
 
 class Column
@@ -31,27 +90,6 @@ class Column
     @flow_type = flow_type
   end
 
-  def grouped_actions_on(date)
-    grouped = {}
-    actions_on(date).each do |action_on|
-      grouped[action_on] ||= 0
-      grouped[action_on] += 1
-    end
-    grouped
-  end
-
-  def actions_on(date)
-    if children?
-      actions = []
-      actions << children.first.task_actions.entries_on(date) 
-      actions << children.last.task_actions.exits_on(date)
-      actions << children.each_value.collect{ |column| column.task_actions.waits_on(date) }
-      actions.flatten
-    else
-      task_actions.all_on(date)
-    end
-  end
-
   def task_actions
     @task_actions ||= TaskActionsCollection.new
   end
@@ -61,15 +99,11 @@ class Column
   end
 
   def children
-    @children ||= ColumnsCollection.new
+    @children ||= ColumnsHash.new
   end
 
   def children?
     !children.empty?
-  end
-
-  def name
-    parent.nil? ? lcname : "#{parent.lcname}.#{lcname}"
   end
 
   def stats

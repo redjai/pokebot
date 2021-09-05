@@ -18,17 +18,17 @@ class Boards
         section = board.find_section(scolumn['section'])
         column = Column.new(
           position: scolumn['position'], 
-          lcname: scolumn['lcname'], 
+          lcname: scolumn['lcname'].upcase, 
           flow_type: scolumn['flow_type']
         )
         scolumn.fetch('children',[]).each do |child|
-          column.children[child['lcname']] = Column.new(
+          column.children[child['lcname'].upcase] = Column.new(
             position: child['position'], 
-            lcname: child['lcname'], 
-            flow_type: child['flow_type']
+            lcname: child['lcname'].upcase, 
+            flow_type: child['flowtype']
           )
         end
-        section.columns[scolumn['lcname']] = column
+        section.columns[scolumn['lcname'].upcase] = column
       end
     end
   end
@@ -58,10 +58,10 @@ class Boards
       entry_at = row[3] == 'NULL' ? nil : DateTime.parse(row[3]) 
       exit_at = row[4] == 'NULL' ? nil : DateTime.parse(row[4]) 
          
-      column = board.find_column(row[1])
+      column = board.find_column(row[1].upcase)
 
       next unless column
-
+      
       task_action = TaskAction.new(
         entry_at: entry_at, 
         exit_at: exit_at,

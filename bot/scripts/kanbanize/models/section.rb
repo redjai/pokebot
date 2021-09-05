@@ -8,6 +8,10 @@ class Section
    @name = name
   end
 
+  def task_actions
+    all_columns.collect{ |c| c.task_actions }.flatten
+  end
+
   def find_column(name)
     names = name.split(".")
     if names.count == 1
@@ -21,7 +25,26 @@ class Section
   end
 
   def columns
-    @columns ||= ColumnsCollection.new
+    @columns ||= ColumnsHash.new
+  end
+
+  def actions_on(date)
+    columns.values.collect do |column|
+      column.actions_on(date)
+    end.flatten
+  end
+
+  def actions_on(date)
+    edges = columns.edges
+    actions = []
+    actions << edges.first.task_actions.entries_on(date)
+    actions << edges.last.task_actions.exits_on(date)
+    actions << edges.collect{ |edge| edge.task_actions.waits_on(date) }
+    actions.flatten
+  end
+
+  def test_actions_on(date)
+    columns.edge_task_actions.each{|task_actions| task_actions.all_on()  }
   end
 
   def queues
@@ -49,12 +72,12 @@ class Section
   end
 
   def all_columns
-    columns.collect do |column|
+    columns.each_value.collect do |column|
       if column.children?
-        column.children
+        column.children.values
       else
         column
       end
-    end.flatten.sort_by(&:position)
+    end.flatten
   end
 end

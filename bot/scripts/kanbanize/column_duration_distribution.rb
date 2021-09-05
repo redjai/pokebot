@@ -9,25 +9,8 @@ boards = Boards.new
 boards.build!
 boards.load_data(ARGV.first)
 
-boards.boards.each_value do |board|
-  board.sections.each_value do |section|
-    puts "#{board.id} - #{section.name}"
-    date = Date.civil(2021,5,31)
-    
-    section.columns.each_value do |column|
-      puts column.lcname
-      (date..(date + 4)).each do |date|
-        puts column.grouped_actions_on(date).inspect
-      end
-    end
-    
-  end
-end
-
-
 Axlsx::Package.new do |p|
-
-  p.workbook.add_worksheet(:name => "Activities") do |sheet|
+  p.workbook.add_worksheet(:name => "Section Actions") do |sheet|
     sheet.add_row(["board","section"])
     boards.boards.each_value do |board|
       board.sections.each_value do |section|
@@ -36,7 +19,7 @@ Axlsx::Package.new do |p|
         sheet.add_row(["","created", "entered","waited","exited","archived"])
         date = Date.civil(2021,5,31)
         (date..(date + 30)).each do |date|
-          activities = section.activities.day(date: date)
+          activities = section.columns.edges.grouped_actions_on(date)
           sheet.add_row([
             date.to_s,
             activities['created'].to_i.to_s,
@@ -49,7 +32,40 @@ Axlsx::Package.new do |p|
       end
     end
   end
-  p.serialize('/tmp/simple.xlsx')
+  p.serialize('/tmp/sections.xlsx')
+end
+
+Axlsx::Package.new do |p|
+  date = Date.civil(2021,6,14)
+  p.workbook.add_worksheet(:name => "Section Actions") do |sheet|
+    boards.boards.each_value do |board|
+      sheet.add_row([])
+      sheet.add_row(["board #{board.id}"])
+      sheet.add_row(["","created", "entered","waited","exited","archived"])
+      board.sections.each_value do |section|
+        dates = (date..(date + 4))
+        section.columns.queues.each do |queue_column|
+          actions = queue_column.task_actions.all_between(dates).to_h
+          sheet.add_row([
+              queue_column.lcname,
+              actions['created'].to_i.to_s,
+              actions['entered'].to_i.to_s,
+              actions['waited'].to_i.to_s,
+              (0 - actions['exited'].to_i).to_s,
+              (0 - actions['archived'].to_i).to_s
+          ])
+        end
+      end
+    end
+  end
+  p.serialize('/tmp/queues.xlsx')
+end
+
+raise "bbb"
+
+date = Date.civil(2021,5,30)
+(date..(date + 30)).each do |date|
+  puts date.to_s + " " + boards.boards["4"].sections['progress'].task_actions.collect{ |ta| ta.waits_on(date) }.compact.count.to_s
 end
 
 raise "boom"

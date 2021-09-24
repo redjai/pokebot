@@ -2,7 +2,7 @@
 
 FactoryBot.define do
 
-    factory :history_detail, class: Storage::Kanbanize::HistoryDetail do
+    factory :history_detail, class: "Storage::Kanbanize::HistoryDetail" do
       sequence(:historyid){|n| n.to_s }
       sequence(:taskid){|n| n.to_s }
       author{ Faker::Internet.username }

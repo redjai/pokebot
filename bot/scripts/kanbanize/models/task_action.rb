@@ -50,7 +50,7 @@ class TaskAction
 
   OFFICE_START_HOUR = 9
   OFFICE_END_HOUR = 18
-  MIN_DAY = 4
+  MIN_DAY = 12
 
   attr_reader :entry_at, :exit_at, :entry_history_event, :exit_history_event
 
@@ -78,7 +78,7 @@ class TaskAction
   end
 
   def date_range
-    @date_range ||= (entry_at_date..exit_at_date)
+    @date_range ||= duration ? (entry_at_date..exit_at_date) : nil
   end
 
   module Actions
@@ -89,27 +89,41 @@ class TaskAction
     ARCHIVED = "archived"
   end
 
-  def wait_length(date)
-    ((exit_at - entry_at) * 24).to_i    
+  def wait_length_on(date)
+    date = date.to_date if date.is_a?(DateTime)
+    
+    if date_range.first == date
+      start = entry_at.hour
+    else 
+      start = 0
+    end
+
+    if date_range.last == date
+      finish = exit_at.hour
+    else 
+      finish = 24
+    end
+
+    finish - start  
   end
   
-  def waits_on(date)
+  def waited_on(date)
     return nil unless date_range.include?(date)
-    if wait_length(date) >= MIN_DAY
+    if wait_length_on(date) >= MIN_DAY
       Actions::WAITED
     else
       #puts wait_length(date).to_s + " no wait " + entry_at.to_s + " - " + exit_at.to_s
     end
   end
 
-  def entries_on(date)
+  def entered_on(date)
     return nil unless date_range.include?(date)
     if date == entry_at_date
       created? ? Actions::CREATED : Actions::ENTERED
     end
   end
 
-  def exits_on(date)
+  def exited_on(date)
     return nil unless date_range.include?(date)
     if date == exit_at_date
       archived? ? Actions::ARCHIVED : Actions::EXITED
@@ -118,17 +132,17 @@ class TaskAction
 
   def all_on(date)
     actions = []
-    actions << entries_on(date)
-    actions << exits_on(date)
-    actions << waits_on(date)
-    actions.flatten.compact
+    actions << entered_on(date)
+    actions << exited_on(date)
+    actions << waited_on(date)
+    actions.compact
   end
 
   def exit_at_date
-    @exit_at_date ||= exit_at.to_date
+    @exit_at_date ||= @exit_at ? @exit_at.to_date : nil
   end
 
   def entry_at_date
-    @entry_at_date ||= entry_at.to_date
+    @entry_at_date ||= @entry_at ? @entry_at.to_date : nil
   end
 end

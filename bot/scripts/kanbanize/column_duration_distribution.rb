@@ -9,6 +9,31 @@ boards = Boards.new
 boards.build!
 boards.load_data(ARGV.first)
 
+date = Date.civil(2021,5,31)
+  
+boards.boards.each_value do |board|
+  CSV.open("/tmp/board-#{board.id}.csv", "wb") do |csv|
+    csv << ["date","created", "entered","waited","exited","archived"]
+    #(date..(date + 30)).each do |date|
+      board.sections.each_value do |section|
+        section.columns.queues.each do |queue_column|
+          actions = queue_column.task_actions.all_on(date).to_h
+        #actions = section.columns.edges.grouped_actions_on(date)
+        
+        csv << [
+                queue_column.lcname,
+                actions['created'].to_i.to_s,
+                actions['entered'].to_i.to_s,
+                actions['waited'].to_i.to_s,
+                (0 - actions['exited'].to_i).to_s,
+                (0 - actions['archived'].to_i).to_s
+              ]
+         end
+      end
+    #end
+  end
+end
+
 Axlsx::Package.new do |p|
   p.workbook.add_worksheet(:name => "Section Actions") do |sheet|
     sheet.add_row(["board","section"])
@@ -34,6 +59,14 @@ Axlsx::Package.new do |p|
   end
   p.serialize('/tmp/sections.xlsx')
 end
+
+
+ 
+
+  raise "bam"
+  
+  p.serialize('/tmp/queues.xlsx')
+
 
 Axlsx::Package.new do |p|
   date = Date.civil(2021,6,14)

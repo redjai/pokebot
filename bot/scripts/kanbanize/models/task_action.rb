@@ -17,19 +17,19 @@ end
 class TaskActionsCollection < Array
    def entries_on(date)
     TaskActionsResult.new(each.collect do |task_action|
-       task_action.entries_on(date)
+       task_action.entered_on(date)
      end).flatten
    end
 
    def exits_on(date)
     TaskActionsResult.new(each.collect do |task_action|
-       task_action.exits_on(date)
+       task_action.exited_on(date)
       end.flatten)
    end
 
    def waits_on(date)
     TaskActionsResult.new(each.collect do |task_action|
-        task_action.waits_on(date)
+        task_action.waited_on(date)
       end.flatten)
    end
 
@@ -47,9 +47,7 @@ class TaskActionsCollection < Array
 end
 
 class TaskAction
-
-  OFFICE_START_HOUR = 9
-  OFFICE_END_HOUR = 18
+  
   MIN_DAY = 12
 
   attr_reader :entry_at, :exit_at, :entry_history_event, :exit_history_event
@@ -135,7 +133,7 @@ class TaskAction
     actions << entered_on(date)
     actions << exited_on(date)
     actions << waited_on(date)
-    actions.compact
+    actions.flatten.compact
   end
 
   def exit_at_date

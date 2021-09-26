@@ -1,7 +1,12 @@
 require_relative 'board'
 require 'date'
+require 'json'
 
 class Boards
+
+  def initialize(structure_files="board_structures/*.json")
+    @structure_files = structure_files
+  end
 
   def boards
     @boards ||= {}
@@ -9,34 +14,42 @@ class Boards
 
   def build!
     structure_files.each do |path|
-      structure = JSON.parse(structure_file(path))
+      board_data = JSON.parse(structure_file(path))
       path =~ /(\d+)\.json/
       id = $1
-      boards[id] = Board.new(id)
-      board = boards[id]
-      structure["columns"].each do |scolumn|
-        section = board.find_section(scolumn['section'])
-        column = Column.new(
-          position: scolumn['position'], 
-          lcname: scolumn['lcname'].upcase, 
-          flow_type: scolumn['flow_type']
-        )
-        scolumn.fetch('children',[]).each do |child|
-          column.children[child['lcname'].upcase] = Column.new(
-            position: child['position'], 
-            lcname: child['lcname'].upcase, 
-            flow_type: child['flowtype']
-          )
-        end
-        section.columns[scolumn['lcname'].upcase] = column
-      end
+      boards[id] = build_board(id, board_data)  
     end
+  end
+
+  def build_board(id, board_data)
+    board = Board.new(id)
+    board_data["columns"].each do |column_data|
+      section = board.find_section(column_data['section'])
+      column = build_column(column_data)
+      section.columns[column.lcname] = column
+    end
+    board
+  end
+
+  def build_column(column_data)
+    column = Column.new(
+      position: column_data['position'], 
+      lcname: column_data['lcname'], 
+      flow_type: column_data['flow_type']
+    )
+
+    column_data.fetch('children',[]).each do |child_column_data|
+      child = build_column(child_column_data)
+      column.children[child.lcname] = child
+    end
+
+    column
   end
 
 
 
   def structure_files
-    Dir.glob("board_structures/*.json")
+    Dir.glob(@structure_files)
   end
 
   def structure_file(path)

@@ -14,7 +14,7 @@ date = Date.civil(2021,5,31)
 boards.boards.each_value do |board|
   CSV.open("/tmp/board-#{board.id}.csv", "wb") do |csv|
     csv << ["date","created", "entered","waited","exited","archived"]
-    #(date..(date + 30)).each do |date|
+    (date..(date + 30)).each do |date|
       board.sections.each_value do |section|
         section.columns.queues.each do |queue_column|
           actions = queue_column.task_actions.all_on(date).to_h
@@ -30,7 +30,7 @@ boards.boards.each_value do |board|
               ]
          end
       end
-    #end
+    end
   end
 end
 

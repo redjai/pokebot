@@ -77,6 +77,7 @@ class ColumnsHash < Hash
       ColumnsResult.new(queues)
     end
   end
+
 end
 
 class Column
@@ -86,7 +87,7 @@ class Column
 
   def initialize(position:, lcname:, flow_type:, children:[])
     @position = position
-    @lcname = lcname
+    @lcname = lcname.upcase
     @flow_type = flow_type
   end
 

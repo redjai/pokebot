@@ -2,6 +2,8 @@ require_relative 'section'
 
 class Board
 
+  SECTION_NAMES = ['backlog','requested','progress', 'done','archive']
+
   attr_reader :id
 
   def initialize(id)
@@ -37,6 +39,18 @@ class Board
 
   def sections
     @sections ||= {}
+  end
+
+  def edges
+    @edges ||= begin
+      edges = []
+      SECTION_NAMES.each do |name|
+        sections[name].columns.edges.each do |edge|
+          edges << edge
+        end
+      end
+      edges
+    end
   end
 
 end

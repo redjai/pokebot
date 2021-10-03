@@ -14,7 +14,11 @@ class Board
   end
 
   def transitions
-    @transitions ||= Transitions.new(cards)
+    @transitions ||= begin
+      cards.collect do |card|
+        card.history_details.column_movements
+      end.flatten.group_by{ |movement| movement.from_name }
+    end
   end
 
   def waits
@@ -28,6 +32,8 @@ class Board
   def columns
     @columns ||= Columns.new
   end
+
+  
 
   def card_section_boundaries(card, date_range: nil)
     sections = {}

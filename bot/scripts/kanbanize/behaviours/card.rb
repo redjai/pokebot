@@ -19,7 +19,7 @@ class Card # this is an imported kanbanize card
   end
 
   def history_details
-    @history_details ||= HistoryDetails::Collection.new(_history_details)
+    @history_details ||= HistoryDetails::Collection.new()
   end
 
   def base_history_details
@@ -28,7 +28,8 @@ class Card # this is an imported kanbanize card
     end
   end
 
-  def section_cycle_times
+  def section_cycle_times(section)
+    history_details.movements
     sections = {}
     transitions.each do |transition|
       if transitions.section_boundary?
@@ -44,11 +45,10 @@ class Card # this is an imported kanbanize card
     end.nil?
   end
 
-  private
-
-  def _history_details
-    (@data['historydetails'] || []).sort_by{ |a| a["historyid"] }.collect do |history_detail|
-      HistoryDetails.build(history_detail)
+  def build_history_details!(**opts)
+    (@data['historydetails'] || []).sort_by{ |a| a["historyid"] }.collect do |history_detail_data|
+      history_detail = HistoryDetails.build(history_detail_data)
+      history_details << history_detail if history_detail.entry_date.to_date >= opts[:after]
     end
   end
 

@@ -19,6 +19,12 @@ class CardData
     end
   end
 
+  def build_history_details!(**opts)
+    cards.each do |card|
+      card.build_history_details!(opts)
+    end
+  end
+
   def index_movements!(board_structures)
     cards.each do |card|
       card.history_details.column_movements.each do |movement|
@@ -27,13 +33,15 @@ class CardData
         edges = board.columns.edges
         from = edges.find{ |edge| edge.lcname == movement.from_name }
         to = edges.find{ |edge| edge.lcname == movement.to_name }
+        movement.from = from
+        movement.to = to
         movement.from_index = edges.index(from)
         movement.to_index = edges.index(to)
       end
     end
   end
 
-  def update_boards(boards)
+  def assign_cards_to_boards(boards)
     cards.each do |card|
       board = boards[card.board_id]
       board.cards << card if board

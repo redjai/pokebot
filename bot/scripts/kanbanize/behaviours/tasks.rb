@@ -14,30 +14,22 @@ require 'descriptive_statistics'
                      #.transitions
 
 def print_section(section, durations)
-  #puts durations.sort.inspect
-  puts "#{section} - 85% completed in #{remove_outliers(durations).percentile(85).round(0)} days"
+  if durations.empty?
+    puts "#{section} - no data"
+  else
+    puts "#{section} - 85% completed in #{durations.percentile(85).round(0)} days - #{durations.length}"
+  end
 end
 
-def remove_outliers(array)
-  return [] if array.empty?
-  array = array.delete_if{|d| d <  0}
-
-  q1 = array.descriptive_statistics[:q1]
-  q3 = array.descriptive_statistics[:q3]
-  diff = (q3 - q1).to_f
-  min = q1 - 1.5 * diff
-  max = q3 + 1.5 * diff
-  array.select{ |n| n > min || n < max }
-end
 
 boards = BoardStructure.new
 boards.build!
 
 card_data = CardData.new
 card_data.load!
-
+card_data.build_history_details!(after: Date.civil(2021,6,1))
 card_data.index_movements!(boards.boards)
-card_data.update_boards(boards.boards)
+card_data.assign_cards_to_boards(boards.boards)
 
 authors = card_data.authors
 
@@ -72,6 +64,31 @@ authors.values.sort_by{|author| author.history_details.created.count }.reverse.e
   puts "#{author.name} created #{author.history_details.created.count} cards archived #{author.history_details.archived.count} cards"
 end
 
+puts 
+puts "Do they comment ?"
+puts "Is the user commenting on cards."
+puts "--------------------"
+authors.values.sort_by{|author| author.history_details.comments.count }.reverse.each do |author|
+  puts "#{author.name} commented #{author.history_details.comments.count} times"
+end
+
+puts 
+puts "Do they create subtasks ?"
+puts "Is the user creating task subcards."
+puts "--------------------"
+authors.values.sort_by{|author| author.history_details.subtasks.count }.reverse.each do |author|
+  puts "#{author.name} creates #{author.history_details.subtasks.count} subtasks"
+end
+
+puts 
+puts "Do they mark cards as blocked ?"
+puts "Is the user blocking cards"
+puts "--------------------"
+authors.values.sort_by{|author| author.history_details.blocked.count }.reverse.each do |author|
+  puts "#{author.name} blocked cards #{author.history_details.blocked.count} times"
+end
+
+
 puts "\n\n\n"
 puts "****************"
 puts " Columns"
@@ -105,7 +122,7 @@ boards.boards.each_value do |board|
   puts
   puts "Board #{board.id}"
   board.columns.edges.each do |edge|
-    transitions = board.transitions.group_by_from_column[edge.lcname]
+    transitions = board.transitions[edge.lcname]
     next unless transitions
     counts = {}
     transitions.each do |transition|
@@ -129,10 +146,11 @@ boards.boards.each_value do |board|
   sections = {}
 
   board.cards.each do |card|
-    board.card_section_boundaries(card, date_range: date_range).each do |section, entries_and_exits|
+    %w{ backlog requested progress done }.each do |section|
       sections[section] ||= []
-      delta = (entries_and_exits[:exit] - entries_and_exits[:entry]).to_f
-      sections[section] << delta
+      entry = card.history_details.section_entry(section)
+      exit = card.history_details.section_exit(section)
+      sections[section] << exit - entry if exit && entry
     end
   end
 

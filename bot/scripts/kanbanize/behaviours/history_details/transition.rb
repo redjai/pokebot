@@ -1,7 +1,7 @@
 module HistoryDetails
   class Transition < HistoryDetail
 
-    attr_accessor :from_index, :to_index
+    attr_accessor :from_index, :to_index, :from, :to
 
     FROM_TO = Regexp.new("'\s*([^']+)\s*'")
 

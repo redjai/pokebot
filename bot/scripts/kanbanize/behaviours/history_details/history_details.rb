@@ -41,6 +41,11 @@ module HistoryDetails
       exit.from_name if exit.is_a?(Transition)
     end
 
+    def section
+      entry.to.section if entry.is_a?(Transition) && entry.indexed?
+      exit.from.section if exit.is_a?(Transition) && exit.indexed?
+    end
+
     def duration
       exit.entry_date - entry.entry_date
     end
@@ -81,7 +86,21 @@ module HistoryDetails
     def get(type:)
       select do |history_detail|
         history_detail.event_type == type
-      end.sort_by{|history_detail| history_detail.entry_date }
+      end.sort_by{ |history_detail| history_detail.entry_date }
+    end
+
+    def section_entry(section)
+      entry_wait = waits.find do |wait|
+        wait.section == section
+      end
+      entry_wait.entry.entry_date if entry_wait
+    end
+
+    def section_exit(section)
+      exit_waits = waits.select do |wait|
+        wait.section == section
+      end
+      exit_waits.last.exit.entry_date unless exit_waits.empty?
     end
 
     def movements
@@ -96,6 +115,18 @@ module HistoryDetails
 
     def column_movements
       get(type: 'Transitions').select{ |transition| transition.column_movement? }
+    end
+
+    def comments
+      get(type: 'Comments')
+    end
+
+    def blocked
+      select{|history_detail| history_detail.is_a?(Block)}
+    end
+
+    def subtasks
+      get(type: 'Updates').select{ |update| update.history_event == 'Subtask  created'} #GRRR! API has two spaces...
     end
 
     def indexed_column_movements

@@ -1,192 +1,149 @@
 # aws s3 cp s3://gerty-development-kanbanize-imports/tasks /tmp/ --recursive --profile red-queen
 
-require_relative '../models/boards'
+require_relative 'board_structure'
+require_relative 'card_data'
+require_relative 'card'
+require_relative 'author'
+require_relative 'month'
+require_relative 'wait'
+require_relative 'history_details/history_details'
+
 require 'descriptive_statistics'
 
-class Card # this is an imported kanbanize card
+# board.cards.columns.waits
+                     #.transitions
 
-  @@cards = []
-
-  attr_accessor :board
-
-  def self.cards
-    @@cards
-  end
-
-  def id
-    @data['taskid']
-  end
-
-  def self.load(boards)
-    paths = Dir.glob("data/**/*.json")
-    paths.each do |path|
-      card = new(JSON.parse(File.read(path)))
-      board = boards.boards[card.board_id]
-      if board
-        card.board = board
-        @@cards << card
-      end
-    end
-  end
-
-  def initialize(data)
-    @data = data
-  end
-
-  def board_id
-    @data['boardid']
-  end
-
-  def history_details
-    @data['historydetails']
-  end
-
-  def movements
-    history_details.select{ |detail| detail['historyevent'] == 'Task moved' }
-                   .collect{ |data| movement = Movement.new(@board, data) }
-                   .select{ |movement| movement.delta }
-  end
-
+def print_section(section, durations)
+  #puts durations.sort.inspect
+  puts "#{section} - 85% completed in #{remove_outliers(durations).percentile(85).round(0)} days"
 end
 
-class Movement
+def remove_outliers(array)
+  return [] if array.empty?
+  array = array.delete_if{|d| d <  0}
 
-  attr_accessor :board
-
-  FROM_TO = Regexp.new("'([^']+)'")
-  
-  def initialize(board, history_detail)
-    @history_detail = history_detail
-    @board = board
-  end
-
-  def event
-    @history_detail['historyevent']
-  end
-
-  def detail
-    @history_detail['details']
-  end
-
-  def entry_date
-    DateTime.parse(@history_detail['entrydate']).to_time.to_i # seconds since epoch
-  end
-
-  def author
-    @history_detail['author']
-  end
-
-  def from
-    @from ||= cols.first.first.split(".").last.upcase if cols.first
-  end
-
-  def from_index
-    @from_index ||= board.edges.index{ |edge| from == edge.lcname }
-  end
-
-  def to_index
-    @to_index ||= board.edges.index{ |edge| to == edge.lcname }
-  end
-
-  def to
-    @to ||= cols.last.first.split(".").last.upcase if cols.first
-  end
-
-  def cols
-    detail.scan(FROM_TO)
-  end
-
-  def delta
-    to_index - from_index if to_index && from_index
-  end
+  q1 = array.descriptive_statistics[:q1]
+  q3 = array.descriptive_statistics[:q3]
+  diff = (q3 - q1).to_f
+  min = q1 - 1.5 * diff
+  max = q3 + 1.5 * diff
+  array.select{ |n| n > min || n < max }
 end
 
-class Author
-
-  attr_accessor :name
-
-  def initialize(name)
-    @name = name
-  end
-
-  def moves
-    @movements ||= []
-  end
-
-  def at
-    @at ||= []
-  end
-
-  def uniq?
-    at.count - at.uniq.count
-  end
-
-  def good_moves
-    moves.select{|m| m == 1}
-  end
-
-  def good_moves_ratio
-    return 0 if moves.empty?
-    good_moves.count.to_f / moves.count.to_f
-  end
-
-  def good_moves_as_percent
-    (good_moves_ratio * 100.0).to_i
-  end
-
-  def times
-    @times ||= begin
-      times = []
-      at.sort.each_cons(2) { |a,b| times << (b - a) }
-      times
-    end
-  end
-
-  def good_times
-    times.select{|time| time > 600 } #seconds
-  end
-
-  def good_times_ratio
-    good_times.count.to_f / at.count.to_f
-  end
-
-  def good_times_as_percent
-    (good_times_ratio * 100.0).to_i
-  end
-
-end
-
-boards = Boards.new
+boards = BoardStructure.new
 boards.build!
 
-Card.load(boards)
+card_data = CardData.new
+card_data.load!
 
-authors = {}
+card_data.index_movements!(boards.boards)
+card_data.update_boards(boards.boards)
 
-Card.cards.each do |card|
-  card.movements.each do |movement|
-    authors[movement.author] ||=  Author.new(movement.author)
-    authors[movement.author].moves << movement.delta
-    authors[movement.author].at << movement.entry_date
-  end
-end
+authors = card_data.authors
 
+june = Month.range(month: 6)
+july = Month.range(month: 7)
+date_range = (june.first..july.last)
+
+puts "****************"
+puts " Users"
+puts "****************"
+puts
+puts "How they move cards."
+puts "% of cards that a user has moved to the next sequential column on the board"
+puts "-------------------"
 authors.values.sort_by(&:good_moves_as_percent).each do |author|
-  puts "#{author.name} #{author.good_moves_as_percent}"
+  puts "#{author.name} #{author.good_moves_as_percent}% of #{author.history_details.indexed_column_movements.count} moved to next column."
 end
 
 puts
-
-authors.values.sort_by(&:good_times_as_percent).each do |author|
-  puts "#{author.name} #{author.good_times_as_percent}"
+puts "When they move cards"
+puts "% of cards that the user has moved in a group i.e. within #{(Author::MOVE_INTERVAL / 60).to_i} minutes from moving any other card."
+puts "--------------------"
+authors.values.sort_by(&:bad_times_as_percent).reverse.each do |author|
+  puts "#{author.name} #{author.bad_times_as_percent}% of #{author.times.count} moved as a group"
 end
 
-scores_on_the_doors = {}
-
-authors.values.each do |author|
-  scores_on_the_doors[author.name] = author.good_times_ratio * author.good_moves_ratio
+puts 
+puts "Do they create and archive ?"
+puts "Is the user acting as a creator and archiver of cards."
+puts "--------------------"
+authors.values.sort_by{|author| author.history_details.created.count }.reverse.each do |author|
+  puts "#{author.name} created #{author.history_details.created.count} cards archived #{author.history_details.archived.count} cards"
 end
 
-puts scores_on_the_doors.sort_by{|name, score| score }.inspect
+puts "\n\n\n"
+puts "****************"
+puts " Columns"
+puts "****************"
+
+puts
+puts "WAITING"
+puts "how many tickets wait in a column and typically how long for"
+puts "--------------------"
+boards.boards.each_value do |board|
+  puts
+  puts "Board #{board.id}"
+  board.columns.edges.each do |edge|
+    waits = board.waits[edge.lcname]
+    if waits
+      durations = waits.collect{ |wait| wait.duration } 
+      created = waits.select{|wait| wait.created? }.count
+      archived = waits.select{|wait| wait.archived? }.count
+      puts "#{edge.lcname}: #{waits.length} tickets out of #{}. #{created} tickets created in this column, #{archived} tickets archived. 85% of cards completed in #{durations.percentile(85).round(0)} days" 
+    else
+      puts "#{edge.lcname} - NO DATA"
+    end
+  end
+end
+
+puts
+puts "MOVING"
+puts "Where do tickets move to after this column..."
+puts "([N/A] means that the ticket moved to a column no longet on the board)"
+boards.boards.each_value do |board|
+  puts
+  puts "Board #{board.id}"
+  board.columns.edges.each do |edge|
+    transitions = board.transitions.group_by_from_column[edge.lcname]
+    next unless transitions
+    counts = {}
+    transitions.each do |transition|
+      counts[transition.to_name] ||= { count: 0, delta: board.columns.delta(transition.from_name, transition.to_name) }
+      counts[transition.to_name][:count] += 1
+    end
+    counts.sort_by { |to, count| count[:count] }.reverse.each do |arr|
+      puts "#{edge.lcname} to #{arr.first} - moved #{arr.last[:delta] || '[N/A]'} columns #{arr.last[:count]} times"
+    end
+  end 
+end
+
+puts "\n\n\n"
+puts "**********************"
+puts " Section Cycle Times"
+puts "**********************"
+
+
+
+boards.boards.each_value do |board|
+  sections = {}
+
+  board.cards.each do |card|
+    board.card_section_boundaries(card, date_range: date_range).each do |section, entries_and_exits|
+      sections[section] ||= []
+      delta = (entries_and_exits[:exit] - entries_and_exits[:entry]).to_f
+      sections[section] << delta
+    end
+  end
+
+  puts
+  puts "Board #{board.id}"
+  print_section('backlog', sections['backlog'])
+  print_section('requested', sections['requested'])
+  print_section('progress', sections['progress'])
+  print_section('done', sections['done'])
+end
+
+
 
 

@@ -28,7 +28,7 @@ include ReportDates
     date_range.each do |date|
       @cols.each do |col|
         col.task_actions.each do |task_action|
-            task_action.actions_on(date).each do |task_movement|
+            task_action.actions_on(date).each do |task_transition|
               next if task_movement == "entered" && col != @cols.first
               next if task_movement == "exited" && col != @cols.last
               activities[task_movement] ||= 0

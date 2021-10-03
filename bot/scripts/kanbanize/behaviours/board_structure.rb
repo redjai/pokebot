@@ -2,9 +2,9 @@ require_relative 'board'
 require 'date'
 require 'json'
 
-class Boards
+class BoardStructure
 
-  def initialize(structure_files="board_structures/*.json")
+  def initialize(structure_files="data/boards/*.json")
     @structure_files = structure_files
   end
 
@@ -24,23 +24,30 @@ class Boards
   def build_board(id, board_data)
     board = Board.new(id)
     board_data["columns"].each do |column_data|
-      section = board.find_section(column_data['section'])
-      column = build_column(column_data)
-      section.columns[column.lcname] = column
+      column = build_column(board, column_data)
+      board.columns << column
     end
     board
   end
 
-  def build_column(column_data)
+  def build_column(board, column_data, parent_column: nil)
+    lcname = if parent_column
+      "#{parent_column}.#{column_data['lcname']}"
+    else
+      column_data['lcname']
+    end
+
     column = Column.new(
+      board: board,
+      section: column_data['section'],
       position: column_data['position'], 
-      lcname: column_data['lcname'], 
+      lcname: lcname, 
       flow_type: column_data['flow_type']
     )
 
     column_data.fetch('children',[]).each do |child_column_data|
-      child = build_column(child_column_data)
-      column.children[child.lcname] = child
+      child = build_column(board, child_column_data, parent_column: column.lcname)
+      column.children << child
     end
 
     column

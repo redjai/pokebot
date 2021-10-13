@@ -1,6 +1,6 @@
 require 'date'
 require 'aws-sdk-rdsdataservice'
-require_relative 'net/api'
+require_relative '../kanbanize/net/api'
 require 'storage/kanbanize/s3/task'
 require 'storage/kanbanize/postgres/column_durations'
 
@@ -8,6 +8,10 @@ module Service
   module Kanbanize
     module TaskColumnDuration # change this name 
       extend self
+
+      Service::BoundedContext.register( service: self, 
+                                         listen: [ Request::Events::Kanbanize::TASKS_IMPORTED ],
+                                      broadcast: %w( kanbanize ) ) 
   
       def call(bot_request)
 

@@ -1,3 +1,4 @@
+
 class CardData
 
   def data
@@ -33,10 +34,12 @@ class CardData
         edges = board.columns.edges
         from = edges.find{ |edge| edge.lcname == movement.from_name }
         to = edges.find{ |edge| edge.lcname == movement.to_name }
-        movement.from = from
-        movement.to = to
-        movement.from_index = edges.index(from)
-        movement.to_index = edges.index(to)
+        from_index = edges.index(from)
+        to_index = edges.index(to)
+        range = ColumnRange.new(from_index: from_index, 
+                                  to_index: to_index, 
+                                   columns: edges.slice((from_index..to_index))) if from_index && to_index
+        movement.columns = range if range && range.valid?
       end
     end
   end

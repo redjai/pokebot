@@ -1,10 +1,10 @@
-require 'request/events/util'
+require 'request/events/cron'
 require 'service/bounded_context'
 require 'service/bounded_context_loader'
 require 'handlers/processors/logger'
 
  
-module Util
+module Cron
   class Handler
     
     @@loader = nil
@@ -15,7 +15,7 @@ module Util
       
       load_bounded_context!(event['bounded_context']) unless @@loader
 
-      bot_request = Request::Events::Util.util_request(event)
+      bot_request = Request::Events::Cron.cron_request(event)
       Service::BoundedContext.call(bot_request)
     end
 
@@ -25,4 +25,3 @@ module Util
     end
   end
 end
-

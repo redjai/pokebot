@@ -17,10 +17,11 @@ module Request
       end
 
       def api_event(aws_event)
-        ::Request::Event.new(name: ::Request::Events::Slack::EVENT_API_REQUEST,
-                       source: 'slack-event-api',
+        data = http_data(aws_event)
+        ::Request::Event.new(name: data['event']['type'],
+                       source: EVENT_API_REQUEST,
                       version: 1.0,
-                         data: http_data(aws_event))   
+                         data: data)   
       end
 
       def interaction_request(aws_event)

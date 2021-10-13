@@ -1,0 +1,1 @@
+require_relative '../kanbanize_cron/find_tasks'

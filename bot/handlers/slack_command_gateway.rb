@@ -2,7 +2,7 @@ require 'request/events/slack'
 require 'service/command/controller'
 
 
-module Command 
+module SlackCommandGateway 
   class Handler
     def self.handle(event:, context:)
       begin

@@ -17,8 +17,10 @@ class Author
   end
 
   def good_moves
-    history_details.indexed_column_movements.select do |column_movement|
-      column_movement.delta == 1
+    @good_moves ||= begin
+      history_details.indexed_column_movements.select do |column_movement|
+        column_movement.delta == 1
+      end
     end
   end
 

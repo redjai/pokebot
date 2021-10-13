@@ -1,4 +1,6 @@
 require 'slack/response'
+require 'service/bounded_context'
+require 'request/events/messages'
 
 module Service
   module Responder
@@ -6,6 +8,16 @@ module Service
       module Searching
         module Index
         extend self
+
+          def listen
+            [ ::Request::Events::Messages::RECEIVED ]
+          end
+
+          def broadcast
+            []
+          end
+
+          BoundedContext.register(self)
 
           def call(bot_request)
             ::Slack::Response.respond(

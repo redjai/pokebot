@@ -5,7 +5,7 @@ require 'json'
 module Topic 
   module Sns
     extend self
-
+    
     @@topics = {}
 
     def broadcast(topic:, request:)

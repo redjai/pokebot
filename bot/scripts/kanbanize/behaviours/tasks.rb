@@ -5,19 +5,18 @@ require_relative 'card_data'
 require_relative 'card'
 require_relative 'author'
 require_relative 'month'
-require_relative 'wait'
 require_relative 'history_details/history_details'
 
 require 'descriptive_statistics'
 
-# board.cards.columns.waits
+# board.cards.columns.works
                      #.transitions
 
 def print_section(section, durations)
   if durations.empty?
     puts "#{section} - no data"
   else
-    puts "#{section} - 85% completed in #{durations.percentile(85).round(0)} days - #{durations.length}"
+    puts "#{section} - 85% completed in #{durations.percentile(85).round(0)} days"
   end
 end
 
@@ -27,15 +26,11 @@ boards.build!
 
 card_data = CardData.new
 card_data.load!
-card_data.build_history_details!(after: Date.civil(2021,6,1))
+card_data.build_history_details!(after: Date.civil(2021,5,1))
 card_data.index_movements!(boards.boards)
 card_data.assign_cards_to_boards(boards.boards)
 
 authors = card_data.authors
-
-june = Month.range(month: 6)
-july = Month.range(month: 7)
-date_range = (june.first..july.last)
 
 puts "****************"
 puts " Users"
@@ -44,7 +39,7 @@ puts
 puts "How they move cards."
 puts "% of cards that a user has moved to the next sequential column on the board"
 puts "-------------------"
-authors.values.sort_by(&:good_moves_as_percent).each do |author|
+authors.values.sort_by(&:good_moves_as_percent).reverse.each do |author|
   puts "#{author.name} #{author.good_moves_as_percent}% of #{author.history_details.indexed_column_movements.count} moved to next column."
 end
 
@@ -65,11 +60,11 @@ authors.values.sort_by{|author| author.history_details.created.count }.reverse.e
 end
 
 puts 
-puts "Do they comment ?"
-puts "Is the user commenting on cards."
+puts "Do they comment or get mentioned?"
+puts "How many times does the user comment on cards or get mentioned by others"
 puts "--------------------"
 authors.values.sort_by{|author| author.history_details.comments.count }.reverse.each do |author|
-  puts "#{author.name} commented #{author.history_details.comments.count} times"
+  puts "#{author.name} commented #{author.history_details.comments.count} times and was mentioned #{author.history_details.mentions.count} times"
 end
 
 puts 
@@ -88,6 +83,69 @@ authors.values.sort_by{|author| author.history_details.blocked.count }.reverse.e
   puts "#{author.name} blocked cards #{author.history_details.blocked.count} times"
 end
 
+puts 
+puts "The WIP"
+puts "Do they exceed the WIP limit ?"
+puts "--------------------"
+authors.values.sort_by{|author| author.history_details.exceeded_wip_limit.count }.reverse.each do |author|
+  puts "#{author.name} - exceeded WIP limit #{author.history_details.exceeded_wip_limit.count} times"
+end
+
+puts 
+puts "Columns"
+puts "Work in each column of the board"
+authors.values.each do |author|
+  columns = {}
+  boards.boards.each_value do |board|
+    board.cards.each do |card|
+      card.history_details.works.each do |work|
+        next unless work.valid? && work.section # a section can be nil if it's old columns
+        if work.entry.author == author.name || work.exit.author == author.name
+          columns[work.column_name] ||= {worked: [], skipped: 0}
+          columns[work.column_name][:worked] << work.duration
+        end
+      end
+    end
+  end
+  puts "#{author.name}:"
+  boards.boards.each_value do |board|
+    puts "board #{board.id}"
+    board.columns.edges.each do |edge|
+      column = columns[edge.lcname]
+      if column
+        puts " #{edge.lcname} worked #{column[:worked].length} times, 85% completed in #{column[:worked].percentile(85).round(0)} days"
+      end
+    end
+  end
+  puts
+end
+
+puts 
+puts "Queues"
+puts "Do authors use queue columns"
+queues = {}
+authors.values.each do |author|
+  boards.boards.each_value do |board|
+    board.cards.each do |card|
+      card.history_details.column_movements.each do |transition|
+        if transition.author == author.name
+          edge = board.columns.edge(transition.to_name)
+          if edge && edge.queue?
+            queues[author.name] ||= 0
+            queues[author.name] += 1
+          end
+        end
+      end
+    end
+  end
+end
+
+
+
+queues.sort_by{|author, count| count }.reverse.each do |res|
+  puts "#{res.first} has moved cards into a queue column #{res.last} times"
+end
+
 
 puts "\n\n\n"
 puts "****************"
@@ -95,19 +153,19 @@ puts " Columns"
 puts "****************"
 
 puts
-puts "WAITING"
-puts "how many tickets wait in a column and typically how long for"
+puts "Working"
+puts "how many tickets in a column and typically how long for"
 puts "--------------------"
 boards.boards.each_value do |board|
   puts
   puts "Board #{board.id}"
   board.columns.edges.each do |edge|
-    waits = board.waits[edge.lcname]
-    if waits
-      durations = waits.collect{ |wait| wait.duration } 
-      created = waits.select{|wait| wait.created? }.count
-      archived = waits.select{|wait| wait.archived? }.count
-      puts "#{edge.lcname}: #{waits.length} tickets out of #{}. #{created} tickets created in this column, #{archived} tickets archived. 85% of cards completed in #{durations.percentile(85).round(0)} days" 
+    works = board.works[edge.lcname]
+    if works
+      durations = works.collect{ |work| work.duration } 
+      created = works.select{|work| work.created? }.count
+      archived = works.select{|work| work.archived? }.count
+      puts "#{edge.lcname} worked #{works.length} times, skipped #{board.skipped[edge.lcname].to_i} times. #{created} tickets created in this column, #{archived} tickets archived. 85% of cards completed in #{durations.percentile(85).round(0)} days" 
     else
       puts "#{edge.lcname} - NO DATA"
     end
@@ -140,6 +198,7 @@ puts "**********************"
 puts " Section Cycle Times"
 puts "**********************"
 
+puts "Boards"
 
 
 boards.boards.each_value do |board|
@@ -161,6 +220,18 @@ boards.boards.each_value do |board|
   print_section('progress', sections['progress'])
   print_section('done', sections['done'])
 end
+
+# puts
+# puts "Authors"
+# authors.values.each do |author|
+
+#   %w{ backlog requested progress done }.each do |section|
+#     sections[section] ||= []
+#     entry = author.history_details.section_entry(section)
+#     exit = card.history_details.section_exit(section)
+#     sections[section] << exit - entry if exit && entry
+
+# end
 
 
 

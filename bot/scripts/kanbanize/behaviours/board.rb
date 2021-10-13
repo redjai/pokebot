@@ -21,58 +21,67 @@ class Board
     end
   end
 
-  def waits
-    @waits ||= begin
+  def works
+    @works ||= begin
       cards.collect do |card|
-        card.history_details.waits
-      end.flatten.group_by{ |wait| wait.column_name }
+        card.history_details.works
+      end.flatten.group_by{ |work| work.column_name }
+    end
+  end
+
+  def skipped
+    @skipped ||= begin
+      counts = {}
+      cards.collect do |card|
+        card.history_details.indexed_column_movements.each do |transition|
+          transition.columns.skipped.each do |column|
+            counts[column.lcname] ||= 0
+            counts[column.lcname] += 1
+          end
+        end
+      end
+      counts
     end
   end
 
   def columns
     @columns ||= Columns.new
   end
+end
 
-  
+class ColumnRange
 
-  def card_section_boundaries(card, date_range: nil)
-    sections = {}
+  attr_accessor :from_index, :to_index
 
-    card.transitions(date_range: date_range).sort_by{|m| m.entry_date }.collect do |transition|
-      { 
-        from: columns.edge(transition.from_name),
-        to: columns.edge(transition.to_name),
-        at: transition.entry_date
-      }
-    end.select do |boundary|
-      boundary[:from] && boundary[:to] && boundary[:from].section != boundary[:to].section
-    end.each do |boundary|
-      sections[boundary[:from].section] ||= {}
-      sections[boundary[:to].section] ||= {}
-      sections[boundary[:from].section][:exit] = boundary[:at] if sections[boundary[:from].section][:exit].nil? || sections[boundary[:from].section][:exit] < boundary[:at]
-      sections[boundary[:to].section][:entry] = boundary[:at] if sections[boundary[:from].section][:entry].nil? || sections[boundary[:from].section][:entry] > boundary[:at]
-    end
-
-    if card.waits.first && card.waits.first.type == :created
-      created_column = columns.edge(card.waits.first.column_name)
-      if created_column
-        sections[created_column.section] ||= {}
-        sections[created_column.section][:entry] = card.waits.first.entry_at
-      end
-    end 
-
-    if card.waits.last && card.waits.last.type == :archived
-      archived_column = columns.edge(card.waits.last.column_name)
-      if archived_column
-        sections[archived_column.section] ||= {}
-        sections[archived_column.section][:exit] = card.waits.last.entry_at
-      end
-    end
-
-    sections.delete_if{|_, entries_and_exits| !entries_and_exits[:entry] || !entries_and_exits[:exit]}
-
-    sections
+  def initialize(from_index:, to_index:, columns:)
+    @from_index = from_index
+    @to_index = to_index
+    @columns = columns
   end
+
+  def from
+    @columns.first
+  end
+
+  def to
+    @columns.last
+  end
+
+   # [cola, colb, colc] > [colc] 
+   # [cola, colb] > []
+   # [cola] > nil hence the || []
+  def skipped
+    (@columns.slice(1, @columns.length - 2) || [])
+  end
+
+  def delta
+    to_index - from_index
+  end
+
+  def valid?
+    @columns.length > 1
+  end
+
 end
 
 class Columns < Array

@@ -1,5 +1,8 @@
 require 'date'
 require 'storage/kanbanize/dynamodb/client'
+require 'request/events/kanbanize'
+require 'service/bounded_context'
+require 'slack/response'
 
 module Service
     module Responder
@@ -8,6 +11,16 @@ module Service
           module Activities
           extend self
           extend Storage::Kanbanize::DynamoDB
+                                
+            def listen
+              [ Request::Events::Kanbanize::NEW_ACTIVITIES_FOUND ]
+            end
+
+            def broadcast
+              []
+            end
+
+            Service::BoundedContext.register(self)
 
             def call(bot_request)
 

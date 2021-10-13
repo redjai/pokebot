@@ -7,7 +7,7 @@ module Request
     
     attr_reader :record, :intent
 
-    def initialize(source:, name:, version:, data: [], intent: false)
+    def initialize(source:, name:, version:, data: {}, intent: false)
       @record = { 
                   'name' => name, 
                   'metadata' => 

@@ -1,7 +1,7 @@
 module HistoryDetails
   class Transition < HistoryDetail
 
-    attr_accessor :from_index, :to_index, :from, :to
+    attr_accessor :columns
 
     FROM_TO = Regexp.new("'\s*([^']+)\s*'")
 
@@ -24,11 +24,24 @@ module HistoryDetails
     end
 
     def indexed?
-      from_index && to_index
+      !@columns.nil?
     end
 
     def delta
-      to_index - from_index
+      @columns.delta
     end
+
+    def from
+      @columns.from
+    end
+
+    def to
+      @columns.to
+    end
+
+    def from_index
+      @columns
+    end
+
   end
 end

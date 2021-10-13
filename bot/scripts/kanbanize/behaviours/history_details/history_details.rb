@@ -13,7 +13,8 @@ require_relative 'stickers'
 require_relative 'transition'
 require_relative 'unarchive'
 require_relative 'update'
-
+require_relative 'work'
+require 'logger'
 
 module HistoryDetails
 
@@ -27,59 +28,28 @@ module HistoryDetails
     end.join(""))
   end
 
-  class Wait
-
-    attr_accessor :entry, :exit
-
-    def initialize(entry:, exit:)
-      @entry = entry
-      @exit = exit
-    end
-
-    def column_name
-      entry.to_name if entry.is_a?(Transition)
-      exit.from_name if exit.is_a?(Transition)
-    end
-
-    def section
-      entry.to.section if entry.is_a?(Transition) && entry.indexed?
-      exit.from.section if exit.is_a?(Transition) && exit.indexed?
-    end
-
-    def duration
-      exit.entry_date - entry.entry_date
-    end
-
-    def valid?
-      entry.is_a?(Transition) && exit.is_a?(Transition) && entry.to_name != exit.from_name
-    end
-
-    def created?
-      entry.history_event == 'Task created'
-    end
-
-    def archived?
-      exit.history_event == 'Task archived'
-    end
-
-  end
-
   class Collection < Array
 
-    def waits
-      @waits ||= begin
-        waits = []
+    LOGGER = Logger.new("/tmp/gerty-history-details.log")
+
+    def works
+      @works ||= begin
+        works = []
         if created.first
-          waits << Wait.new(entry: created.first, exit: column_movements.first)
+          works << Work.new(entry: created.first, exit: column_movements.first)
         end
         column_movements.each_cons(2) do |entry, exit| 
-          wait = Wait.new(entry: entry, exit: exit)
-          waits << wait if wait.valid?
+          work = Work.new(entry: entry, exit: exit)
+          if work.valid?
+            works << work 
+          else
+            LOGGER.info("work #{work.entry.class} #{work.exit.class}[#{work.entry.to_name}] does not equal [#{work.exit.from_name}]")
+          end
         end
         if archived.first
-          waits << Wait.new(entry: column_movements.last, exit: archived.first)
+          works << Work.new(entry: column_movements.last, exit: archived.first)
         end
-        waits
+        works
       end
     end
 
@@ -90,17 +60,17 @@ module HistoryDetails
     end
 
     def section_entry(section)
-      entry_wait = waits.find do |wait|
-        wait.section == section
+      entry_work = works.find do |work|
+        work.section == section
       end
-      entry_wait.entry.entry_date if entry_wait
+      entry_work.entry.entry_date if entry_work
     end
 
     def section_exit(section)
-      exit_waits = waits.select do |wait|
-        wait.section == section
+      exit_works = works.select do |work|
+        work.section == section
       end
-      exit_waits.last.exit.entry_date unless exit_waits.empty?
+      exit_works.last.exit.entry_date unless exit_works.empty?
     end
 
     def movements
@@ -114,7 +84,7 @@ module HistoryDetails
     end
 
     def column_movements
-      get(type: 'Transitions').select{ |transition| transition.column_movement? }
+      @column_movements ||= get(type: 'Transitions').select{ |transition| transition.column_movement? }
     end
 
     def comments
@@ -122,11 +92,19 @@ module HistoryDetails
     end
 
     def blocked
-      select{|history_detail| history_detail.is_a?(Block)}
+      select{ |history_detail| history_detail.is_a?(Block) }
     end
 
     def subtasks
       get(type: 'Updates').select{ |update| update.history_event == 'Subtask  created'} #GRRR! API has two spaces...
+    end
+
+    def exceeded_wip_limit
+      select{ |history_detail| history_detail.is_a?(ExceededLimit) }
+    end
+
+    def mentions
+      select{ |history_detail| history_detail.is_a?(Mention) }
     end
 
     def indexed_column_movements

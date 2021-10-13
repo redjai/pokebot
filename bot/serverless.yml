@@ -12,10 +12,15 @@ package:
     - Gemfile
     - Gemfile.lock
     - spec/**
-    - scripts/*
-    - generators/*
+    - scripts/**
+    - generators/**
+    - data/**
+    - nlp/**
+    - node_modules/**
+
 
 provider:
+  lambdaHashingVersion: 20201221
   name: aws
   runtime: ruby2.5
   profile: pokebot-deploy
@@ -148,7 +153,7 @@ custom:
 
 functions:
   messages:
-    handler: handlers/messages.Messages::Handler.handle
+    handler: handlers/slack_api_gateway.SlackApiGateway::Handler.handle
     events:
       - httpApi:
           method: POST 
@@ -187,7 +192,7 @@ functions:
       FAVOURITES_TABLE_NAME: ${self:custom.recipe_favourites_table}
 
   responder:
-    handler: handlers/responder.Responder::Handler.handle
+    handler: handlers/sqs.Handler::Sqs.handle
     events:
       - sqs:
          arn:
@@ -246,24 +251,26 @@ functions:
       USERS_TOPIC_ARN: !Ref UsersSnsTopic
 
   kanbanize_cron:
-    handler: handlers/kanbanize/cron.Kanbanize::Cron::Handler.handle
+    handler: handlers/cron.Cron::Handler.handle
     events:
       - schedule: 
           name: 'kanbanize-transitions-blocks-activities'
           description: 'test-rate-schedule'
-          rate: cron(*/10 7-20 ? * MON-FRI *) #note the ? (not *) for day of month is needed because we have set 1-5 for day of week. 
+          rate: cron(*/10 7-22 ? * MON-FRI *) #note the ? (not *) for day of month is needed because we have set 1-5 for day of week. 
           input:
             client_id: 'livelink'
             action: 'kanbanize-import-activities'
             source: 'cron'
+            bounded_context: 'kanbanize_cron'
       - schedule: 
           name: 'kanbanize-archive-yesterday'
           description: 'find tasks archived yesterday'
           rate: cron(0 6 * * ? *) #note the ? (not *) for day of month is needed because we have set 1-5 for day of week. 
           input:
             client_id: 'livelink'
-            action: 'find-tasks'
+            action: 'find_task_ids_for_board'
             source: 'cron'
+            bounded_context: 'kanbanize_cron'
     environment:
       KANBANIZE_CLIENTS_TABLE_NAME: ${self:custom.kanbanize_clients_table}
       KANBANIZE_TOPIC_ARN: !Ref KanbanizeSnsTopic
@@ -272,7 +279,7 @@ functions:
 
   kanbanize_imports:
     timeout: 20
-    handler: handlers/kanbanize/imports.Kanbanize::Imports::Handler.handle
+    handler: handlers/sqs.Handler::Sqs.handle
     events:
       - sqs:
          arn:

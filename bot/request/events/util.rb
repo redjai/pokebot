@@ -1,6 +1,11 @@
 require_relative '../base'
 require_relative '../event'
 
+# sls invoke \
+# -f kanbanize_util \
+# --stage development \
+# -d "{\"client_id\":\"livelink\",\"action\":\"find-tasks\",\"archive\":\"2021-07-1:2021-08-1\"}"
+
 module Request
   module Events
     module Util
@@ -12,15 +17,13 @@ module Request
         DB_MIGRATE = 'db-migrate'    
       end
 
-      MANUAL_REQUEST = 'manual-request'
-
       def util_request(aws_event)
         ::Request::Request.new current: util_event(aws_event)
       end
 
       def util_event(aws_event)
         ::Request::Event.new(
-          name: ::Request::Events::Util::MANUAL_REQUEST,
+          name: aws_event['action'],
           source: aws_event['source'],
           version: 1.0,
           data: aws_event

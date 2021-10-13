@@ -1,8 +1,14 @@
 require 'net/http'
-require_relative 'net/api'
+require_relative '../kanbanize/net/api'
 require 'storage/kanbanize/dynamodb/client'
-require 'request/events/kanbanize'
+require 'request/events/cron'
 require 'topic/sns'
+require 'service/bounded_context'
+
+#
+# Reacts to CRON request, fetches activities from kanbanize and publishes them into a topic
+# NOTE: It does not save them to storage, other services can do so if they wish.
+#
 
 module Service
   module Kanbanize
@@ -12,6 +18,16 @@ module Service
       extend Storage::Kanbanize::DynamoDB
 
       DEFAULT_PAGE_SIZE = 30
+                                
+      def listen
+        [ Request::Events::Cron::Actions::KANBANIZE_IMPORT_ACTIVITIES ]
+      end
+
+      def broadcast
+        %w( kanbanize )
+      end
+
+      Service::BoundedContext.register(self)
 
       def call(bot_request)
 
@@ -30,11 +46,6 @@ module Service
             ),
             board_id: client.board_id,
             client_id: client.id
-          )
-
-          Topic::Sns.broadcast(
-            topic: :kanbanize,
-            request: bot_request
           )
 
         rescue Service::Kanbanize::Api::BadKanbanizeRequest => e

@@ -1,9 +1,11 @@
 require 'handlers/processors/sqs'
 
 module Intent
-  class Handler
+  class Handler   
     def self.handle(event:, context:)
-      Processors::Sqs.process_sqs(aws_event: event, service: :intent, accept: { messages: %w{ received }})
+      bot_request = Processors::Sqs.bot_requests(event).each do |bot_request|
+        Service::BoundedContext.call(bot_request)
+      end
     end
   end
 end

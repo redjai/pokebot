@@ -10,6 +10,16 @@ module Service
   module Kanbanize
     module NewActivitiesFound # change this name 
       extend self
+                                
+      def listen
+        [ Request::Events::Kanbanize::ACTIVITIES_IMPORTED ]
+      end
+
+      def broadcast
+        %w( kanbanize users )
+      end
+
+      Service::BoundedContext.register(self)
 
       def call(bot_request)
         store = Storage::Kanbanize::ActivityStore.new(
@@ -30,15 +40,11 @@ module Service
                                 board_id: bot_request.data['board_id'],
                                 activities: new_activities
                               )
-
-          Topic::Sns.broadcast(
-            topic: [:kanbanize, :users],
-            request: bot_request
-          )
+                              
         end
       end
 
     end
   end
 end
-
+  

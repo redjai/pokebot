@@ -1,10 +1,22 @@
 require 'request/events/slack'
-require 'service/message/controller'
-require 'net/http'
+require 'service/bounded_context'
+require 'service/bounded_context_loader'
+require 'handlers/processors/logger'
+require 'honeybadger'
+require 'slack/authentication'
+require 'handlers/processors/http_response'
 
-
-module Messages
+module SlackApiGateway
   class Handler
+
+    @@loader = nil
+
+    def self.load_bounded_context!
+      return unless @@loader.nil?  
+      @@loader = Service::BoundedContextLoader.new(name: 'message')
+      @@loader.load!
+    end
+
     def self.handle(event:, context:)
       begin
         Bot::LOGGER.debug(event)
@@ -21,7 +33,9 @@ module Messages
           return Lambda::HttpResponse.plain_text_response('Not authorized', 401)
         end
 
-        Service::Message::Controller.call(bot_request)
+        load_bounded_context!
+
+        Service::BoundedContext.call(bot_request)
     
       rescue StandardError => e
         if ENV['HONEYBADGER_API_KEY']
@@ -31,5 +45,17 @@ module Messages
         end
       end
     end
+    
+    def self.context(e)
+      return nil unless e.respond_to?(:context)
+      if e.context.is_a?(Hash)
+        e.context
+      elsif e.context.respond_to?(:params)
+        e.context.params 
+      end
+    end
+
   end
 end
+
+

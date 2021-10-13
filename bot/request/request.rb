@@ -23,15 +23,17 @@ module Request
       current['name']
     end
 
-    def intent
-      all.find do |event|
-        event['intent']
-      end
-    end
+    # intent was when we couldn't understand why a user has interacted
+    # lets replace this by using SlackContext private-metadata in interactions 
+    # def intent
+    #   all.find do |event|
+    #     event['intent']
+    #   end
+    # end
 
-    def intent?
-      !intent.nil?
-    end
+    # def intent?
+    #   !intent.nil?
+    # end
 
     def events?
       events.any?
@@ -58,7 +60,7 @@ module Request
       end
     end
 
-    def to_json
+    def to_json(options = {})
       { 
         current: @current, 
         trail: @trail, 
@@ -79,8 +81,14 @@ module Request
   end
 
   class EventArray < Array
+
+    def dirty?
+      @dirty == true
+    end
+
     def <<(event)
       push event.to_h if event
+      @dirty = true
     end
   end
 end

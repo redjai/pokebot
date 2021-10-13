@@ -6,6 +6,8 @@ module Service
 
       def call(bot_request)
 
+        #TODO: - merge these into a single intent service 
+        # there is logic in this contrller & has got way too clever and granular
         case bot_request.current['data']['text']
         when /like/
           # do nothing now

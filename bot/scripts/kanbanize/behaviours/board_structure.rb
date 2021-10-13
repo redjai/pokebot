@@ -42,7 +42,7 @@ class BoardStructure
       section: column_data['section'],
       position: column_data['position'], 
       lcname: lcname, 
-      flow_type: column_data['flow_type']
+      flow_type: column_data['flowtype']
     )
 
     column_data.fetch('children',[]).each do |child_column_data|

@@ -1,8 +1,9 @@
 require 'date'
 require 'aws-sdk-s3'
-require_relative 'net/api'
+require_relative '../kanbanize/net/api'
 require 'storage/kanbanize/dynamodb/client'
 require 'storage/kanbanize/s3/task'
+require 'request/events/kanbanize'
 
 # this service imports task details for any new activities found that day
 module Service
@@ -11,6 +12,20 @@ module Service
       extend self
       extend Service::Kanbanize::Api
       extend Storage::Kanbanize::DynamoDB
+                                  
+      def listen
+        [
+          Request::Events::Kanbanize::NEW_ACTIVITIES_FOUND,
+          Request::Events::Kanbanize::TASKS_FOUND,
+          Request::Events::Kanbanize::ARCHIVED_TASKS_FOUND
+        ]
+      end
+
+      def broadcast
+        %w( kanbanize )
+      end
+
+      Service::BoundedContext.register(self)
 
       def call(bot_request)
         client = get_client(bot_request.data['client_id'])
@@ -56,11 +71,6 @@ module Service
           tasks: ids.collect{ |id| { "task_id" => id } },
           archived: bot_request.data['archived'] ? 'yes' : 'no'  
         )
-
-        Topic::Sns.broadcast(
-          topic: :kanbanize,
-          request: bot_request
-        ) 
       end
     end
   end

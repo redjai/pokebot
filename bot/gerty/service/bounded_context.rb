@@ -6,11 +6,20 @@ require 'gerty/topic/sns'
 
 module Gerty
   module Service
+
+    class NilSentry
+
+      def pass?(bot_request)
+        true
+      end
+
+    end
+
     class BoundedContext
 
       @@listens = {}
       @@broadcasts = {}
-      @@sentry = nil
+      @@sentry = NilSentry.new
 
       def self.listens
         @@listens
@@ -33,7 +42,7 @@ module Gerty
         Gerty::LOGGER.debug("request in:")
         Gerty::LOGGER.debug(bot_request.to_json)
 
-        if @@sentry && @@sentry.pass?(bot_request) == false
+        if @@sentry.pass?(bot_request) == false
           Gerty::LOGGER.debug("sentry #{@@sentry} rejected request")
           return
         end

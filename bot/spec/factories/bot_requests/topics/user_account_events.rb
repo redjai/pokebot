@@ -3,7 +3,7 @@ require 'gerty/request/events/slack'
 require 'gerty/request/events/users'
 
 module TopicHelper
-  extend Request::Base
+  extend Gerty::Request::Base
 end
 
 FactoryBot.define do

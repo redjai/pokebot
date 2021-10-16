@@ -1,7 +1,7 @@
 require 'gerty/request/base'
 
 module TopicHelper
-  extend Request::Base
+  extend Gerty::Request::Base
 
 end
 

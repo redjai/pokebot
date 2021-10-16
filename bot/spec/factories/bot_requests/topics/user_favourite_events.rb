@@ -3,7 +3,7 @@ require 'gerty/request/events/users'
 require 'gerty/request/events/recipes'
 
 module TopicHelper
-  extend Request::Base
+  extend Gerty::Request::Base
 end
 
 FactoryBot.define do

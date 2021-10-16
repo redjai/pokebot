@@ -1,4 +1,3 @@
-require 'topic/sns'
 require 'gerty/request/events/users'
 require 'gerty/request/events/recipes'
 require_relative 'view_submissions/user_account_update_requested'
@@ -16,7 +15,7 @@ module Service
         [ :users ]
       end
 
-      Service::BoundedContext.register(self)
+      Gerty::Service::BoundedContext.register(self)
 
       def call(bot_request)
         if bot_request.data['type'] == 'block_actions'

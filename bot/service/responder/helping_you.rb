@@ -1,5 +1,5 @@
 require 'service/responder/slack/response'
-require 'service/bounded_context'
+require 'gerty/service/bounded_context'
 require 'gerty/request/events/messages'
 
 module Service
@@ -17,7 +17,7 @@ module Service
             []
           end
 
-          BoundedContext.register(self)
+         Gerty::Service::BoundedContext.register(self)
 
           def call(bot_request)
             ::Service::Responder::Slack::Response.respond(

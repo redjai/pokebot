@@ -1,5 +1,5 @@
-require 'service/bounded_context'
-require 'service/bounded_context_loader'
+require 'gerty/service/bounded_context'
+require 'gerty/service/bounded_context_loader'
 require 'gerty/listeners/records/sqs'
 
 module Handler
@@ -13,7 +13,7 @@ module Handler
       load_or_verify!(sqs_records)
 
       sqs_records.bot_requests.each do |bot_request|
-        Service::BoundedContext.call(bot_request)
+        Gerty::Service::BoundedContext.call(bot_request)
       end
     end
 
@@ -23,7 +23,7 @@ module Handler
     end
 
     def self.load_bounded_context!(event_source_arn)
-      @@loader = Service::BoundedContextLoader.new(event_source_arn: event_source_arn)
+      @@loader = Gerty::Service::BoundedContextLoader.new(event_source_arn: event_source_arn)
       @@loader.load!
     end
 

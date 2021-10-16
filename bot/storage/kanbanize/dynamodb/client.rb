@@ -1,5 +1,4 @@
 require 'aws-sdk-dynamodb'
-require 'topic/sns'
 
 module Storage
   module Kanbanize

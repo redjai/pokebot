@@ -12,7 +12,7 @@ module Service
       %w( messages )
     end
     
-    BoundedContext.register(self)
+   Gerty::Service::BoundedContext.register(self)
 
     def call(bot_request)
       bot_request.events << Gerty::Request::Events::Messages.received(source: self, text: text(bot_request)) 

@@ -1,4 +1,3 @@
-require 'topic/sns'
 require 'gerty/request/events/users'
 require 'gerty/request/events/recipes'
 require_relative 'view_submissions/user_account_update_requested'
@@ -34,21 +33,21 @@ module Service
           when 'favourite'
             bot_request.events << Gerty::Request::Events::Users.favourite_new(source: :interaction, favourite_recipe_id: value['data']) 
 
-            Topic::Sns.broadcast(topic: :users, request: bot_request)
+            Gerty::Topic::Sns.broadcast(topic: :users, request: bot_request)
           when 'unfavourite'
             bot_request.events << Gerty::Request::Events::Users.favourite_destroy(source: :interaction, favourite_recipe_id: value['data']) 
 
-            Topic::Sns.broadcast(topic: :users, request: bot_request)
+            Gerty::Topic::Sns.broadcast(topic: :users, request: bot_request)
           when 'next-recipes' 
             bot_request.events << Gerty::Request::Events::Recipes.search_requested(source: :interaction, 
                                                                            query: value['data']['query'],
                                                                            offset: value['data']['offset'],
                                                                            per_page: value['data']['per_page']
                                                                          )
-            Topic::Sns.broadcast(topic: :recipes, request: bot_request)
+            Gerty::Topic::Sns.broadcast(topic: :recipes, request: bot_request)
           when 'edit-account'
             bot_request.events << Gerty::Request::Events::Users.account_edit_requested(source: :interactions) 
-            Topic::Sns.broadcast(topic: :users, request: bot_request)
+            Gerty::Topic::Sns.broadcast(topic: :users, request: bot_request)
           end
         end
       end

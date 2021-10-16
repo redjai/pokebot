@@ -1,6 +1,6 @@
 
-require 'service/bounded_context'
-require 'service/bounded_context_loader'
+require 'gerty/service/bounded_context'
+require 'gerty/service/bounded_context_loader'
 require 'honeybadger'
 require 'gerty/listeners/http/authentication'
 require 'gerty/listeners/http/http_response'
@@ -14,7 +14,7 @@ module SlackApiGateway
 
     def self.load_bounded_context!
       return unless @@loader.nil?  
-      @@loader = Service::BoundedContextLoader.new(name: 'message')
+      @@loader = Gerty::Service::BoundedContextLoader.new(name: 'message')
       @@loader.load!
     end
 
@@ -36,7 +36,7 @@ module SlackApiGateway
 
         load_bounded_context!
 
-        Service::BoundedContext.call(bot_request)
+        Gerty::Service::BoundedContext.call(bot_request)
 
       rescue StandardError => e
         if ENV['HONEYBADGER_API_KEY']

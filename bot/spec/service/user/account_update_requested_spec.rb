@@ -19,11 +19,11 @@ describe Service::User::Controller do
     context 'user does not exist' do
 
       before(:each) do
-        allow(Topic::Sns).to receive(:broadcast)
+        allow(Gerty::Topic::Sns).to receive(:broadcast)
       end
       
       it 'should broadcast to the user topic' do
-        expect(Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request) 
+        expect(Gerty::Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request) 
         subject.call(bot_request)
       end
 
@@ -61,12 +61,12 @@ describe Service::User::Controller do
       let(:old_kanbanize_username){ Faker::Internet.username }
 
       before(:each) do
-        allow(Topic::Sns).to receive(:broadcast)
+        allow(Gerty::Topic::Sns).to receive(:broadcast)
         Service::User::Storage.update_account(slack_id: bot_request.context.slack_id, email: old_email, handle: old_handle, kanbanize_username: old_kanbanize_username)
       end
       
       it 'should broadcast to the user topic' do
-        expect(Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request) 
+        expect(Gerty::Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request) 
         subject.call(bot_request)
       end
 

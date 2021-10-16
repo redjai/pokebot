@@ -30,7 +30,7 @@ describe Service::Kanbanize::ImportTasks do
   end
 
   before do
-    allow(Topic::Sns).to receive(:broadcast).with(topic: :kanbanize, request: bot_request)
+    allow(Gerty::Topic::Sns).to receive(:broadcast).with(topic: :kanbanize, request: bot_request)
     expect(Service::Kanbanize::ImportTasks).to receive(:post).with(uri: uri, body: body, kanbanize_api_key: kanbanize_api_key).and_return(response)
   end
   

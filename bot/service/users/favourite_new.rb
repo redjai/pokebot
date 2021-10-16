@@ -1,7 +1,7 @@
 require 'aws-sdk-dynamodb'
 require_relative 'storage/favourites'
 require 'gerty/request/events/users'
-require 'service/bounded_context'
+require 'gerty/service/bounded_context'
 
 module Service
   module User
@@ -17,7 +17,7 @@ module Service
           [ :users ]
         end
 
-        Service::BoundedContext.register(self)
+        Gerty::Service::BoundedContext.register(self)
 
         def call(bot_request)
           updates = Service::User::Storage.add_favourite(bot_request.context.slack_id, bot_request.data['favourite_recipe_id'])

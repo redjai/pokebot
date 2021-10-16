@@ -6,14 +6,14 @@ describe Service::Interaction::Controller do
   let(:bot_request){ build(:slack_interaction_user_account_update_request) }
 
   it 'should broadcast a user account update requested to the users topic' do
-    expect(Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request) 
+    expect(Gerty::Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request) 
     subject.call(bot_request)
   end
 
   context 'payload data' do
 
     before do
-      allow(Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request) 
+      allow(Gerty::Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request) 
       subject.call(bot_request)
     end
 

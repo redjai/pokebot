@@ -1,9 +1,8 @@
-require 'topic/sns'
 require_relative 'spoonacular/api/complex_search'
 require_relative 'user'
 require_relative 'spoonacular/api/information_bulk_search'
 require 'gerty/request/events/recipes'
-require 'service/bounded_context'
+require 'gerty/service/bounded_context'
 
 module Service
   module Recipe
@@ -19,7 +18,7 @@ module Service
           [ :recipes ]
         end
 
-        Service::BoundedContext.register(self)
+        Gerty::Service::BoundedContext.register(self)
 
         def call(bot_request)
           complex_search = Service::Recipe::Spoonacular::ComplexSearch.search_free_text(

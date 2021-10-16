@@ -1,6 +1,6 @@
-require 'service/bounded_context'
+require 'gerty/service/bounded_context'
 
-describe Service::BoundedContext do
+describe Gerty::Service::BoundedContext do
 
   before do
     require 'spec/support/bounded_contexts/test_bounded_context/test_service_1.rb'
@@ -39,16 +39,16 @@ describe Service::BoundedContext do
 
     it 'should call test service 1 with test_event_1a and broadcast' do
       expect(TestService1).to receive(:call).with(bot_request_1).and_call_original
-      expect(Topic::Sns).to receive(:broadcast).with(topic: :test_topic_1a, request: bot_request_1)
-      expect(Topic::Sns).to receive(:broadcast).with(topic: :test_topic_1b, request: bot_request_1)
+      expect(Gerty::Topic::Sns).to receive(:broadcast).with(topic: :test_topic_1a, request: bot_request_1)
+      expect(Gerty::Topic::Sns).to receive(:broadcast).with(topic: :test_topic_1b, request: bot_request_1)
       expect(TestService2).to receive(:call).never
       subject.call(bot_request_1)
     end
 
     it 'should call test service 2 with test_event_1a and broadcast' do
       expect(TestService2).to receive(:call).with(bot_request_2).and_call_original
-      expect(Topic::Sns).to receive(:broadcast).with(topic: :test_topic_2a, request: bot_request_2)
-      expect(Topic::Sns).to receive(:broadcast).with(topic: :test_topic_2b, request: bot_request_2)
+      expect(Gerty::Topic::Sns).to receive(:broadcast).with(topic: :test_topic_2a, request: bot_request_2)
+      expect(Gerty::Topic::Sns).to receive(:broadcast).with(topic: :test_topic_2b, request: bot_request_2)
       expect(TestService2).to receive(:call).never
       subject.call(bot_request_2)
     end
@@ -58,8 +58,8 @@ describe Service::BoundedContext do
       # don't use .and_call_original so bot request is not updated by service
       it 'should not broadcast' do
         expect(TestService1).to receive(:call).with(bot_request_1) 
-        expect(Topic::Sns).to receive(:broadcast).never
-        expect(Topic::Sns).to receive(:broadcast).never
+        expect(Gerty::Topic::Sns).to receive(:broadcast).never
+        expect(Gerty::Topic::Sns).to receive(:broadcast).never
         expect(TestService2).to receive(:call).never
         subject.call(bot_request_1)
       end

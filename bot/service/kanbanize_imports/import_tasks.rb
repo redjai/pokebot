@@ -25,7 +25,7 @@ module Service
         %w( kanbanize )
       end
 
-      Service::BoundedContext.register(self)
+      Gerty::Service::BoundedContext.register(self)
 
       def call(bot_request)
         client = get_client(bot_request.data['client_id'])

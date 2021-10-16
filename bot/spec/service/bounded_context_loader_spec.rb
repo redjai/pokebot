@@ -1,6 +1,6 @@
-require 'service/bounded_context_loader'
+require 'gerty/service/bounded_context_loader'
 
-describe Service::BoundedContextLoader do
+describe Gerty::Service::BoundedContextLoader do
 
   
   let(:root){ "spec/support/bounded_contexts" }

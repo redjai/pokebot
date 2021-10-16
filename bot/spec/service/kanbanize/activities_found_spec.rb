@@ -22,7 +22,7 @@ describe Service::Kanbanize::NewActivitiesFound do
       let(:found_activities){ {"client_id" => client_id, "activities" => [ activity1.data ], "board_id" => board_id } }
 
       before do
-        allow(Topic::Sns).to receive(:broadcast).with(topic: [:kanbanize, :users], request: bot_request)
+        allow(Gerty::Topic::Sns).to receive(:broadcast).with(topic: [:kanbanize, :users], request: bot_request)
         SpecHelper::S3.bucket.object(activity2.key).put(body: activity2.to_json)
       end
 
@@ -33,7 +33,7 @@ describe Service::Kanbanize::NewActivitiesFound do
       end
 
       it 'should broadcast only the created activity  to sns' do
-        expect(Topic::Sns).to receive(:broadcast).with(topic: [:kanbanize, :users], request: bot_request).once
+        expect(Gerty::Topic::Sns).to receive(:broadcast).with(topic: [:kanbanize, :users], request: bot_request).once
         described_class.call(bot_request)
       end
       
@@ -51,7 +51,7 @@ describe Service::Kanbanize::NewActivitiesFound do
 
         before do
           allow_any_instance_of(Aws::S3::Object).to receive(:exists?).and_return(true)
-          expect(Topic::Sns).to receive(:broadcast).never
+          expect(Gerty::Topic::Sns).to receive(:broadcast).never
         end
 
         it 'should not broadcast an event' do

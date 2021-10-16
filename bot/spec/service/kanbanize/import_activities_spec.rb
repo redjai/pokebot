@@ -38,7 +38,7 @@ describe Service::Kanbanize::ImportBoardActivities do
   end
 
   before do
-    allow(Topic::Sns).to receive(:broadcast).with(topic: :kanbanize, request: bot_request)
+    allow(Gerty::Topic::Sns).to receive(:broadcast).with(topic: :kanbanize, request: bot_request)
     expect(Service::Kanbanize::ImportBoardActivities).to receive(:post).with(uri: uri, body: body1, kanbanize_api_key: kanbanize_api_key).and_return(response_1)
     expect(Service::Kanbanize::ImportBoardActivities).to receive(:post).with(uri: uri, body: body2, kanbanize_api_key: kanbanize_api_key).and_return(response_2)
     expect(Service::Kanbanize::ImportBoardActivities).to receive(:post).with(uri: uri, body: body3, kanbanize_api_key: kanbanize_api_key).and_return(response_3)

@@ -1,8 +1,7 @@
-require 'topic/sns'
 require_relative 'spoonacular/api/information_bulk_search'
 require_relative 'user'
 require 'gerty/request/events/recipes'
-require 'service/bounded_context'
+require 'gerty/service/bounded_context'
 
 module Service
   module Recipe
@@ -18,7 +17,7 @@ module Service
           [ :recipes ]
         end
 
-        Service::BoundedContext.register(self)
+        Gerty::Service::BoundedContext.register(self)
         
         def call(bot_request)
           recipe_ids = Service::Recipe::User.recipe_ids(bot_request.context.slack_id)

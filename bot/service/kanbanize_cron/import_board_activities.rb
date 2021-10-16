@@ -2,8 +2,7 @@ require 'net/http'
 require_relative '../kanbanize/net/api'
 require 'storage/kanbanize/dynamodb/client'
 require 'gerty/request/events/cron'
-require 'topic/sns'
-require 'service/bounded_context'
+require 'gerty/service/bounded_context'
 
 #
 # Reacts to CRON request, fetches activities from kanbanize and publishes them into a topic
@@ -27,7 +26,7 @@ module Service
         %w( kanbanize )
       end
 
-      Service::BoundedContext.register(self)
+      Gerty::Service::BoundedContext.register(self)
 
       def call(bot_request)
 

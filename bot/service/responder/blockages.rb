@@ -1,7 +1,7 @@
 require 'date'
 require 'storage/kanbanize/dynamodb/client'
 require 'gerty/request/events/kanbanize'
-require 'service/bounded_context'
+require 'gerty/service/bounded_context'
 require 'service/responder/slack/response'
 
 module Service
@@ -20,7 +20,7 @@ module Service
               [] 
             end
 
-            Service::BoundedContext.register(self)
+            Gerty::Service::BoundedContext.register(self)
 
             def call(bot_request)
 

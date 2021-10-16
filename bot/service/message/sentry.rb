@@ -4,7 +4,7 @@ module Service
 
     # if the message isn't from a bot we are good to go
        
-    BoundedContext.register_sentry(self)
+   Gerty::Service::BoundedContext.register_sentry(self)
 
     def pass?(bot_request)
       bot_request.data['event']['bot_id'].nil? 

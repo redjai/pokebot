@@ -16,7 +16,7 @@ module Service
             []
           end
 
-          Service::BoundedContext.register(self)
+          Gerty::Service::BoundedContext.register(self)
 
           def call(bot_request)
             ::Service::Responder::Slack::Response.respond(

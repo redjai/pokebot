@@ -18,7 +18,7 @@ describe Service::User::Controller do
     context 'user does not exist' do
       
       before(:each) do
-        allow(Topic::Sns).to receive(:broadcast)
+        allow(Gerty::Topic::Sns).to receive(:broadcast)
       end
       
       
@@ -34,7 +34,7 @@ describe Service::User::Controller do
       end
 
       it 'should broadcast the user favourites array to the users topic' do
-        expect(Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request)
+        expect(Gerty::Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request)
         subject.call(bot_request)
       end
 
@@ -63,7 +63,7 @@ describe Service::User::Controller do
       let(:previous_bot_request){ build(:bot_request, context: previous_context, current: Gerty::Request::Events::Users.favourite_new(source: :interactions, favourite_recipe_id:  existing_favourite)) }
       
       before(:each) do
-        allow(Topic::Sns).to receive(:broadcast)
+        allow(Gerty::Topic::Sns).to receive(:broadcast)
         subject.call(previous_bot_request) # set up the user with a favourite
       end
 
@@ -82,7 +82,7 @@ describe Service::User::Controller do
         end
 
         it 'should broadcast the user favourites array to the users topic' do
-          expect(Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request)
+          expect(Gerty::Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request)
           subject.call(bot_request)
         end
 
@@ -96,7 +96,7 @@ describe Service::User::Controller do
         end
 
         it 'should NOT broadcast the user favourites array to the users topic' do
-          expect(Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request).never
+          expect(Gerty::Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request).never
           subject.call(previous_bot_request)
         end
       end

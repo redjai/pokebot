@@ -34,7 +34,7 @@ describe Service::Recipe::Controller do
       end
 
       before do
-        allow(Topic::Sns).to receive(:broadcast).with(topic: :recipes, request: bot_request) 
+        allow(Gerty::Topic::Sns).to receive(:broadcast).with(topic: :recipes, request: bot_request) 
         stub_request(:get, information_bulk_uri).with(query: { "apiKey" => api_key , "ids" => ids }).and_return(body: information_bulk_response.to_json)
       end
 

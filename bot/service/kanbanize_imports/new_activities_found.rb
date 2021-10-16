@@ -1,5 +1,4 @@
 require 'gerty/request/events/kanbanize'
-require 'topic/sns'
 require 'date'
 require 'storage/kanbanize/s3/activity'
 
@@ -19,7 +18,7 @@ module Service
         %w( kanbanize users )
       end
 
-      Service::BoundedContext.register(self)
+      Gerty::Service::BoundedContext.register(self)
 
       def call(bot_request)
         store = Storage::Kanbanize::ActivityStore.new(

@@ -13,7 +13,7 @@ module Service
             email: extract_from_values(values: values, extract: :email),
             kanbanize_username: extract_from_values(values: values, extract: :kanbanize)
           )  
-          Topic::Sns.broadcast(topic: :users, request: bot_request)
+          Gerty::Topic::Sns.broadcast(topic: :users, request: bot_request)
         end
 
         def extract_from_values(values:, extract:)

@@ -1,6 +1,6 @@
 require 'aws-sdk-dynamodb'
 require_relative 'user'
-require 'service/bounded_context'
+require 'gerty/service/bounded_context'
 require 'gerty/request/events/users'
 
 module Service
@@ -16,7 +16,7 @@ module Service
         []
       end
 
-      Service::BoundedContext.register(self)
+      Gerty::Service::BoundedContext.register(self)
 
       def call(bot_request)
         Service::Recipe::User.upsert(bot_request.context.slack_id, bot_request.data['favourite_recipe_ids'])

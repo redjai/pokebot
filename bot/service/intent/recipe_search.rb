@@ -1,4 +1,3 @@
-require 'topic/sns'
 require 'gerty/request/events/messages'
 require 'gerty/request/events/recipes' 
 
@@ -15,7 +14,7 @@ module Service
         [ :recipes ]
       end
 
-      Service::BoundedContext.register(self)
+      Gerty::Service::BoundedContext.register(self)
       
       def call(bot_request)
         if bot_request.current['data']['text'] =~ /recipe for (.+)$/

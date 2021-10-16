@@ -5,7 +5,7 @@ require 'gerty/request/events/recipes'
 describe Service::Command::Controller do
 
   before do
-    allow(Topic::Sns).to receive(:broadcast)
+    allow(Gerty::Topic::Sns).to receive(:broadcast)
   end
   
   context 'favourites' do
@@ -15,7 +15,7 @@ describe Service::Command::Controller do
 
 
     it 'should call favourites' do
-      expect(Topic::Sns).to receive(:broadcast).with(topic: :recipes, request: bot_request)
+      expect(Gerty::Topic::Sns).to receive(:broadcast).with(topic: :recipes, request: bot_request)
       subject.call(bot_request)
     end
     
@@ -33,7 +33,7 @@ describe Service::Command::Controller do
     let(:bot_request){ Gerty::Request::Events::Slack.command_request(aws_event) }
 
     it 'should call favourites' do
-      expect(Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request)
+      expect(Gerty::Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request)
       subject.call(bot_request)
     end
     

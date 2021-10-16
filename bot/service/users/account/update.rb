@@ -18,7 +18,7 @@ module Service
                                                                                                     handle: user.attributes['handle'], 
                                                                                                      email: user.attributes['email'],
                                                                                         kanbanize_username: user.attributes['kanbanize_username'])
-            Topic::Sns.broadcast(topic: :users, request: bot_request)
+            Gerty::Topic::Sns.broadcast(topic: :users, request: bot_request)
           end
         end
       end

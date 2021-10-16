@@ -1,6 +1,6 @@
 require 'gerty/request/events/slack'
-require 'service/bounded_context_loader'
-require 'service/bounded_context'
+require 'gerty/service/bounded_context_loader'
+require 'gerty/service/bounded_context'
 require 'gerty/lib/logger'
 
 
@@ -11,7 +11,7 @@ module Interactions
 
     def self.load_bounded_context!
       return unless @@loader.nil?  
-      @@loader = Service::BoundedContextLoader.new(name: 'interaction')
+      @@loader = Gerty::Service::BoundedContextLoader.new(name: 'interaction')
       @@loader.load!
     end
 
@@ -23,7 +23,7 @@ module Interactions
 
         load_bounded_context!
 
-        Service::BoundedContext.call(bot_request)
+        Gerty::Service::BoundedContext.call(bot_request)
         
         { statusCode: 204 }
       rescue StandardError => e

@@ -9,7 +9,7 @@ module Service
     module TaskColumnDuration # change this name 
       extend self
 
-      Service::BoundedContext.register( service: self, 
+      Gerty::Service::BoundedContext.register( service: self, 
                                          listen: [ Gerty::Request::Events::Kanbanize::TASKS_IMPORTED ],
                                       broadcast: %w( kanbanize ) ) 
   

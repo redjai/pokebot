@@ -1,7 +1,7 @@
-require 'request/event'
-require 'request/base'
+require 'gerty/request/event'
+require 'gerty/request/base'
 
-describe ::Request::SlackContext do
+describe ::Gerty::Request::SlackContext do
 
   context 'to and from h' do
     let(:channel){ 'test-channel' } 
@@ -22,7 +22,7 @@ describe ::Request::SlackContext do
     }
 
     context 'to_h' do
-      subject{ ::Request::SlackContext.new(slack_id: slack_id, 
+      subject{ ::Gerty::Request::SlackContext.new(slack_id: slack_id, 
                                         channel: channel, 
                                      message_ts: message_ts, 
                                      trigger_id: trigger_id,
@@ -36,7 +36,7 @@ describe ::Request::SlackContext do
     end
 
     context 'from_h' do
-      subject{ ::Request::SlackContext.from_h(to_h) }
+      subject{ ::Gerty::Request::SlackContext.from_h(to_h) }
 
       it 'should assign slack_id' do
         expect(subject.slack_id).to eq slack_id

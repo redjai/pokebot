@@ -1,4 +1,4 @@
-require 'request/base'
+require 'gerty/request/base'
 
 module TopicHelper
   extend Request::Base

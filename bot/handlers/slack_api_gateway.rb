@@ -1,4 +1,4 @@
-require 'request/events/slack'
+require 'gerty/request/events/slack'
 require 'service/bounded_context'
 require 'service/bounded_context_loader'
 require 'handlers/processors/logger'
@@ -20,7 +20,7 @@ module SlackApiGateway
     def self.handle(event:, context:)
       begin
         Bot::LOGGER.debug(event)
-        bot_request = ::Request::Events::Slack.api_request(event)
+        bot_request = Gerty::Request::Events::Slack.api_request(event)
         
         if bot_request.data['challenge']
           return Lambda::HttpResponse.plain_text_response(bot_request.data['challenge'])

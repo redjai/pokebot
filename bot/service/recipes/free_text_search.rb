@@ -2,7 +2,7 @@ require 'topic/sns'
 require_relative 'spoonacular/api/complex_search'
 require_relative 'user'
 require_relative 'spoonacular/api/information_bulk_search'
-require 'request/events/recipes'
+require 'gerty/request/events/recipes'
 require 'service/bounded_context'
 
 module Service
@@ -12,7 +12,7 @@ module Service
         extend self
 
         def listen
-          [ ::Request::Events::Recipes::SEARCH_REQUESTED ]
+          [ Gerty::Request::Events::Recipes::SEARCH_REQUESTED ]
         end
 
         def broadcast
@@ -27,7 +27,7 @@ module Service
                                                                                           bot_request.data['page']['offset'], 
                                                                                           bot_request.data['page']['per_page']
                                                                                        )
-          bot_request.events << ::Request::Events::Recipes::found(
+          bot_request.events << Gerty::Request::Events::Recipes::found(
                               source: :recipes,
                              recipes: information_bulk_result(complex_search),
                 favourite_recipe_ids: Service::Recipe::User.recipe_ids(bot_request.context.slack_id),

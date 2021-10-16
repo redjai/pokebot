@@ -1,7 +1,7 @@
 require 'service/interaction/controller'
 require 'topic/sns'
-require 'request/event'
-require 'request/events/recipes'
+require 'gerty/request/event'
+require 'gerty/request/events/recipes'
 
 describe Service::Interaction::Controller do
   context 'more results' do
@@ -16,7 +16,7 @@ describe Service::Interaction::Controller do
     it 'should broadcast a recipes next page search event' do
       allow(Topic::Sns).to receive(:broadcast).with(topic: :recipes, request: bot_request)
       subject.call(bot_request)
-      expect(bot_request.next.first[:current]['name']).to eq ::Request::Events::Recipes::SEARCH_REQUESTED
+      expect(bot_request.next.first[:current]['name']).to eq Gerty::Request::Events::Recipes::SEARCH_REQUESTED
     end
 
   end

@@ -1,4 +1,4 @@
-require 'request/events/kanbanize'
+require 'gerty/request/events/kanbanize'
 require 'topic/sns'
 require 'date'
 require 'storage/kanbanize/s3/activity'
@@ -12,7 +12,7 @@ module Service
       extend self
                                 
       def listen
-        [ Request::Events::Kanbanize::ACTIVITIES_IMPORTED ]
+        [ Gerty::Request::Events::Kanbanize::ACTIVITIES_IMPORTED ]
       end
 
       def broadcast
@@ -34,7 +34,7 @@ module Service
       
         if new_activities.any?
 
-          bot_request.events << Request::Events::Kanbanize.new_activities_found(
+          bot_request.events << Gerty::Request::Events::Kanbanize.new_activities_found(
                                 source: self.class.name, 
                                 client_id: bot_request.data['client_id'],
                                 board_id: bot_request.data['board_id'],

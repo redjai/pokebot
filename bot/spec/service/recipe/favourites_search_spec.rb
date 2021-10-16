@@ -2,7 +2,7 @@ require 'service/recipe/controller'
 require 'json'
 require 'topic/sns'
 require 'service/recipe/user'
-require 'request/events/recipes'
+require 'gerty/request/events/recipes'
 
 describe Service::Recipe::Controller do
 
@@ -11,7 +11,7 @@ describe Service::Recipe::Controller do
 
     context 'recipes found' do
 
-      let(:bot_request){ build(:bot_request, :with_event_context, current: ::Request::Events::Recipes.favourites_requested(source: 'intent')) }
+      let(:bot_request){ build(:bot_request, :with_event_context, current: Gerty::Request::Events::Recipes.favourites_requested(source: 'intent')) }
       let(:offset){ 0 }
       let(:api_key){ 'mock-spoonacular-api-key' }
       let(:recipe_1){ '123' }

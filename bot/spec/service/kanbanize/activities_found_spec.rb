@@ -1,6 +1,6 @@
 require 'service/kanbanize/controller'
 require 'topic/sns'
-require 'request/event'
+require 'gerty/request/event'
 require 'service/kanbanize/new_activities_found'
 require 'storage/kanbanize/s3/activity'
 

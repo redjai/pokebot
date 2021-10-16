@@ -1,6 +1,6 @@
 require 'date'
 require 'storage/kanbanize/dynamodb/client'
-require 'request/events/kanbanize'
+require 'gerty/request/events/kanbanize'
 require 'service/bounded_context'
 require 'slack/response'
 
@@ -13,7 +13,7 @@ module Service
           extend Storage::Kanbanize::DynamoDB
                                 
             def listen
-              [ Request::Events::Kanbanize::NEW_ACTIVITIES_FOUND ]
+              [ Gerty::Request::Events::Kanbanize::NEW_ACTIVITIES_FOUND ]
             end
 
             def broadcast

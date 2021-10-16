@@ -1,7 +1,7 @@
 require 'net/http'
 require_relative '../kanbanize/net/api'
 require 'storage/kanbanize/dynamodb/client'
-require 'request/events/cron'
+require 'gerty/request/events/cron'
 require 'topic/sns'
 require 'service/bounded_context'
 
@@ -20,7 +20,7 @@ module Service
       DEFAULT_PAGE_SIZE = 30
                                 
       def listen
-        [ Request::Events::Cron::Actions::KANBANIZE_IMPORT_ACTIVITIES ]
+        [ Gerty::Request::Events::Cron::Actions::KANBANIZE_IMPORT_ACTIVITIES ]
       end
 
       def broadcast
@@ -35,7 +35,7 @@ module Service
 
         begin
 
-          bot_request.events << ::Request::Events::Kanbanize.activities_imported(
+          bot_request.events << Gerty::Request::Events::Kanbanize.activities_imported(
             source: :kanbanize,
             activities: activities(
               kanbanize_api_key: client.kanbanize_api_key,

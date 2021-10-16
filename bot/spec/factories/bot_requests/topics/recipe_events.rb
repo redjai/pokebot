@@ -1,7 +1,7 @@
-require 'request/event'
-require 'request/events/slack'
-require 'request/events/recipes'
-require 'request/events/messages'
+require 'gerty/request/event'
+require 'gerty/request/events/slack'
+require 'gerty/request/events/recipes'
+require 'gerty/request/events/messages'
 
 module TopicHelper
   extend Request::Base
@@ -13,16 +13,16 @@ FactoryBot.define do
   
 
 
-  factory :message_received, class: ::Request::Event do
+  factory :message_received, class: ::Gerty::Request::Event do
 
     source { :test_source }
     text { 'some test text' }
 
-    initialize_with{ ::Request::Events::Messages.received(source: source, text: text) }
+    initialize_with{ Gerty::Request::Events::Messages.received(source: source, text: text) }
 
   end
   
-  factory :recipes_found, class: ::Request::Event do
+  factory :recipes_found, class: ::Gerty::Request::Event do
 
     source { :test_source }
     recipes { Factory::Support::Spoonacular.information_bulk_beef_rendang }
@@ -32,7 +32,7 @@ FactoryBot.define do
     per_page { 10 }
     total_results { 1 }
 
-    initialize_with{ ::Request::Events::Recipes.found( source: source, 
+    initialize_with{ Gerty::Request::Events::Recipes.found( source: source, 
                                           recipes: recipes, 
                                             query: query, 
                              favourite_recipe_ids: favourite_recipe_ids, 
@@ -42,7 +42,7 @@ FactoryBot.define do
 
   end
   
-  factory :slack_event_api_recipe_search_event, class: ::Request::Event do
-    initialize_with{ ::Request::Events::Slack.api_event(recipe_search_api_event) } 
+  factory :slack_event_api_recipe_search_event, class: ::Gerty::Request::Event do
+    initialize_with{ Gerty::Request::Events::Slack.api_event(recipe_search_api_event) } 
   end
 end

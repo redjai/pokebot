@@ -9,7 +9,7 @@ module Service
       extend self
         def call(bot_request)
           Service::User::Storage.read(bot_request.context.slack_id).tap do |user|
-            bot_request.events << ::Request::Events::Users.account_updated(source: :user, user: user)
+            bot_request.events << Gerty::Request::Events::Users.account_updated(source: :user, user: user)
             Topic::Sns.broadcast(topic: :users, request: bot_request)
           end
         end

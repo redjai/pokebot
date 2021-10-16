@@ -10,7 +10,7 @@ module Service
       extend self
 
       Service::BoundedContext.register( service: self, 
-                                         listen: [ Request::Events::Kanbanize::TASKS_IMPORTED ],
+                                         listen: [ Gerty::Request::Events::Kanbanize::TASKS_IMPORTED ],
                                       broadcast: %w( kanbanize ) ) 
   
       def call(bot_request)

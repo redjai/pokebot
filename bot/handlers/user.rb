@@ -1,4 +1,4 @@
-require 'request/event'
+require 'gerty/request/event'
 require 'handlers/processors/sqs'
 
 module User

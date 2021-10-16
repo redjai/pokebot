@@ -1,6 +1,6 @@
 require 'slack/response'
 require 'service/bounded_context'
-require 'request/events/messages'
+require 'gerty/request/events/messages'
 
 module Service
   module Responder
@@ -10,7 +10,7 @@ module Service
         extend self
 
           def listen
-            [ ::Request::Events::Messages::RECEIVED ]
+            [ Gerty::Request::Events::Messages::RECEIVED ]
           end
 
           def broadcast

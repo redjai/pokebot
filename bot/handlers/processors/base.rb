@@ -1,4 +1,4 @@
-require 'request/event'
+require 'gerty/request/event'
 require 'honeybadger'
 require 'logger'
 require_relative 'logger'

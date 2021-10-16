@@ -3,7 +3,7 @@ require 'aws-sdk-s3'
 require_relative '../kanbanize/net/api'
 require 'storage/kanbanize/dynamodb/client'
 require 'storage/kanbanize/s3/task'
-require 'request/events/kanbanize'
+require 'gerty/request/events/kanbanize'
 
 # this service imports task details for any new activities found that day
 module Service
@@ -15,9 +15,9 @@ module Service
                                   
       def listen
         [
-          Request::Events::Kanbanize::NEW_ACTIVITIES_FOUND,
-          Request::Events::Kanbanize::TASKS_FOUND,
-          Request::Events::Kanbanize::ARCHIVED_TASKS_FOUND
+          Gerty::Request::Events::Kanbanize::NEW_ACTIVITIES_FOUND,
+          Gerty::Request::Events::Kanbanize::TASKS_FOUND,
+          Gerty::Request::Events::Kanbanize::ARCHIVED_TASKS_FOUND
         ]
       end
 
@@ -64,7 +64,7 @@ module Service
           end
         end
         
-        bot_request.events << ::Request::Events::Kanbanize.tasks_imported(
+        bot_request.events << Gerty::Request::Events::Kanbanize.tasks_imported(
           source: self.class.name, 
           client_id: client.id, 
           board_id: bot_request.data['board_id'],

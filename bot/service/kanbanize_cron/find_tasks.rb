@@ -2,7 +2,7 @@ require 'date'
 require 'aws-sdk-s3'
 require_relative '../kanbanize/net/api'
 require 'storage/kanbanize/dynamodb/client'
-require 'request/events/kanbanize'
+require 'gerty/request/events/kanbanize'
 
 require_relative 'find_tasks/active_tasks'
 require_relative 'find_tasks/archived_tasks'
@@ -18,7 +18,7 @@ module Service
       extend Storage::Kanbanize::DynamoDB
 
       def listen
-        [ Request::Events::Kanbanize::FIND_TASK_IDS_FOR_BOARD ]
+        [ Gerty::Request::Events::Kanbanize::FIND_TASK_IDS_FOR_BOARD ]
       end
 
       def broadcast

@@ -1,4 +1,4 @@
-require 'request/events/cron'
+require 'gerty/request/events/cron'
 require 'service/bounded_context'
 require 'service/bounded_context_loader'
 require 'handlers/processors/logger'
@@ -15,7 +15,7 @@ module Cron
       
       load_bounded_context!(event['bounded_context']) unless @@loader
 
-      bot_request = Request::Events::Cron.cron_request(event)
+      bot_request = Gerty::Request::Events::Cron.cron_request(event)
       Service::BoundedContext.call(bot_request)
     end
 

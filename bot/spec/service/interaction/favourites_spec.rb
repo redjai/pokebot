@@ -1,6 +1,6 @@
 require 'service/interaction/controller'
 require 'topic/sns'
-require 'request/event'
+require 'gerty/request/event'
 
 describe Service::Interaction::Controller do
 
@@ -16,7 +16,7 @@ describe Service::Interaction::Controller do
     it 'should broadcast a favourites new event' do
       allow(Topic::Sns).to receive(:broadcast).with(topic: :users, request: bot_request)
       subject.call(bot_request)
-      expect(bot_request.next.first[:current]['name']).to eq ::Request::Events::Users::FAVOURITE_NEW
+      expect(bot_request.next.first[:current]['name']).to eq Gerty::Request::Events::Users::FAVOURITE_NEW
     end
 
   end

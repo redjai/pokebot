@@ -1,6 +1,6 @@
 require_relative '../fixtures/aws_events/events_api/recipe_search_api_event'
 require_relative '../fixtures/aws_events/events_api/challenge'
-require 'request/base'
+require 'gerty/request/base'
 
 module TopicHelper
   extend Request::Base

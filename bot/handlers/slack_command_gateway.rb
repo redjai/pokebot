@@ -1,4 +1,4 @@
-require 'request/events/slack'
+require 'gerty/request/events/slack'
 require 'service/command/controller'
 
 
@@ -6,7 +6,7 @@ module SlackCommandGateway
   class Handler
     def self.handle(event:, context:)
       begin
-        bot_request = ::Request::Events::Slack.command_request(event)
+        bot_request = Gerty::Request::Events::Slack.command_request(event)
         Service::Command::Controller.call(bot_request)
         { statusCode: 204 }
       rescue StandardError => e

@@ -1,6 +1,6 @@
 require 'aws-sdk-dynamodb'
 require_relative 'storage/favourites'
-require 'request/events/users'
+require 'gerty/request/events/users'
 require 'service/bounded_context'
 
 module Service
@@ -10,7 +10,7 @@ module Service
       extend self
 
         def listen
-          [ ::Request::Events::Users::FAVOURITE_DESTROY ]
+          [ Gerty::Request::Events::Users::FAVOURITE_DESTROY ]
         end
 
         def broadcast
@@ -22,7 +22,7 @@ module Service
         def call(bot_request)
           updates = Service::User::Storage.remove_favourite(bot_request.context.slack_id, bot_request.data['favourite_recipe_id'])
           recipe_ids =  (updates['attributes'] || {}).fetch('favourites',[]).collect{|id| id }
-          bot_request.events << ::Request::Events::Users.favourites_updated( source: :user, 
+          bot_request.events << Gerty::Request::Events::Users.favourites_updated( source: :user, 
                                                                favourite_recipe_ids: recipe_ids )
         end
       end

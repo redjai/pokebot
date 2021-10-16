@@ -1,6 +1,6 @@
 require 'topic/sns'
-require 'request/events/users'
-require 'request/events/recipes'
+require 'gerty/request/events/users'
+require 'gerty/request/events/recipes'
 
 module Service
   module Command 
@@ -10,13 +10,13 @@ module Service
       def call(bot_request)
         case bot_request.data['command'].first
         when '/favourites' 
-          bot_request.events << ::Request::Events::Recipes.favourites_requested(source: :command)
+          bot_request.events << Gerty::Request::Events::Recipes.favourites_requested(source: :command)
           Topic::Sns.broadcast(
             topic: :recipes,
             request: bot_request 
           )
         when '/account'
-          bot_request.events << ::Request::Events::Users.account_show_requested(source: :command)
+          bot_request.events << Gerty::Request::Events::Users.account_show_requested(source: :command)
           Topic::Sns.broadcast(
             topic: :users,
             request: bot_request 

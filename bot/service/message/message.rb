@@ -1,4 +1,4 @@
-require 'request/events/messages'
+require 'gerty/request/events/messages'
 
 module Service
   module Message
@@ -15,7 +15,7 @@ module Service
     BoundedContext.register(self)
 
     def call(bot_request)
-      bot_request.events << ::Request::Events::Messages.received(source: self, text: text(bot_request)) 
+      bot_request.events << Gerty::Request::Events::Messages.received(source: self, text: text(bot_request)) 
     end
 
     def text(bot_request)

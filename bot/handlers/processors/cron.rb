@@ -1,5 +1,5 @@
-require 'request/event'
-require 'request/events/cron'
+require 'gerty/request/event'
+require 'gerty/request/events/cron'
 require 'honeybadger'
 require_relative 'logger'
 require_relative 'base'
@@ -28,7 +28,7 @@ module Processors
 
       def handle(aws_event)
         begin
-          handle_request Request::Events::Cron.cron_request(aws_event)
+          handle_request Gerty::Request::Events::Cron.cron_request(aws_event)
         rescue StandardError => e
           if ENV['HONEYBADGER_API_KEY']
             Honeybadger.notify(e, sync: true, context: context(e)) #sync true is important as we have no background worker thread

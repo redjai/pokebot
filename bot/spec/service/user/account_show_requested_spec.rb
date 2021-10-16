@@ -1,4 +1,4 @@
-require 'request/events/users'
+require 'gerty/request/events/users'
 require 'service/user/controller'
 require 'topic/sns'
 require 'service/user/storage'
@@ -26,7 +26,7 @@ describe Service::User::Controller do
 
       it 'should change the event from requested to found' do
         subject.call(bot_request)
-        expect(bot_request.next.first[:current]['name']).to eq ::Request::Events::Users::ACCOUNT_READ
+        expect(bot_request.next.first[:current]['name']).to eq Gerty::Request::Events::Users::ACCOUNT_READ
       end
 
       it 'should set nil user data' do
@@ -44,7 +44,7 @@ describe Service::User::Controller do
 
       it 'should change the event from requested to found' do
         subject.call(bot_request)
-        expect(bot_request.next.first[:current]['name']).to eq ::Request::Events::Users::ACCOUNT_READ
+        expect(bot_request.next.first[:current]['name']).to eq Gerty::Request::Events::Users::ACCOUNT_READ
       end
       
       it 'should set the found user data' do

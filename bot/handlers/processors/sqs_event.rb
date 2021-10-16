@@ -1,4 +1,4 @@
-require 'request/event'
+require 'gerty/request/event'
 require 'honeybadger'
 require_relative 'logger'
 require_relative 'event_base'
@@ -31,7 +31,7 @@ module Handlers
       def bot_request(aws_record)
         record = data(aws_record)
         event = JSON.parse(record["Message"])
-        ::Request::Request.new current: event['current'], trail: event['trail'], context: ::Request::SlackContext.from_h(event['context'])
+        Gerty::Request::Request.new current: event['current'], trail: event['trail'], context: ::Gerty::Request::SlackContext.from_h(event['context'])
       end
 
     

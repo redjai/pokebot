@@ -14,7 +14,7 @@ class TestService1
   Service::BoundedContext.register(self)
   
   def self.call(bot_request)
-    event = ::Request::Event.new(source: self, name: 'test-service-1-updated-event', version: 1.0, data: {})
+    event = Gerty::Request::Event.new(source: self, name: 'test-service-1-updated-event', version: 1.0, data: {})
     bot_request.events << event
   end
                          

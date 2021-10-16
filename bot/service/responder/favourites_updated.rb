@@ -1,5 +1,5 @@
 require 'slack/response'
-require 'request/events/users'
+require 'gerty/request/events/users'
 
 module Service
   module Responder
@@ -9,7 +9,7 @@ module Service
         extend self
 
           def listen
-            [ ::Request::Events::Users::FAVOURITES_UPDATED ]
+            [ Gerty::Request::Events::Users::FAVOURITES_UPDATED ]
           end
 
           def broadcast

@@ -21,7 +21,7 @@ class ActiveTasks < TaskBase
 
   def tasks_found_event
     if any?
-      ::Request::Events::Kanbanize.tasks_found(
+      Gerty::Request::Events::Kanbanize.tasks_found(
         client_id: @client_id,
         source: self.class.name, 
         board_id: @board_id, 

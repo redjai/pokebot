@@ -1,4 +1,4 @@
-require 'request/event'
+require 'gerty/request/event'
 
 FactoryBot.define do
 
@@ -19,45 +19,45 @@ FactoryBot.define do
   end
 
 
-  factory :event_context, class: ::Request::SlackContext do
+  factory :event_context, class: ::Gerty::Request::SlackContext do
     slack_id { generate :slack_id }
     channel { generate :channel }
-    initialize_with{ ::Request::SlackContext._from_slack_event(slack_id: slack_id, channel: channel) }
+    initialize_with{ ::Gerty::Request::SlackContext._from_slack_event(slack_id: slack_id, channel: channel) }
   end
 
-  factory :command_context, class: ::Request::SlackContext do
+  factory :command_context, class: ::Gerty::Request::SlackContext do
     slack_id { generate :slack_id }
     channel { generate :channel }
     response_url { generate :response_url }
-    initialize_with{ ::Request::SlackContext._from_slack_coommand(slack_id: slack_id, channel: channel, response_url: response_url) }
+    initialize_with{ ::Gerty::Request::SlackContext._from_slack_coommand(slack_id: slack_id, channel: channel, response_url: response_url) }
   end
 
-  factory :block_actions_interaction_context, class: ::Request::SlackContext do
+  factory :block_actions_interaction_context, class: ::Gerty::Request::SlackContext do
     slack_id { generate :slack_id }
     channel { generate :channel }
     response_url { generate :response_url }
     trigger_id { generate :trigger_id }
     message_ts { Faker::Time.backward.to_i }
 
-    initialize_with{ ::Request::SlackContext._from_slack_block_actions_interaction(slack_id: slack_id, channel: channel, response_url: response_url, trigger_id: trigger_id, message_ts: message_ts) }
+    initialize_with{ ::Gerty::Request::SlackContext._from_slack_block_actions_interaction(slack_id: slack_id, channel: channel, response_url: response_url, trigger_id: trigger_id, message_ts: message_ts) }
   end
   
-  factory :view_submission_interaction_context, class: ::Request::SlackContext do
+  factory :view_submission_interaction_context, class: ::Gerty::Request::SlackContext do
 
     slack_id { generate :slack_id }
     response_url { generate :response_url }
     trigger_id { generate :trigger_id }
     private_metadata { {'intent' => 'test-intent', 'context' => {}}.to_json  }
 
-    initialize_with{ ::Request::SlackContext._from_slack_view_sumission_interaction(slack_id: slack_id, channel: channel, response_url: response_url, trigger_id: trigger_id, message_ts: message_ts) }
+    initialize_with{ ::Gerty::Request::SlackContext._from_slack_view_sumission_interaction(slack_id: slack_id, channel: channel, response_url: response_url, trigger_id: trigger_id, message_ts: message_ts) }
   end
 
-  factory :bot_request, class: ::Request::Request do
+  factory :bot_request, class: Gerty::Request::Request do
     transient do
       bot_event { build(:bot_event) }
     end
 
-    context { ::Request::SlackContext.new }
+    context { ::Gerty::Request::SlackContext.new }
     current { bot_event } 
     trail { [ build(:bot_event).to_h ] }
     
@@ -167,7 +167,7 @@ FactoryBot.define do
       end
     end
 
-    initialize_with{ ::Request::Request.new(current: current, context: context, trail: trail) }
+    initialize_with{ Gerty::Request::Request.new(current: current, context: context, trail: trail) }
   end
 
 end

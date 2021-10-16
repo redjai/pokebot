@@ -1,6 +1,6 @@
 require 'slack/response'
 require_relative 'slack/views/recipes/index'
-require 'request/events/recipes'
+require 'gerty/request/events/recipes'
 
 module Service
   module Responder
@@ -10,7 +10,7 @@ module Service
         extend self
 
         def listen
-          [ ::Request::Events::Recipes::FOUND ]
+          [ Gerty::Request::Events::Recipes::FOUND ]
         end
 
         def broadcast

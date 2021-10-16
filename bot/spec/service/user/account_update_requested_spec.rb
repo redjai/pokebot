@@ -1,4 +1,4 @@
-require 'request/events/users'
+require 'gerty/request/events/users'
 require 'service/user/controller'
 require 'topic/sns'
 require 'service/user/storage'
@@ -29,7 +29,7 @@ describe Service::User::Controller do
 
       it 'should create an account update event' do
         subject.call(bot_request)
-        expect(bot_request.next.first[:current]['name']).to eq ::Request::Events::Users::ACCOUNT_UPDATED
+        expect(bot_request.next.first[:current]['name']).to eq Gerty::Request::Events::Users::ACCOUNT_UPDATED
       end  
 
       it 'should create a new  user' do
@@ -72,7 +72,7 @@ describe Service::User::Controller do
 
       it 'should create an account update event' do
         subject.call(bot_request)
-        expect(bot_request.next.first[:current]['name']).to eq ::Request::Events::Users::ACCOUNT_UPDATED
+        expect(bot_request.next.first[:current]['name']).to eq Gerty::Request::Events::Users::ACCOUNT_UPDATED
       end  
 
       it 'should not create a user' do

@@ -1,6 +1,6 @@
 require 'service/kanbanize/controller'
 require 'topic/sns'
-require 'request/event'
+require 'gerty/request/event'
 require 'service/kanbanize/import_board_activities'
 
 describe Service::Kanbanize::ImportBoardActivities do

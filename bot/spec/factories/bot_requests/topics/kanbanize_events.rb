@@ -1,11 +1,11 @@
-require 'request/event'
+require 'gerty/request/event'
 
 FactoryBot.define do
 
-  factory :activities_imported, class: ::Request::Event do
+  factory :activities_imported, class: ::Gerty::Request::Event do
 
     source { :test_source }
-    name { Request::Events::Kanbanize::ACTIVITIES_IMPORTED }
+    name { Gerty::Request::Events::Kanbanize::ACTIVITIES_IMPORTED }
     version { 1.0 }
     data { 
       { 
@@ -15,14 +15,14 @@ FactoryBot.define do
       } 
     } 
 
-    initialize_with{ ::Request::Event.new(source: source, name: name, version: version, data: data) }
+    initialize_with{ Gerty::Request::Event.new(source: source, name: name, version: version, data: data) }
   
   end
 
-  factory :new_activities_found, class: ::Request::Event do
+  factory :new_activities_found, class: ::Gerty::Request::Event do
 
     source { :test_source }
-    name { Request::Events::Kanbanize::NEW_ACTIVITIES_FOUND }
+    name { Gerty::Request::Events::Kanbanize::NEW_ACTIVITIES_FOUND }
     version { 1.0 }
     data { 
       { 
@@ -32,7 +32,7 @@ FactoryBot.define do
       } 
     } 
 
-    initialize_with{ ::Request::Event.new(source: source, name: name, version: version, data: data) }
+    initialize_with{ Gerty::Request::Event.new(source: source, name: name, version: version, data: data) }
   
   end
 end

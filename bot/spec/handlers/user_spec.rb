@@ -9,7 +9,7 @@ describe 'handler' do
   let(:context){ {} }
 
   it 'should call the controller with a bot event' do
-    expect(Service::User::Controller).to receive(:call).with(kind_of(::Request::Request))
+    expect(Service::User::Controller).to receive(:call).with(kind_of(Gerty::Request::Request))
     User::Handler.handle(event: aws_records_event, context: context)
   end
 

@@ -1,5 +1,5 @@
 require 'handlers/processors/sqs'
-require 'request/events/kanbanize'
+require 'gerty/request/events/kanbanize'
 
 module Kanbanize
   module Imports 

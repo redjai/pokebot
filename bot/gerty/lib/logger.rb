@@ -1,6 +1,6 @@
 require 'logger'
 
-module Bot
+module Gerty
   LOGGER = Logger.new($stdout)
   case ENV['BOT_ENV']
   when 'development'

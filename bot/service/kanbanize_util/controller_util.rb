@@ -15,7 +15,7 @@ module Service
           require_relative 'db_migrate' # change this name
           Service::Kanbanize::DbMigrate.call(bot_request) # change this name
         else
-          Bot::LOGGER.error "unexpected action #{bot_request.data['action'].to_s}"
+          Gerty::LOGGER.error "unexpected action #{bot_request.data['action'].to_s}"
         end
       end
     end

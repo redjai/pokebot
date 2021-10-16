@@ -1,4 +1,4 @@
-require 'slack/response'
+require 'service/responder/slack/response'
 require 'service/responder/controller'
 
 describe Service::Responder::Controller do
@@ -10,7 +10,7 @@ describe Service::Responder::Controller do
     let(:text){ 'recipes:' }
 
     it 'should respond to slack' do
-      expect(Slack::Response).to receive(:respond).with(channel: channel, text: text, blocks: instance_of(Array), response_url: nil)
+      expect(Service::Responder::Slack::Response).to receive(:respond).with(channel: channel, text: text, blocks: instance_of(Array), response_url: nil)
       subject.call(bot_request)
     end
 
@@ -23,7 +23,7 @@ describe Service::Responder::Controller do
     let(:text){ 'recipes:' }
 
     it 'should respond to slack' do
-      expect(Slack::Response).to receive(:respond).with(channel: channel, text: text, blocks: instance_of(Array), response_url: nil)
+      expect(Service::Responder::Slack::Response).to receive(:respond).with(channel: channel, text: text, blocks: instance_of(Array), response_url: nil)
       subject.call(bot_request)
     end
 
@@ -36,7 +36,7 @@ describe Service::Responder::Controller do
     let(:text){ ":smiley:  _some test text_...\n...helping you is what I do !" }
 
     it 'should respond to slack' do
-      expect(Slack::Response).to receive(:respond).with(channel: channel, text: text)
+      expect(Service::Responder::Slack::Response).to receive(:respond).with(channel: channel, text: text)
       subject.call(bot_request)
     end
   end
@@ -49,7 +49,7 @@ describe Service::Responder::Controller do
     let(:text){ "favourites updated, you have #{favourites_count} favourites. You can see them with the command /favourites" }
 
     it 'should respond to slack' do
-      expect(Slack::Response).to receive(:respond).with(channel: channel, text: text)
+      expect(Service::Responder::Slack::Response).to receive(:respond).with(channel: channel, text: text)
       subject.call(bot_request)
     end
   end
@@ -64,7 +64,7 @@ describe Service::Responder::Controller do
       let(:bot_request){ build(:bot_request, :with_user_account_read, :with_account_show_intent) }
       
       it 'should respond to slack' do
-        expect(Slack::Response).to receive(:respond).with(channel: channel, text: text, blocks: kind_of(Array))
+        expect(Service::Responder::Slack::Response).to receive(:respond).with(channel: channel, text: text, blocks: kind_of(Array))
         subject.call(bot_request)
       end
 
@@ -76,8 +76,8 @@ describe Service::Responder::Controller do
       let(:trigger_id){ bot_request.context.trigger_id }
 
       it 'should respond to slack' do
-        expect(Slack::Response).to receive(:delete).with(channel: bot_request.context.channel, ts: bot_request.context.message_ts)
-        expect(Slack::Response).to receive(:modal).with(trigger_id, kind_of(Hash))
+        expect(Service::Responder::Slack::Response).to receive(:delete).with(channel: bot_request.context.channel, ts: bot_request.context.message_ts)
+        expect(Service::Responder::Slack::Response).to receive(:modal).with(trigger_id, kind_of(Hash))
         subject.call(bot_request)
       end
 

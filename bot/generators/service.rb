@@ -6,7 +6,7 @@ require 'handlers/processors/sqs'
 module #{service.capitalize}  
   class Handler
     def self.handle(event:, context:)
-      Bot::LOGGER.debug(event)
+      Gerty::LOGGER.debug(event)
       Processors::Sqs.process_sqs(aws_event: event, controller: :#{service}, accept: {
         # topic: %w{ event1 event2 },
       })

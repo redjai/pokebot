@@ -1,10 +1,11 @@
-require 'gerty/request/events/slack'
+
 require 'service/bounded_context'
 require 'service/bounded_context_loader'
-require 'handlers/processors/logger'
 require 'honeybadger'
-require 'slack/authentication'
-require 'handlers/processors/http_response'
+require 'gerty/listeners/http/authentication'
+require 'gerty/listeners/http/http_response'
+require 'gerty/request/events/slack'
+require 'gerty/lib/logger'
 
 module SlackApiGateway
   class Handler
@@ -19,18 +20,18 @@ module SlackApiGateway
 
     def self.handle(event:, context:)
       begin
-        Bot::LOGGER.debug(event)
+        Gerty::LOGGER.debug(event)
         bot_request = Gerty::Request::Events::Slack.api_request(event)
         
         if bot_request.data['challenge']
-          return Lambda::HttpResponse.plain_text_response(bot_request.data['challenge'])
+          return Gerty::Listeners::Http::HttpResponse.plain_text_response(bot_request.data['challenge'])
         end
 
-        unless Slack::Authentication.authenticated?(
+        unless Gerty::Listeners::Http::Authentication.authenticated?(
           timestamp: event['headers']['x-slack-request-timestamp'],
           signature: event['headers']['x-slack-signature'],
                body: event['body'])
-          return Lambda::HttpResponse.plain_text_response('Not authorized', 401)
+          return Gerty::Listeners::Http::HttpResponse.plain_text_response('Not authorized', 401)
         end
 
         load_bounded_context!

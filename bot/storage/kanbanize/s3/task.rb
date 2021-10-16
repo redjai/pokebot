@@ -157,7 +157,7 @@ module Storage
         if object.exists? # sometimes this returns false when object exists - not sure why yet.
           JSON.parse(object.get.body.read) 
         else
-          Bot::LOGGER.info("cannot fetch task #{key} as exists? return false")
+          Gerty::LOGGER.info("cannot fetch task #{key} as exists? return false")
           nil
         end
       end

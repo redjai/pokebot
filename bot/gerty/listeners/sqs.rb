@@ -1,6 +1,6 @@
 require 'service/bounded_context'
 require 'service/bounded_context_loader'
-require 'handlers/processors/sqs_event'
+require 'gerty/listeners/records/sqs'
 
 module Handler
   class Sqs
@@ -8,18 +8,18 @@ module Handler
     @@loader = nil
 
     def self.handle(event:, context:)
-      sqs_event = Handlers::SqsEvent.new(event)
+      sqs_records = Gerty::Listeners::Records::Sqs.new(event)
       
-      load_or_verify!(sqs_event)
+      load_or_verify!(sqs_records)
 
-      sqs_event.bot_requests.each do |bot_request|
+      sqs_records.bot_requests.each do |bot_request|
         Service::BoundedContext.call(bot_request)
       end
     end
 
-    def self.load_or_verify!(sqs_event)
-      load_bounded_context!(sqs_event.event_source_arn) unless !@@loader.nil?
-      verify_event_source_arn!(sqs_event.event_source_arn)   
+    def self.load_or_verify!(sqs_records)
+      load_bounded_context!(sqs_records.event_source_arn) unless !@@loader.nil?
+      verify_event_source_arn!(sqs_records.event_source_arn)   
     end
 
     def self.load_bounded_context!(event_source_arn)

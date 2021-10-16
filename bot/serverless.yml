@@ -155,7 +155,7 @@ custom:
 
 functions:
   messages:
-    handler: handlers/slack_api_gateway.SlackApiGateway::Handler.handle
+    handler: gerty/listeners/slack_api_gateway.SlackApiGateway::Handler.handle
     events:
       - httpApi:
           method: POST 
@@ -165,7 +165,7 @@ functions:
       MESSAGES_TOPIC_ARN: !Ref MessagesSnsTopic
 
   intent:
-    handler: handlers/sqs.Handler::Sqs.handle
+    handler: gerty/listeners/sqs.Handler::Sqs.handle
     events:    
       - sqs:
          arn:
@@ -176,7 +176,7 @@ functions:
       RECIPES_TOPIC_ARN: !Ref RecipesSnsTopic
 
   recipe:
-    handler: handlers/sqs.Handler::Sqs.handle
+    handler: gerty/listeners/sqs.Handler::Sqs.handle
     events:
       - sqs:
          arn:
@@ -194,7 +194,7 @@ functions:
       FAVOURITES_TABLE_NAME: ${self:custom.recipe_favourites_table}
 
   responder:
-    handler: handlers/sqs.Handler::Sqs.handle
+    handler: gerty/listeners/sqs.Handler::Sqs.handle
     events:
       - sqs:
          arn:
@@ -215,13 +215,8 @@ functions:
       BOT_USER_OAUTH_ACCESS_TOKEN: ${file(config.${self:provider.stage}.yml):bot_user_oauth_access_token}
       KANBANIZE_CLIENTS_TABLE_NAME: ${self:custom.kanbanize_clients_table}  
 
-  notifier:
-    handler: handlers/notifier.Notifier::Handler.handle
-    environment:
-      POKEBOT_TESTER_NOTIFICATION_URI: ${file(config.${self:provider.stage}.yml):pokebot_tester_notification_uri}  
-  
   interactions:
-    handler: handlers/slack_interactions_gateway.Interactions::Handler.handle
+    handler: gerty/listeners/slack_interactions_gateway.Interactions::Handler.handle
     events:
       - httpApi:
           method: POST 
@@ -231,7 +226,7 @@ functions:
       USERS_TOPIC_ARN: !Ref UsersSnsTopic
 
   command:
-    handler: handlers/command.Command::Handler.handle
+    handler: gerty/listeners/command.Command::Handler.handle
     events:
       - httpApi:
           method: POST 
@@ -241,7 +236,7 @@ functions:
       USERS_TOPIC_ARN: !Ref UsersSnsTopic
   
   user:
-    handler: handlers/sqs.Handler::Sqs.handle
+    handler: gerty/listeners/sqs.Handler::Sqs.handle
     events:
       - sqs:
          arn:
@@ -253,7 +248,7 @@ functions:
       USERS_TOPIC_ARN: !Ref UsersSnsTopic
 
   kanbanize_cron:
-    handler: handlers/cron.Cron::Handler.handle
+    handler: gerty/listeners/cron.Cron::Handler.handle
     events:
       - schedule: 
           name: 'kanbanize-transitions-blocks-activities'
@@ -281,7 +276,7 @@ functions:
 
   kanbanize_imports:
     timeout: 20
-    handler: handlers/sqs.Handler::Sqs.handle
+    handler: gerty/listeners/sqs.Handler::Sqs.handle
     events:
       - sqs:
          arn:
@@ -298,7 +293,7 @@ functions:
       KANBANIZE_DB_SECRET_ARN: ${self:custom.config.kanbanize_database.secret_arn}
 
   kanbanize_util:
-    handler: handlers/kanbanize/util.Kanbanize::Util::Handler.handle
+    handler: gerty/listeners/kanbanize/util.Kanbanize::Util::Handler.handle
     environment:
       KANBANIZE_CLIENTS_TABLE_NAME: ${self:custom.kanbanize_clients_table}
       KANBANIZE_TOPIC_ARN: !Ref KanbanizeSnsTopic

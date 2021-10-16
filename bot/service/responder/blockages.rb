@@ -2,7 +2,7 @@ require 'date'
 require 'storage/kanbanize/dynamodb/client'
 require 'gerty/request/events/kanbanize'
 require 'service/bounded_context'
-require 'slack/response'
+require 'service/responder/slack/response'
 
 module Service
     module Responder
@@ -36,7 +36,7 @@ module Service
                   firehose_text(activity)
                 end
 
-                ::Slack::Response.respond(
+                ::Service::Responder::Slack::Response.respond(
                   channel: client.blockages_channel, 
                   text: messages.join("\n")
                 )

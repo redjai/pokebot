@@ -1,4 +1,4 @@
-require 'slack/response'
+require 'service/responder/slack/response'
 require_relative 'slack/views/recipes/index'
 require 'gerty/request/events/recipes'
 
@@ -20,7 +20,7 @@ module Service
         BoundedContext.register(self)
           
         def call(bot_request)
-            ::Slack::Response.respond(
+            ::Service::Responder::Slack::Response.respond(
               channel: bot_request.context.channel, 
               text: 'recipes:',
               blocks: Service::Responder::Slack::Views::Recipes::Index.new(bot_request).recipe_blocks,

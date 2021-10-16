@@ -1,4 +1,3 @@
-require 'handlers/processors/sqs'
 require 'aws-sdk-sns'
 require 'json'
 
@@ -9,11 +8,11 @@ module Topic
     @@topics = {}
 
     def broadcast(topic:, request:)
-      Bot::LOGGER.debug("out:")
-      Bot::LOGGER.debug(topic)
+      Gerty::LOGGER.debug("out:")
+      Gerty::LOGGER.debug(topic)
       request.next.each_with_index do |next_request, i|
-        Bot::LOGGER.debug("next event #{i}")
-        Bot::LOGGER.debug(next_request.to_json)
+        Gerty::LOGGER.debug("next event #{i}")
+        Gerty::LOGGER.debug(next_request.to_json)
       end
       [topic].flatten.each do |t|
         request.next.each do |next_request|

@@ -1,4 +1,4 @@
-require 'slack/response'
+require 'service/responder/slack/response'
 
 module Service
   module Responder
@@ -7,7 +7,7 @@ module Service
         module Updated 
         extend self
           def call(bot_request)
-            ::Slack::Response.respond(
+            ::Service::Responder::Slack::Response.respond(
               channel: bot_request.context.private_metadata['context']['channel'], 
               text: "Thanks #{bot_request.data['handle']}, I've updated your details"
             )

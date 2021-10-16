@@ -2,7 +2,7 @@ require 'date'
 require 'storage/kanbanize/dynamodb/client'
 require 'gerty/request/events/kanbanize'
 require 'service/bounded_context'
-require 'slack/response'
+require 'service/responder/slack/response'
 
 module Service
     module Responder
@@ -33,7 +33,7 @@ module Service
               channel = client.firehoses[bot_request.data['board_id']]
 
               if channel
-                ::Slack::Response.respond(
+                ::Service::Responder::Slack::Response.respond(
                   channel: channel, 
                   text: messages.join("\n")
                 )

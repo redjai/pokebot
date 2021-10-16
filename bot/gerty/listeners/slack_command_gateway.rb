@@ -1,6 +1,4 @@
 require 'gerty/request/events/slack'
-require 'service/command/controller'
-
 
 module SlackCommandGateway 
   class Handler

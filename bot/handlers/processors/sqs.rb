@@ -8,7 +8,7 @@ module Processors
     extend self
    
     def process_sqs(aws_event:, service:, controller: nil, accept: [])
-      Bot::LOGGER.debug(aws_event)      
+      Gerty::LOGGER.debug(aws_event)      
       handler = SqsRecordsHandler.new(accept, service, controller) 
       handler.handle_records(aws_event['Records'])
     end

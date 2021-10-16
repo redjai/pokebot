@@ -1,4 +1,4 @@
-require 'slack/response'
+require 'service/responder/slack/response'
 require 'gerty/request/events/users'
 
 module Service
@@ -19,7 +19,7 @@ module Service
           Service::BoundedContext.register(self)
 
           def call(bot_request)
-            ::Slack::Response.respond(
+            ::Service::Responder::Slack::Response.respond(
               channel: bot_request.context.channel, 
               text: "I've updated your favourite recipes, you now have #{bot_request.data['favourite_recipe_ids'].count} favourites. You can see them by askimg me for 'my favourites'",
             )

@@ -7,12 +7,12 @@ module Processors
   module Base
 
     def handle_request(bot_request)
-      Bot::LOGGER.debug "Record in:"
-      Bot::LOGGER.debug bot_request.to_json
+      Gerty::LOGGER.debug "Record in:"
+      Gerty::LOGGER.debug bot_request.to_json
       if accept?(bot_request)
         call(bot_request)
       else
-        Bot::LOGGER.debug("event #{bot_request.name} not accepted by this service. expected #{accepts}")
+        Gerty::LOGGER.debug("event #{bot_request.name} not accepted by this service. expected #{accepts}")
       end
     end
 

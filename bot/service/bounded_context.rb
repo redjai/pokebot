@@ -1,5 +1,5 @@
 
-require 'handlers/processors/logger'
+require 'gerty/lib/logger'
 require 'honeybadger'
 require 'topic/sns'
 
@@ -28,15 +28,15 @@ module Service
     end
 
     def self.call(bot_request)
-      Bot::LOGGER.debug("request in:")
-      Bot::LOGGER.debug(bot_request.to_json)
+      Gerty::LOGGER.debug("request in:")
+      Gerty::LOGGER.debug(bot_request.to_json)
 
       if @@sentry && @@sentry.pass?(bot_request) == false
-        Bot::LOGGER.debug("sentry #{@@sentry} rejected request")
+        Gerty::LOGGER.debug("sentry #{@@sentry} rejected request")
         return
       end
 
-      Bot::LOGGER.debug("listening: #{listens.inspect}")
+      Gerty::LOGGER.debug("listening: #{listens.inspect}")
       listens.each do |klazz, event_names|
         if event_names.include?(bot_request.name.to_sym)
           call_service(klazz, bot_request)
@@ -47,7 +47,7 @@ module Service
     private 
 
     def self.call_service(klazz, bot_request)
-      Bot::LOGGER.debug("calling: #{klazz}")
+      Gerty::LOGGER.debug("calling: #{klazz}")
       begin
         klazz.call(bot_request)
         broadcast_bot_request(klazz, bot_request) if bot_request.events.dirty?
@@ -62,11 +62,11 @@ module Service
     end
 
     def self.broadcast_bot_request(klazz, bot_request)
-      Bot::LOGGER.debug("broadcasting on: #{broadcasts.inspect}")
-      Bot::LOGGER.debug("broadcast event:")
-      Bot::LOGGER.debug(bot_request.to_json)
+      Gerty::LOGGER.debug("broadcasting on: #{broadcasts.inspect}")
+      Gerty::LOGGER.debug("broadcast event:")
+      Gerty::LOGGER.debug(bot_request.to_json)
       broadcasts[klazz].each do |topic|
-        Bot::LOGGER.debug("to topic #{topic}:")
+        Gerty::LOGGER.debug("to topic #{topic}:")
         Topic::Sns.broadcast(
           topic: topic,
           request: bot_request

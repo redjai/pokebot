@@ -1,4 +1,4 @@
-require 'slack/response'
+require 'service/responder/slack/response'
 
 module Service
   module Responder

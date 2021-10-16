@@ -8,7 +8,7 @@ $: << File.dirname(File.expand_path('..',__FILE__))
 require 'factory_bot'
 require 'climate_control'
 require 'webmock/rspec'
-require 'handlers/processors/logger'
+require 'gerty/lib/logger'
 require 'faker'
 require 'aws-sdk-s3'
 
@@ -21,7 +21,7 @@ Aws.config.update({
 WebMock.disable_net_connect!(allow_localhost: true) #we are using dynamodb with localhost
 
 
-Bot::LOGGER.level = Logger::INFO
+Gerty::LOGGER.level = Logger::INFO
 
 require 'support/s3'
 require 'support/dynamodb'

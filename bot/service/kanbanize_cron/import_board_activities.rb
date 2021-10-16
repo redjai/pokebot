@@ -49,8 +49,8 @@ module Service
           )
 
         rescue Service::Kanbanize::Api::BadKanbanizeRequest => e
-          Bot::LOGGER.info(e.inspect)  
-          Bot::LOGGER.info(client.inspect)
+          Gerty::LOGGER.info(e.inspect)  
+          Gerty::LOGGER.info(client.inspect)
         end
        
         set_last_board(client.id, client.board_id)

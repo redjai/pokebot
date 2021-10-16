@@ -9,7 +9,7 @@ module Processors
     extend self
    
     def process(aws_event:, service:, controller: nil)
-      Bot::LOGGER.debug(aws_event)      
+      Gerty::LOGGER.debug(aws_event)      
       handler = CronHandler.new(service, controller) 
       handler.handle(aws_event)
     end

@@ -1,7 +1,7 @@
 require 'gerty/request/events/slack'
 require 'service/bounded_context_loader'
 require 'service/bounded_context'
-require 'handlers/processors/logger'
+require 'gerty/lib/logger'
 
 
 module Interactions
@@ -16,10 +16,10 @@ module Interactions
     end
 
     def self.handle(event:, context:)
-      Bot::LOGGER.debug(event)
+      Gerty::LOGGER.debug(event)
       begin
         bot_request = Gerty::Request::Events::Slack.interaction_request(event)
-        Bot::LOGGER.debug(bot_request.data.inspect) # payload is encrypted
+        Gerty::LOGGER.debug(bot_request.data.inspect) # payload is encrypted
 
         load_bounded_context!
 

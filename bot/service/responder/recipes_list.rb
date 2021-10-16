@@ -1,5 +1,6 @@
 require 'slack/response'
-require_relative '../../slack/views/recipes/index'
+require_relative 'slack/views/recipes/index'
+require 'request/events/recipes'
 
 module Service
   module Responder
@@ -7,6 +8,16 @@ module Service
       module Recipes
         module Index
         extend self
+
+        def listen
+          [ ::Request::Events::Recipes::FOUND ]
+        end
+
+        def broadcast
+          []
+        end
+
+        BoundedContext.register(self)
           
         def call(bot_request)
             ::Slack::Response.respond(

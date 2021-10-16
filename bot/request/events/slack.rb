@@ -44,9 +44,10 @@ module Request
 
       def command_event(aws_event)
         ::Request::Event.new(  name: ::Request::Events::Slack::SHORTCUT_API_REQUEST,
-                         source: 'slack-command-api',
-                        version: 1.0,
-                           data: command_data(aws_event))
+                             source: 'slack-command-api',
+                            version: 1.0,
+                               data: command_data(aws_event)
+                            )
       end
     end
   end

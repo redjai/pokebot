@@ -5,7 +5,7 @@ module Service
     extend self
     
     def listen
-      [ 'app_mention' ]
+      %w( app_mention message )
     end
 
     def broadcast

@@ -1,14 +1,25 @@
 require 'topic/sns'
-require_relative 'api/complex_search'
-require_relative '../user'
-require_relative 'api/information_bulk_search'
+require_relative 'spoonacular/api/complex_search'
+require_relative 'user'
+require_relative 'spoonacular/api/information_bulk_search'
 require 'request/events/recipes'
+require 'service/bounded_context'
 
 module Service
   module Recipe
     module Spoonacular 
       module FreeTextSearch
         extend self
+
+        def listen
+          [ ::Request::Events::Recipes::SEARCH_REQUESTED ]
+        end
+
+        def broadcast
+          [ :recipes ]
+        end
+
+        Service::BoundedContext.register(self)
 
         def call(bot_request)
           complex_search = Service::Recipe::Spoonacular::ComplexSearch.search_free_text(
@@ -24,8 +35,7 @@ module Service
                               offset: bot_request.data['page']['offset'], 
                             per_page: bot_request.data['page']['per_page'],
                        total_results: complex_search['totalResults']
-                                                                         )
-          Topic::Sns.broadcast(topic: :recipes, request: bot_request)
+                       )
         end
 
         def information_bulk_result(search_result)

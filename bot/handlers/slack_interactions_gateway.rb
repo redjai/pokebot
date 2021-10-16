@@ -1,5 +1,8 @@
 require 'request/events/slack'
-require 'service/interaction/controller'
+require 'service/bounded_context_loader'
+require 'service/bounded_context'
+require 'handlers/processors/logger'
+
 
 module Interactions
   class Handler
@@ -20,7 +23,7 @@ module Interactions
 
         load_bounded_context!
 
-        BoundedContextLoader.call(bot_request)
+        Service::BoundedContext.call(bot_request)
         
         { statusCode: 204 }
       rescue StandardError => e

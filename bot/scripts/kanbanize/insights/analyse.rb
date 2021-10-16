@@ -26,7 +26,7 @@ boards.build!
 
 card_data = CardData.new
 card_data.load!
-card_data.build_history_details!(after: Date.civil(2021,5,1))
+card_data.build_history_details!(after: Date.civil(2021,6,1))
 card_data.index_movements!(boards.boards)
 card_data.assign_cards_to_boards(boards.boards)
 

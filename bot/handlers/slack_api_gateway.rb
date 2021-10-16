@@ -36,7 +36,7 @@ module SlackApiGateway
         load_bounded_context!
 
         Service::BoundedContext.call(bot_request)
-    
+
       rescue StandardError => e
         if ENV['HONEYBADGER_API_KEY']
           Honeybadger.notify(e, sync: true, context: context(e)) #sync true is important as we have no background worker thread

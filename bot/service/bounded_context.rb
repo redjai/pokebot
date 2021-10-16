@@ -8,6 +8,7 @@ module Service
 
     @@listens = {}
     @@broadcasts = {}
+    @@sentry = nil
 
     def self.listens
       @@listens
@@ -15,6 +16,10 @@ module Service
 
     def self.broadcasts
       @@broadcasts
+    end
+
+    def self.register_sentry(sentry)
+      @@sentry = sentry
     end
 
     def self.register(service)
@@ -25,6 +30,12 @@ module Service
     def self.call(bot_request)
       Bot::LOGGER.debug("request in:")
       Bot::LOGGER.debug(bot_request.to_json)
+
+      if @@sentry && @@sentry.pass?(bot_request) == false
+        Bot::LOGGER.debug("sentry #{@@sentry} rejected request")
+        return
+      end
+
       Bot::LOGGER.debug("listening: #{listens.inspect}")
       listens.each do |klazz, event_names|
         if event_names.include?(bot_request.name.to_sym)
@@ -40,6 +51,7 @@ module Service
       begin
         klazz.call(bot_request)
         broadcast_bot_request(klazz, bot_request) if bot_request.events.dirty?
+        bot_request.events.clean! #if we call another service we reset the dirty marker
       rescue StandardError => e
         if ENV['HONEYBADGER_API_KEY']
           Honeybadger.notify(e, sync: true, context: error_context(e)) #sync true is important as we have no background worker thread

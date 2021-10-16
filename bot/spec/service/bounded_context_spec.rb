@@ -65,6 +65,49 @@ describe Service::BoundedContext do
       end
     end
 
+    context 'guard' do
+
+      let(:bot_request){ build(:bot_request, bot_event: event_1a) }
+
+      context 'sentry returns true' do
+
+        module TrueSentry
+        
+          def self.pass?(bot_request)
+            true
+          end
+
+        end
+
+        it 'should allow a call for each listener' do
+          subject.register_sentry(TrueSentry)
+          expect(TestService1).to receive(:call).with(bot_request).once
+          subject.call(bot_request)
+        end
+
+      end
+
+      context 'sentry returns false' do
+
+        module FalseSentry
+        
+          def self.pass?(bot_request)
+            false
+          end
+
+        end
+
+        it 'should not call any listener' do
+          subject.register_sentry(FalseSentry)
+          expect(TestService1).to receive(:call).never
+          expect(TestService2).to receive(:call).never
+          subject.call(bot_request)
+        end
+
+      end
+
+    end
+
   end
 
 end

@@ -111,8 +111,9 @@ provider:
         - dynamodb:BatchWriteItem
       Resource:
         Fn::GetAtt:
-          - FavouritesTable
+          - UsersTable
           - Arn
+
     - Effect: "Allow"
       Action:
         - dynamodb:DescribeTable
@@ -127,6 +128,7 @@ provider:
         Fn::GetAtt:
           - RecipeFavouritesTable
           - Arn
+          
     - Effect: "Allow"
       Action:
         - dynamodb:DescribeTable
@@ -144,7 +146,7 @@ provider:
 
 custom:
   config: ${file(config.${self:provider.stage}.yml)}
-  favourites_table: ${self:service}-${self:provider.stage}-favourites-service-favourites
+  users_table: ${self:service}-${self:provider.stage}-users-service-users
   recipe_favourites_table: ${self:service}-${self:provider.stage}-recipe-service-favourites
   kanbanize_clients_table: ${self:service}-${self:provider.stage}-kanbanize-clients
   kanbanize_imports_bucket: ${self:service}-${self:provider.stage}-kanbanize-imports
@@ -163,7 +165,7 @@ functions:
       MESSAGES_TOPIC_ARN: !Ref MessagesSnsTopic
 
   intent:
-    handler: handlers/intent.Intent::Handler.handle
+    handler: handlers/sqs.Handler::Sqs.handle
     events:    
       - sqs:
          arn:
@@ -174,7 +176,7 @@ functions:
       RECIPES_TOPIC_ARN: !Ref RecipesSnsTopic
 
   recipe:
-    handler: handlers/recipes.Recipes::Handler.handle
+    handler: handlers/sqs.Handler::Sqs.handle
     events:
       - sqs:
          arn:
@@ -219,7 +221,7 @@ functions:
       POKEBOT_TESTER_NOTIFICATION_URI: ${file(config.${self:provider.stage}.yml):pokebot_tester_notification_uri}  
   
   interactions:
-    handler: handlers/interactions.Interactions::Handler.handle
+    handler: handlers/slack_interactions_gateway.Interactions::Handler.handle
     events:
       - httpApi:
           method: POST 
@@ -239,7 +241,7 @@ functions:
       USERS_TOPIC_ARN: !Ref UsersSnsTopic
   
   user:
-    handler: handlers/user.User::Handler.handle
+    handler: handlers/sqs.Handler::Sqs.handle
     events:
       - sqs:
          arn:
@@ -247,7 +249,7 @@ functions:
              - UsersToUsersSqsQueue
              - Arn
     environment:
-      FAVOURITES_TABLE_NAME: ${self:custom.favourites_table}
+      FAVOURITES_TABLE_NAME: ${self:custom.users_table}
       USERS_TOPIC_ARN: !Ref UsersSnsTopic
 
   kanbanize_cron:
@@ -698,10 +700,10 @@ resources:
     #######################################
     # User Service: Favourites Table
     ######################################      
-    FavouritesTable:
+    UsersTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.favourites_table}
+        TableName: ${self:custom.users_table}
         AttributeDefinitions:
           -
             AttributeName: user_id

@@ -6,7 +6,7 @@ class CardData
   end
 
   def load!
-    paths = Dir.glob("data/**/*.json")
+    paths = Dir.glob("data/tasks/**/*.json")
     paths.each do |path|
       data << JSON.parse(File.read(path))
     end

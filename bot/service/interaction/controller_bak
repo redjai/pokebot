@@ -8,6 +8,14 @@ module Service
     module Controller
       extend self
 
+      def listen
+
+      end
+
+      def broadcast
+        []
+      end
+
       def call(bot_request)
         case bot_request.data['type']
         when 'block_actions'

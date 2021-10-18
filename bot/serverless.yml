@@ -260,14 +260,25 @@ functions:
             source: 'cron'
             bounded_context: 'kanbanize_cron'
       - schedule: 
-          name: 'kanbanize-archive-yesterday'
+          name: 'kanbanize-find-task_ids'
+          description: 'find all non archived task ids board by board'
+          rate: cron(0 6 * * ? *) #note the ? (not *) for day of month is needed because we have set 1-5 for day of week. 
+          input:
+            client_id: 'livelink'
+            action: 'find_task_ids_for_boards'
+            source: 'cron'
+            bounded_context: 'kanbanize_cron'
+      - schedule: 
+          name: 'kanbanize-find-task-ids-archived-yesterday'
           description: 'find tasks archived yesterday'
           rate: cron(0 6 * * ? *) #note the ? (not *) for day of month is needed because we have set 1-5 for day of week. 
           input:
             client_id: 'livelink'
-            action: 'find_task_ids_for_board'
+            action: 'find_archive_task_ids_for_boards'
             source: 'cron'
+            date_range: 'yesterday'
             bounded_context: 'kanbanize_cron'
+
     environment:
       KANBANIZE_CLIENTS_TABLE_NAME: ${self:custom.kanbanize_clients_table}
       KANBANIZE_TOPIC_ARN: !Ref KanbanizeSnsTopic

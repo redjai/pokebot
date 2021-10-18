@@ -40,9 +40,9 @@ module Service
 
       def date_range(arg)
         case arg
-        when :today
+        when 'today'
           today
-        when :yesterday
+        when 'yesterday'
           yesterday
         else
           parse_date_range(arg)   

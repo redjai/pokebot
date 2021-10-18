@@ -9,7 +9,9 @@ module Gerty
       extend Gerty::Request::Base
 
         module Actions
-          KANBANIZE_IMPORT_ACTIVITIES = 'kanbanize-import-activities'    
+          KANBANIZE_IMPORT_ACTIVITIES = 'kanbanize-import-activities'
+          FIND_TASK_IDS_FOR_BOARDS = 'find_task_ids_for_boards'
+          FIND_ARCHIVE_TASK_IDS_FOR_BOARDS = 'find_archive_task_ids_for_boards'    
         end
 
         SCHEDULED_REQUEST = 'cron-scheduled-request' 

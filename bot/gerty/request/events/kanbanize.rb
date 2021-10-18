@@ -8,7 +8,7 @@ module Gerty
         extend self
         extend Gerty::Request::Base
 
-        FIND_TASK_IDS_FOR_BOARD = 'find_task_ids_for_board'
+        
         ACTIVITIES_IMPORTED = 'activities_imported'
         TASKS_IMPORTED = 'tasks_imported'
         NEW_ACTIVITIES_FOUND = 'new_activities_found'

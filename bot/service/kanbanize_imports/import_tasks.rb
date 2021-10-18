@@ -15,7 +15,6 @@ module Service
                                   
       def listen
         [
-          Gerty::Request::Events::Kanbanize::NEW_ACTIVITIES_FOUND,
           Gerty::Request::Events::Kanbanize::TASKS_FOUND,
           Gerty::Request::Events::Kanbanize::ARCHIVED_TASKS_FOUND
         ]

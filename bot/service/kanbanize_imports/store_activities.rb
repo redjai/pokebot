@@ -7,7 +7,7 @@ require 'storage/kanbanize/s3/activity'
 # it then broadcasts any new activities imported. 
 module Service
   module Kanbanize
-    module NewActivitiesFound # change this name 
+    module StoreActivities # change this name 
       extend self
                                 
       def listen

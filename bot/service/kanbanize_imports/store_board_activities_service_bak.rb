@@ -1,13 +1,13 @@
 require 'gerty/request/events/kanbanize'
 require 'date'
-require 'storage/kanbanize/s3/activity'
+require 'storage/kanbanize/s3/board_activity_store'
 
 # all of todays activities are imported in 'import board activities'
 # this service saves these to s3 IF they haven't already been saved in an earlier request today
 # it then broadcasts any new activities imported. 
 module Service
   module Kanbanize
-    module StoreActivities # change this name 
+    module StoreBoardActivities # change this name 
       extend self
                                 
       def listen
@@ -21,7 +21,7 @@ module Service
       Gerty::Service::BoundedContext.register(self)
 
       def call(bot_request)
-        store = Storage::Kanbanize::ActivityStore.new(
+        store = Storage::Kanbanize::BoardActivityStore.new(
           bot_request.data['client_id'], 
           bot_request.data['board_id'],  
         )

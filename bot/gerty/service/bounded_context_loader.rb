@@ -35,7 +35,9 @@ module Gerty
       end
 
       def bounded_context_files
-        Dir.glob(File.join(bounded_context_folder,"*.rb"))
+        ["*_service.rb", "*_sentry.rb"].collect do |suffix|
+          Dir.glob(File.join(bounded_context_folder, suffix))
+        end.flatten
       end
 
     end

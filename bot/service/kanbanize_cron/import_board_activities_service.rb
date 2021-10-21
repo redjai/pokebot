@@ -14,7 +14,7 @@ module Service
     module ImportBoardActivities # change this name 
       extend self
       extend Service::Kanbanize::Api
-      extend Storage::Kanbanize::DynamoDB
+      extend Storage::Kanbanize::DynamoDB::Client
 
       DEFAULT_PAGE_SIZE = 30
                                 
@@ -41,7 +41,7 @@ module Service
               subdomain: client.subdomain,
               board_id: bot_request.data['board_id'] || client.board_id,
               event_type: bot_request.data['event_type'],
-              date_range: date_range(bot_request.data['date_range'] || :today)
+              date_range: date_range(bot_request.data['date_range'] || 'today')
             ),
             board_id: client.board_id,
             client_id: client.id

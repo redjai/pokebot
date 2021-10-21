@@ -14,7 +14,7 @@ module Service
   module Kanbanize
     module FindTaskIdsForBoards
       extend self
-      extend Storage::Kanbanize::DynamoDB
+      extend Storage::Kanbanize::DynamoDB::Client
 
       def listen
         [ Gerty::Request::Events::Cron::Actions::FIND_TASK_IDS_FOR_BOARDS ]

@@ -4,15 +4,23 @@ module Gerty
   module Request 
     class SlackContext
         
-      attr_accessor :slack_id, :channel, :response_url, :message_ts, :trigger_id
+      attr_accessor :slack_id, :channel, :response_url, :message_ts, :trigger_id, :team_id
 
-      def initialize(slack_id: nil, channel: nil, response_url: nil, message_ts: nil, trigger_id: nil, private_metadata: nil)
+      def initialize(slack_id: nil, 
+                      channel: nil, 
+                 response_url: nil, 
+                   message_ts: nil, 
+                   trigger_id: nil, 
+             private_metadata: nil,
+                      team_id: nil)
+                      
         @slack_id = slack_id
         @channel = channel
         @response_url = response_url
         @message_ts = message_ts
         @trigger_id = trigger_id
         @private_metadata = private_metadata
+        @team_id = team_id
       end
 
       def private_metadata
@@ -39,7 +47,8 @@ module Gerty
         return nil unless api_event.record['data']['event'] # challenge events have no event record
         new(
           slack_id: api_event.record['data']['event']['user'], 
-          channel: api_event.record['data']['event']['channel']
+           channel: api_event.record['data']['event']['channel'],
+           team_id: api_event.record['data']['team_id']
         )
       end
       
@@ -61,6 +70,7 @@ module Gerty
 
       def self.from_slack_block_actions_interaction(record)
         _from_slack_block_actions_interaction(
+          team_id: record.record['data']['user']['team_id'], 
           slack_id: record.record['data']['user']['id'], 
           channel: record.record['data']['container']['channel_id'],
           message_ts: record.record['data']['container']['message_ts'],
@@ -69,8 +79,9 @@ module Gerty
         )
       end
       
-      def self._from_slack_block_actions_interaction(slack_id:, channel:, message_ts:, response_url:, trigger_id:)
+      def self._from_slack_block_actions_interaction(team_id:, slack_id:, channel:, message_ts:, response_url:, trigger_id:)
         new(
+          team_id: team_id,
           slack_id: slack_id, 
           channel: channel,
           message_ts: message_ts,
@@ -99,6 +110,7 @@ module Gerty
       
       def self.from_h(record)
         new(
+          team_id: record['team_id'],
           slack_id: record['slack_id'],
           channel: record['channel'],
           message_ts: record['message_ts'],
@@ -110,6 +122,7 @@ module Gerty
 
       def to_h
         {
+          'team_id' => @team_id,
           'slack_id' =>  @slack_id,
           'channel' => @channel,
           'message_ts' => @message_ts,

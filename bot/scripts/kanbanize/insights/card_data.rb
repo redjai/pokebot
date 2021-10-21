@@ -1,3 +1,4 @@
+require_relative 'authors'
 
 class CardData
 
@@ -6,7 +7,7 @@ class CardData
   end
 
   def load!
-    paths = Dir.glob("data/tasks/**/*.json")
+    paths = Dir.glob("data/tasks/livelink/**/*.json")
     paths.each do |path|
       data << JSON.parse(File.read(path))
     end
@@ -53,7 +54,7 @@ class CardData
 
   def authors
     @authors ||= begin
-      authors = {}
+      authors = Authors.new
       cards.each do |card|
         card.history_details.each do |history_detail|
           authors[history_detail.author] ||=  Author.new(history_detail.author)

@@ -1,5 +1,5 @@
 require_relative 'spoonacular/api/complex_search'
-require_relative 'user'
+require 'storage/kanbanize/dynamodb/recipe_favourites'
 require_relative 'spoonacular/api/information_bulk_search'
 require 'gerty/request/events/recipes'
 require 'gerty/service/bounded_context'
@@ -29,7 +29,10 @@ module Service
           bot_request.events << Gerty::Request::Events::Recipes::found(
                               source: :recipes,
                              recipes: information_bulk_result(complex_search),
-                favourite_recipe_ids: Service::Recipe::User.recipe_ids(bot_request.context.slack_id),
+                favourite_recipe_ids: Storage::Kanbanize::DynamoDB::RecipeFavourites.recipe_ids(
+                                                                           team_id: bot_request.context.team_id,
+                                                                           slack_id: bot_request.context.slack_id
+                                                                           ),
                                query: bot_request.data['query'],
                               offset: bot_request.data['page']['offset'], 
                             per_page: bot_request.data['page']['per_page'],

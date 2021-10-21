@@ -19,7 +19,14 @@ module Gerty
 
         def api_event(aws_event)
           data = http_data(aws_event)
-          Gerty::Request::Event.new(name: data['event']['type'],
+
+          name = if data['event']
+            data['event']['type']
+          else
+            data['type']
+          end
+
+          Gerty::Request::Event.new(name: name,
                         source: EVENT_API_REQUEST,
                         version: 1.0,
                           data: data)   

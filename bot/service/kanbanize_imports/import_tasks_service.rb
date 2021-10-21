@@ -11,7 +11,7 @@ module Service
     module ImportTasks
       extend self
       extend Service::Kanbanize::Api
-      extend Storage::Kanbanize::DynamoDB
+      extend Storage::Kanbanize::DynamoDB::Client
                                   
       def listen
         [

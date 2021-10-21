@@ -47,6 +47,19 @@ class Board
   def columns
     @columns ||= Columns.new
   end
+
+  def mentions
+    cards.collect do |card|
+      card.history_details.mentions
+    end.flatten
+  end
+
+  def comments 
+    cards.collect do |card|
+      card.history_details.comments
+    end.flatten
+  end
+
 end
 
 class ColumnRange
@@ -80,6 +93,10 @@ class ColumnRange
 
   def valid?
     @columns.length > 1
+  end
+
+  def section_boundary?
+    @columns.first.section != @columns.last.section
   end
 
 end

@@ -23,6 +23,7 @@ module HistoryDetails
       from_name && to_name && (from_name != to_name)
     end
 
+    # columns is an assigned column range.
     def indexed?
       !@columns.nil?
     end

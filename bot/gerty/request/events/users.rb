@@ -19,6 +19,9 @@ module Gerty
         ACCOUNT_UPDATE_REQUESTED = 'user-account-update-requested' 
         ACCOUNT_UPDATED = 'user-account-updated'
 
+        USER_KANBANIZE_USERNAME_UPDATE_REQUESTED = 'user-kanbanize-username-update-requested'
+        USER_KANBANIZE_USERNAME_UPDATED = 'user-kanbanize-username-updated'
+
         def favourite_new(source:, favourite_recipe_id:)
           data = {
             'favourite_recipe_id' => favourite_recipe_id.to_s
@@ -74,7 +77,25 @@ module Gerty
           }
           Gerty::Request::Event.new(source: source, name: Gerty::Request::Events::Users::ACCOUNT_UPDATED, version: 1.0, data: data)      
         end
+
+        def set_kanbanize_username_requested(source:, kanbanize_username:)
+          data = {
+            'kanbanize_username' => kanbanize_username
+          }
+          Gerty::Request::Event.new(source: source, name: Gerty::Request::Events::Users::USER_KANBANIZE_USERNAME_UPDATE_REQUESTED, version: 1.0, data: data)      
+        end
+
+        def kanbanize_username_updated(source:, kanbanize_username:)
+          data = {
+            'kanbanize_username' => kanbanize_username
+          }
+          Gerty::Request::Event.new(source: source, name: Gerty::Request::Events::Users::USER_KANBANIZE_USERNAME_UPDATED, version: 1.0, data: data)      
+        end
+
+
       end
+
+      
 
     end
   end

@@ -21,9 +21,10 @@ module SlackApiGateway
     def self.handle(event:, context:)
       begin
         Gerty::LOGGER.debug(event)
+        
         bot_request = Gerty::Request::Events::Slack.api_request(event)
         
-        if bot_request.data['challenge']
+        if bot_request.name == 'url_verification'
           return Gerty::Listeners::Http::HttpResponse.plain_text_response(bot_request.data['challenge'])
         end
 

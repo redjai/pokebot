@@ -88,7 +88,7 @@ module HistoryDetails
     end
 
     def comments
-      get(type: 'Comments')
+      select{ |history_detail| history_detail.is_a?(Comment) }
     end
 
     def blocked

@@ -59,6 +59,40 @@ authors.values.sort_by{|author| author.history_details.created.count }.reverse.e
   puts "#{author.name} created #{author.history_details.created.count} cards archived #{author.history_details.archived.count} cards"
 end
 
+puts
+puts "Where they move cards"
+puts "What edge columns do they work on ?"
+puts "--------------------"
+authors.each_value do |author|
+  puts "#{author.name} #{author.edge_columns.inspect}"
+end
+
+puts
+puts "Where they move cards"
+puts "What parent columns do they work on ?"
+puts "--------------------"
+authors.each_value do |author|
+  puts "#{author.name} #{author.top_parent_column} #{author.parent_columns.inspect}"
+end
+
+raise "boom" 
+
+puts
+puts "Where they move cards"
+puts "What sections of the board do they work on ?"
+puts "--------------------"
+authors.each_value do |author|
+  puts "#{author.name} #{author.sections.inspect}"
+end
+
+puts
+puts "Where they move cards"
+puts "What boards do they work on ?"
+puts "--------------------"
+authors.each_value do |author|
+  puts "#{author.name} #{author.boards.inspect}"
+end
+
 puts 
 puts "Do they comment or get mentioned?"
 puts "How many times does the user comment on cards or get mentioned by others"
@@ -66,6 +100,7 @@ puts "--------------------"
 authors.values.sort_by{|author| author.history_details.comments.count }.reverse.each do |author|
   puts "#{author.name} commented #{author.history_details.comments.count} times and was mentioned #{author.history_details.mentions.count} times"
 end
+
 
 puts 
 puts "Do they create subtasks ?"
@@ -140,12 +175,9 @@ authors.values.each do |author|
   end
 end
 
-
-
 queues.sort_by{|author, count| count }.reverse.each do |res|
   puts "#{res.first} has moved cards into a queue column #{res.last} times"
 end
-
 
 puts "\n\n\n"
 puts "****************"
@@ -191,6 +223,16 @@ boards.boards.each_value do |board|
       puts "#{edge.lcname} to #{arr.first} - moved #{arr.last[:delta] || '[N/A]'} columns #{arr.last[:count]} times"
     end
   end 
+end
+
+puts
+puts "Collaborating"
+puts "how many tickets in a column and typically how long for"
+puts "--------------------"
+boards.boards.each_value do |board|
+  puts
+  puts "Board #{board.id}"
+  puts "comments: #{board.comments.count} mentions: #{board.mentions.count}"
 end
 
 puts "\n\n\n"

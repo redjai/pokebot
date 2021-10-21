@@ -1,0 +1,5 @@
+class Authors < Hash
+
+
+
+end

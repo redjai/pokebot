@@ -12,6 +12,58 @@ class Author
     @history_details ||= HistoryDetails::Collection.new
   end
 
+  def edge_columns
+    @edge_columns ||= begin
+      counts = {}
+      history_details.indexed_column_movements.each do |movement|
+        lcname = movement.to.lcname
+        counts[lcname] ||= 0
+        counts[lcname] += 1
+       end
+       counts
+    end
+  end
+
+  def parent_columns
+    @parent_columns ||= begin
+      counts = {}
+      history_details.indexed_column_movements.each do |movement|
+        lcname = movement.to.lcname.split(".").first
+        counts[lcname] ||= 0
+        counts[lcname] += 1
+       end
+       counts
+    end
+  end
+
+  def top_parent_column
+    parent_columns.to_a.max{ |a,b| a.last <=> b.last }
+  end
+
+  def sections
+    @sections ||= begin 
+      sections = {}
+      history_details.indexed_column_movements.each do |movement|
+        section = movement.to.section
+        sections[section] ||= 0
+        sections[section] += 1
+       end
+      sections
+    end 
+  end
+
+  def boards
+    @boards ||= begin 
+      sections = {}
+      history_details.indexed_column_movements.each do |movement|
+        section = movement.to.board.id
+        sections[section] ||= 0
+        sections[section] += 1
+       end
+      sections
+    end 
+  end
+
   def uniq?
     at.count - at.uniq.count
   end

@@ -4,6 +4,7 @@ require_relative '../kanbanize/net/api'
 require 'storage/kanbanize/dynamodb/client'
 require 'storage/kanbanize/s3/task'
 require 'gerty/request/events/kanbanize'
+require 'storage/kanbanize/dynamodb/tasks'
 
 # this service imports task details for any new activities found that day
 module Service
@@ -35,6 +36,8 @@ module Service
           activity['taskid']
         end.uniq # lets not import the same task multiple times if there is more than one activity.
 
+        puts ids.inspect
+
         uri = uri(subdomain: client.subdomain, function: :get_task_details)  
 
         response = post(
@@ -55,14 +58,9 @@ module Service
         )
 
         response.each do |task|
-          case bot_request.data['archived']
-          when 'yes'
-            store.archive!(task)
-          else
-            store.store!(task)
-          end
+          Storage::Kanbanize::DynamoDB::Task.upsert(client_id: client.id, task: task)
         end
-        
+
         bot_request.events << Gerty::Request::Events::Kanbanize.tasks_imported(
           source: self.class.name, 
           client_id: client.id, 

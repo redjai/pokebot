@@ -37,7 +37,7 @@ module Storage
           end
 
           def firehoses
-            @client['firehoses']
+            @client['firehose']
           end
 
           def blockages_channel

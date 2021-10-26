@@ -3,9 +3,12 @@ $: << File.expand_path(Dir.pwd)
 require 'yaml'
 require 'generators/topic'
 
-serverless = File.new('serverless.yml').read
-auto = YAML.load(File.new('generators/auto.yml').read)
-topics = auto['topics']
+serverless = File.new('serverless.yml',"r").read
+
+File.new("serverless.bak","w").write(serverless)
+
+auto = YAML.load(File.new('generators/topics.yml').read)
+topics = auto['sns']
 
 topics_block = /#AUTO-BEGIN-TOPICS.+#AUTO-END-TOPICS/m
 

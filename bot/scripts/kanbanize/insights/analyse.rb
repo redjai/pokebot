@@ -75,8 +75,6 @@ authors.each_value do |author|
   puts "#{author.name} #{author.top_parent_column} #{author.parent_columns.inspect}"
 end
 
-raise "boom" 
-
 puts
 puts "Where they move cards"
 puts "What sections of the board do they work on ?"
@@ -145,7 +143,7 @@ authors.values.each do |author|
   puts "#{author.name}:"
   boards.boards.each_value do |board|
     puts "board #{board.id}"
-    board.columns.edges.each do |edge|
+    board.columns.each do |edge|
       column = columns[edge.lcname]
       if column
         puts " #{edge.lcname} worked #{column[:worked].length} times, 85% completed in #{column[:worked].percentile(85).round(0)} days"
@@ -164,7 +162,7 @@ authors.values.each do |author|
     board.cards.each do |card|
       card.history_details.column_movements.each do |transition|
         if transition.author == author.name
-          edge = board.columns.edge(transition.to_name)
+          edge = board.columns.column(transition.to_name)
           if edge && edge.queue?
             queues[author.name] ||= 0
             queues[author.name] += 1
@@ -191,7 +189,7 @@ puts "--------------------"
 boards.boards.each_value do |board|
   puts
   puts "Board #{board.id}"
-  board.columns.edges.each do |edge|
+  board.columns.each do |edge|
     works = board.works[edge.lcname]
     if works
       durations = works.collect{ |work| work.duration } 
@@ -211,7 +209,7 @@ puts "([N/A] means that the ticket moved to a column no longet on the board)"
 boards.boards.each_value do |board|
   puts
   puts "Board #{board.id}"
-  board.columns.edges.each do |edge|
+  board.columns.each do |edge|
     transitions = board.transitions[edge.lcname]
     next unless transitions
     counts = {}

@@ -22,7 +22,7 @@ package:
 provider:
   lambdaHashingVersion: 20201221
   name: aws
-  runtime: ruby2.5
+  runtime: ruby2.7
   profile: pokebot-deploy
   stage: ${opt:stage} 
   region: ${self:custom.config.region}
@@ -125,6 +125,55 @@ provider:
         - dynamodb:DeleteItem
         - dynamodb:BatchWriteItem
       Resource:
+         - Fn::GetAtt:
+            - ActivitiesTable
+            - Arn
+         - Fn::Join: ['/', ["Fn::GetAtt": [ ActivitiesTable, Arn ], 'index','*']] # * is all objects
+    
+    - Effect: "Allow"
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:BatchGetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:BatchWriteItem
+      Resource:
+         - Fn::GetAtt:
+            - TasksTable
+            - Arn
+         - Fn::Join: ['/', ["Fn::GetAtt": [ TasksTable, Arn ], 'index','*']] # * is all objects
+
+    - Effect: "Allow"
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:BatchGetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:BatchWriteItem
+      Resource:
+         - Fn::GetAtt:
+            - HistoryDetailsTable
+            - Arn
+         - Fn::Join: ['/', ["Fn::GetAtt": [ HistoryDetailsTable, Arn ], 'index','*']] # * is all objects
+
+
+    - Effect: "Allow"
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:BatchGetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:BatchWriteItem
+      Resource:
         Fn::GetAtt:
           - RecipeFavouritesTable
           - Arn
@@ -146,6 +195,9 @@ provider:
 
 custom:
   config: ${file(config.${self:provider.stage}.yml)}
+  kanbanize_tasks_table: ${self:service}-${self:provider.stage}-insights-service-tasks
+  kanbanize_history_details_table: ${self:service}-${self:provider.stage}-insights-service-history-details
+  kanbanize_activities_table: ${self:service}-${self:provider.stage}-insights-service-activities
   users_table: ${self:service}-${self:provider.stage}-users-service-users
   recipe_favourites_table: ${self:service}-${self:provider.stage}-recipe-service-favourites
   kanbanize_clients_table: ${self:service}-${self:provider.stage}-kanbanize-clients
@@ -297,12 +349,15 @@ functions:
              - Arn
     environment:
       KANBANIZE_CLIENTS_TABLE_NAME: ${self:custom.kanbanize_clients_table}
+      KANBANIZE_TASKS_TABLE_NAME: ${self:custom.kanbanize_tasks_table}
       KANBANIZE_TOPIC_ARN: !Ref KanbanizeSnsTopic
       USERS_TOPIC_ARN: !Ref UsersSnsTopic
       KANBANIZE_IMPORTS_BUCKET: ${self:custom.kanbanize_imports_bucket}
       KANBANIZE_DB_CLUSTER: ${self:custom.config.kanbanize_database.cluster}
       KANBANIZE_DB_NAME: ${self:custom.config.kanbanize_database.name}
       KANBANIZE_DB_SECRET_ARN: ${self:custom.config.kanbanize_database.secret_arn}
+      KANBANIZE_HISTORY_DETAILS_TABLE_NAME: ${self:custom.kanbanize_history_details_table}
+      KANBANIZE_ACTIVITIES_TABLE_NAME: ${self:custom.kanbanize_activities_table}
 
   kanbanize_util:
     handler: gerty/listeners/kanbanize/util.Kanbanize::Util::Handler.handle
@@ -703,6 +758,83 @@ resources:
       
 
     #AUTO-END-TOPICS
+
+    ######################################
+    # Insight Service: Activities Details Table
+    #####################################      
+    ActivitiesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.kanbanize_activities_table}
+        AttributeDefinitions:
+          - AttributeName: monkey_key # hash of activity as activity objects have no unique identifiers 
+            AttributeType: S
+          - AttributeName: date
+            AttributeType: S
+          - AttributeName: author
+            AttributeType: S
+        KeySchema:
+          - AttributeName: author
+            KeyType: HASH
+          - AttributeName: monkey_key
+            KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: author_date
+            KeySchema:
+              - AttributeName: author
+                KeyType: HASH
+              - AttributeName: date
+                KeyType: RANGE
+            Projection:
+                ProjectionType: KEYS_ONLY
+        BillingMode: PAY_PER_REQUEST
+
+
+    ######################################
+    # Insight Service: History Details Table
+    #####################################      
+    HistoryDetailsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.kanbanize_history_details_table}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    ######################################
+    # Insight Service: Tasks Table
+    #####################################      
+    TasksTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.kanbanize_tasks_table}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        # GlobalSecondaryIndexes:
+        #   - IndexName: created_at
+        #     KeySchema:
+        #       - AttributeName: client_id
+        #         KeyType: HASH
+        #       - AttributeName: created_at
+        #         KeyType: RANGE
+        #     Projection:
+        #         ProjectionType: KEYS_ONLY
+          # - IndexName: updated_at
+          #   KeySchema:
+          #       - AttributeName: updated_at
+          #         KeyType: HASH
+          #   Projection:
+          #       ProjectionType: KEYS_ONLY
+        BillingMode: PAY_PER_REQUEST
+      
 
     #######################################
     # User Service: Favourites Table

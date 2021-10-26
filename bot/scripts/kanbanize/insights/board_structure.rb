@@ -24,33 +24,30 @@ class BoardStructure
   def build_board(id, board_data)
     board = Board.new(id)
     board_data["columns"].each do |column_data|
-      column = build_column(board, column_data)
-      board.columns << column
+      build_column(board, column_data)
     end
     board
   end
 
-  def build_column(board, column_data, parent_column: nil)
-    lcname = if parent_column
-      "#{parent_column}.#{column_data['lcname']}"
+  def build_column(board, column_data)
+    if column_data['children']
+      column_data['children'].each do |child_column_data|
+        board.columns << Column.new(
+          board: board,
+          section: child_column_data['section'],
+          lcname: child_column_data['lcname'], 
+          flow_type: child_column_data['flowtype'],
+          parent_lcname: column_data['lcname']
+        )
+      end
     else
-      column_data['lcname']
+      board.columns << Column.new(
+        board: board,
+        section: column_data['section'],
+        lcname: column_data['lcname'], 
+        flow_type: column_data['flowtype']
+      )
     end
-
-    column = Column.new(
-      board: board,
-      section: column_data['section'],
-      position: column_data['position'], 
-      lcname: lcname, 
-      flow_type: column_data['flowtype']
-    )
-
-    column_data.fetch('children',[]).each do |child_column_data|
-      child = build_column(board, child_column_data, parent_column: column.lcname)
-      column.children << child
-    end
-
-    column
   end
 
 

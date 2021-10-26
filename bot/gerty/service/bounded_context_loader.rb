@@ -24,7 +24,9 @@ module Gerty
       end
 
       def load!
+        Gerty::LOGGER.debug("searching in #{bounded_context_folder}")
         bounded_context_files.each do |file|
+          Gerty::LOGGER.debug("found service file #{file}")
           raise "cannot load service #{file}" unless File.exists?(file)
           require file
         end

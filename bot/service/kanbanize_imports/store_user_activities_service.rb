@@ -1,6 +1,6 @@
 require 'gerty/request/events/kanbanize'
 require 'date'
-require 'storage/kanbanize/s3/author_activity_store'
+require 'storage/kanbanize/dynamodb/activities'
 
 # all of todays activities are imported in 'import board activities'
 # this service saves these to s3 IF they haven't already been saved in an earlier request today
@@ -21,23 +21,22 @@ module Service
       Gerty::Service::BoundedContext.register(self)
 
       def call(bot_request)
-        store = Storage::Kanbanize::AuthorActivityStore.new(
-          bot_request.data['client_id'], 
-          bot_request.data['board_id'],  
-        )
 
-        new_activities  = bot_request.data['activities'].select do |activity|
-          store.store!(activity)
-        end
+        activities = bot_request.data['activities']
+
+        puts Storage::Kanbanize::DynamoDB::Activities.yesterday(author: "Ben")
             
-      
-        if new_activities.any?
+        if activities.any?
+
+          Storage::Kanbanize::DynamoDB::Activities.upsert(client_id: bot_request.data['client_id'],
+                                                         board_id: bot_request.data['board_id'],
+                                                         activities: activities)
 
           bot_request.events << Gerty::Request::Events::Kanbanize.new_activities_found(
                                 source: self.class.name, 
                                 client_id: bot_request.data['client_id'],
                                 board_id: bot_request.data['board_id'],
-                                activities: new_activities
+                                activities: activities
                               )
                               
         end

@@ -1,4 +1,5 @@
 require_relative 'authors'
+require_relative 'columns'
 
 class CardData
 
@@ -32,14 +33,13 @@ class CardData
       card.history_details.column_movements.each do |movement|
         board = board_structures[card.board_id]
         next unless board
-        edges = board.columns.edges
-        from = edges.find{ |edge| edge.lcname == movement.from_name }
-        to = edges.find{ |edge| edge.lcname == movement.to_name }
-        from_index = edges.index(from)
-        to_index = edges.index(to)
+        from = board.columns.find{ |edge| edge.lcname == movement.from_name }
+        to = board.columns.find{ |edge| edge.lcname == movement.to_name }
+        from_index = board.columns.index(from)
+        to_index = board.columns.index(to)
         range = ColumnRange.new(from_index: from_index, 
                                   to_index: to_index, 
-                                   columns: edges.slice((from_index..to_index))) if from_index && to_index
+                                   columns: board.columns.slice((from_index..to_index))) if from_index && to_index
         movement.columns = range if range && range.valid?
       end
     end

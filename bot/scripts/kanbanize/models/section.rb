@@ -35,11 +35,10 @@ class Section
   end
 
   def actions_on(date)
-    edges = columns.edges
     actions = []
-    actions << edges.first.task_actions.entries_on(date)
-    actions << edges.last.task_actions.exits_on(date)
-    actions << edges.collect{ |edge| edge.task_actions.waits_on(date) }
+    actions << columns.first.task_actions.entries_on(date)
+    actions << columns.last.task_actions.exits_on(date)
+    actions << columns.collect{ |edge| edge.task_actions.waits_on(date) }
     actions.flatten
   end
 

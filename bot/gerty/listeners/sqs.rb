@@ -1,6 +1,7 @@
 require 'gerty/service/bounded_context'
 require 'gerty/service/bounded_context_loader'
 require 'gerty/listeners/records/sqs'
+require 'gerty/lib/logger'
 
 module Handler
   class Sqs
@@ -8,6 +9,8 @@ module Handler
     @@loader = nil
 
     def self.handle(event:, context:)
+      Gerty::LOGGER.debug(event)
+
       sqs_records = Gerty::Listeners::Records::Sqs.new(event)
       
       load_or_verify!(sqs_records)

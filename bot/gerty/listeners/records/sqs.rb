@@ -34,7 +34,10 @@ module Gerty
         def bot_request(aws_record)
           record = data(aws_record)
           event = JSON.parse(record["Message"])
-          Gerty::Request::Request.new current: event['current'], trail: event['trail'], context: ::Gerty::Request::SlackContext.from_h(event['context'])
+          Gerty::Request::Request.new( current: event['current'], 
+                                        trail: event['trail'], 
+                                      context: ::Gerty::Request::SlackContext.from_h(event['context']),
+                                         user: event['user'] )
         end
 
       end

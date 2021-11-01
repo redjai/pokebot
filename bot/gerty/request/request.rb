@@ -3,25 +3,36 @@ module Gerty
     class Request 
       
       attr_reader :current, :context
-
-      def initialize(current:, context: ::Gerty::Request::SlackContext.new, trail: [])
+      
+      def initialize(current:, context: ::Gerty::Request::SlackContext.new, trail: [], user: nil)
         @context = context
         @current = current.to_h
         @trail = trail
+        @user = user
       end
 
       def initialize_copy(other)
         @context = other.context
         @current = other.current
         @trail = other.trail.dup
+        @user = other.user
       end
 
-      def data(index=0)
+      def data
         current['data']
       end
 
       def name
         current['name']
+      end
+
+      def user(auto_load: true)
+        @user ||= begin
+          return nil unless auto_load
+          require 'storage/kanbanize/dynamodb/user'
+          Storage::Kanbanize::DynamoDB::User.read( team_id: context.team_id, 
+                                                  slack_id: context.slack_id )
+        end
       end
 
       # intent was when we couldn't understand why a user has interacted
@@ -55,7 +66,8 @@ module Gerty
             { 
               current: event, 
               trail: next_trail, 
-              context: @context.to_h 
+              context: @context.to_h,
+              user: user(auto_load: false)
             }
           end
         end
@@ -65,7 +77,8 @@ module Gerty
         { 
           current: @current, 
           trail: @trail, 
-          context: @context.to_h 
+          context: @context.to_h,
+          user: user(auto_load: false)
         }.to_json
       end
 

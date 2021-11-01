@@ -31,6 +31,7 @@ provider:
     GEM_PATH: /opt/ruby/2.5.0
     HONEYBADGER_API_KEY: ${file(config.${self:provider.stage}.yml):honeybadger_api_key}
     BOT_ENV: ${self:provider.stage}
+    USERS_TABLE_NAME: ${self:custom.users_table}
 
   iamRoleStatements:
 
@@ -215,6 +216,7 @@ functions:
     environment:
       SLACK_SIGNED_SECRET: ${self:custom.config.slack_signed_secret}
       MESSAGES_TOPIC_ARN: !Ref MessagesSnsTopic
+      
 
   intent:
     handler: gerty/listeners/sqs.Handler::Sqs.handle

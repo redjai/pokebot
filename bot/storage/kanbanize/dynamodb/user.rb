@@ -40,7 +40,7 @@ module Storage
             key_condition_expression: "user_id = :user_id", 
             table_name: ENV['USERS_TABLE_NAME'],
             select: "ALL_ATTRIBUTES"
-          }).items.first || nil_user 
+          }).items.first
         end
 
         def create(team_id:, slack_id:)

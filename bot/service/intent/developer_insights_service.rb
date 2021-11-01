@@ -1,3 +1,5 @@
+require 'gerty/request/events/messages'
+
 module Service
   module Intent
     module DeveloperInsights

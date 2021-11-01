@@ -1,12 +1,13 @@
 class Column
 
-  attr_reader :board, :flow_type, :children, :section, :parent_lcname
+  attr_reader :board, :flow_type, :children, :section, :parent_lcname, :position
 
-  def initialize(board:, section:, lcname:, flow_type:, parent_lcname: nil)
+  def initialize(board:, section:, lcname:, flow_type:, position:, parent_lcname: nil)
     @board = board
     @lcname = lcname.upcase
     @parent_lcname = parent_lcname.upcase if parent_lcname
     @flow_type = flow_type
+    @position = position
     @section = section
   end
 

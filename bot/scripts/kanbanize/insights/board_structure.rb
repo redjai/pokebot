@@ -37,6 +37,7 @@ class BoardStructure
           section: child_column_data['section'],
           lcname: child_column_data['lcname'], 
           flow_type: child_column_data['flowtype'],
+          position: child_column_data['position'],
           parent_lcname: column_data['lcname']
         )
       end
@@ -45,6 +46,7 @@ class BoardStructure
         board: board,
         section: column_data['section'],
         lcname: column_data['lcname'], 
+        position: column_data['position'],
         flow_type: column_data['flowtype']
       )
     end

@@ -84,7 +84,7 @@ module HistoryDetails
     end
 
     def column_movements
-      @column_movements ||= get(type: 'Transitions').select{ |transition| transition.column_movement? }
+      @column_movements ||= get(type: 'Transitions').select{ |transition| transition.column_movement? }.sort_by{|detail| detail.id  }
     end
 
     def comments

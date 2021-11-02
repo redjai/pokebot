@@ -1,18 +1,16 @@
 sns:
   messages:
-    sqs:
-      - intent
-      - responder
+    - intent
+    - responder
   recipes:
-    sqs:
-      - recipes
-      - responder
+    - recipes
+    - responder
   users:
-    sqs:
-      - responder
-      - recipes
-      - users
+    - responder
+    - recipes
+    - users
   kanbanize:
-    sqs:
-      - kanbanize_imports
+    - kanbanize_imports
+  insights:
+    - insight
 

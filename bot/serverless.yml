@@ -98,6 +98,13 @@ provider:
       Resource: !Ref KanbanizeSnsTopic # !Ref returns the ARN of SNS topic in the resources element below:
     
 
+    # ALLOW THE iamRole TO PUBLISH TO THE 'insights' SNS Topic
+    - Effect: "Allow"
+      Action:
+        - "SNS:Publish"
+      Resource: !Ref InsightsSnsTopic # !Ref returns the ARN of SNS topic in the resources element below:
+    
+
     #AUTO-END-TOPIC-ROLE-STATEMENTS
 
     - Effect: "Allow"
@@ -216,7 +223,15 @@ functions:
     environment:
       SLACK_SIGNED_SECRET: ${self:custom.config.slack_signed_secret}
       MESSAGES_TOPIC_ARN: !Ref MessagesSnsTopic
-      
+  
+  insight:
+    handler: gerty/listeners/sqs.Handler::Sqs.handle
+    events:    
+      - sqs:
+         arn:
+           Fn::GetAtt:
+             - InsightsToInsightSqsQueue
+             - Arn  
 
   intent:
     handler: gerty/listeners/sqs.Handler::Sqs.handle
@@ -229,6 +244,7 @@ functions:
     environment:
       RECIPES_TOPIC_ARN: !Ref RecipesSnsTopic
       USERS_TOPIC_ARN: !Ref UsersSnsTopic
+      INSIGHTS_TOPIC_ARN: !Ref InsightsSnsTopic
 
   recipe:
     handler: gerty/listeners/sqs.Handler::Sqs.handle
@@ -757,6 +773,58 @@ resources:
           - Ref: KanbanizeToKanbanizeImportsSqsQueue
       DependsOn:
         - KanbanizeToKanbanizeImportsSubscription
+      
+
+
+    #### AUTO GENERATED TOPIC - 'insights' 
+    #################################
+    InsightsSnsTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:service}-${self:provider.stage}-insights
+     
+
+
+    #### AUTO GENERATED QUEUE - 'insight'
+    InsightsToInsightSqsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-${self:provider.stage}-sns-insights-to-sqs-insight
+    
+    #### AUTO GENERATED - ATTACH 'insights' TOPIC to 'insight' QUEUE
+    InsightsToInsightSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn: !Ref InsightsSnsTopic
+        Endpoint: !GetAtt
+          - InsightsToInsightSqsQueue
+          - Arn
+        Protocol: sqs
+      DependsOn:
+        - InsightsSnsTopic
+        - InsightsToInsightSqsQueue
+    
+    #### AUTO GENERATED - ALLOW 'insights' TOPIC to send messages to 'insight' QUEUE
+    SnSInsightsToSQSInsightSqsQueuePolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Sid: "allow-sns-insights"
+              Effect: Allow
+              Principal: "*"
+              Resource: !GetAtt
+                - InsightsToInsightSqsQueue
+                - Arn
+              Action: "SQS:SendMessage"
+              Condition:
+                ArnEquals:
+                  "aws:SourceArn": !Ref InsightsSnsTopic 
+        Queues:
+          - Ref: InsightsToInsightSqsQueue
+      DependsOn:
+        - InsightsToInsightSubscription
       
 
     #AUTO-END-TOPICS

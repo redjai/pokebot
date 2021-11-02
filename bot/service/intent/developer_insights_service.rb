@@ -1,3 +1,4 @@
+require 'gerty/request/events/insights'
 require 'gerty/request/events/messages'
 
 module Service
@@ -17,7 +18,7 @@ module Service
       
       def call(bot_request)
         if bot_request.current['data']['text'] =~ /(|me|team) (|today|yesterday|this week)\s*$/
-          bot_request.events << Gerty::Request::Events::Insights.activities_requested(source: self, target: $1, dates: $2)
+          bot_request.events << Gerty::Request::Events::Insights.activities_requested(source: self, target: $1, date_range: $2)
         end
       end 
 

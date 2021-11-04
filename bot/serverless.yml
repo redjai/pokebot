@@ -32,6 +32,7 @@ provider:
     HONEYBADGER_API_KEY: ${file(config.${self:provider.stage}.yml):honeybadger_api_key}
     BOT_ENV: ${self:provider.stage}
     USERS_TABLE_NAME: ${self:custom.users_table}
+    KANBANIZE_ACTIVITIES_TABLE_NAME: ${self:custom.kanbanize_activities_table}
 
   iamRoleStatements:
 
@@ -375,7 +376,7 @@ functions:
       KANBANIZE_DB_NAME: ${self:custom.config.kanbanize_database.name}
       KANBANIZE_DB_SECRET_ARN: ${self:custom.config.kanbanize_database.secret_arn}
       KANBANIZE_HISTORY_DETAILS_TABLE_NAME: ${self:custom.kanbanize_history_details_table}
-      KANBANIZE_ACTIVITIES_TABLE_NAME: ${self:custom.kanbanize_activities_table}
+      
 
   kanbanize_util:
     handler: gerty/listeners/kanbanize/util.Kanbanize::Util::Handler.handle

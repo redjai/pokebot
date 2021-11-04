@@ -1,4 +1,5 @@
 require 'gerty/request/events/insights'
+require 'storage/kanbanize/dynamodb/activities'
 
 module Service
   module Insight
@@ -16,7 +17,9 @@ module Service
       Gerty::Service::BoundedContext.register(self)
       
       def call(bot_request)
-        puts "Insights...."
+        author = bot_request.user['kanbanize_username']
+        dates = bot_request.data['date_range'].to_sym
+        puts Storage::Kanbanize::DynamoDB::Activities.fetch(author: author, dates: dates).inspect
       end 
 
     end

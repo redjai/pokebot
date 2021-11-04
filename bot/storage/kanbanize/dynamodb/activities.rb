@@ -10,22 +10,41 @@ module Storage
       module Activities
         extend self
 
-        def yesterday(author:)
+        def fetch(author:, dates:)
+          range = dates_to_range(dates)
           dynamo_resource.client.query(
             {
+              table_name: ENV['KANBANIZE_ACTIVITIES_TABLE_NAME'],
+              index_name: "author_date",
               expression_attribute_values: {
-                ":date" => (Date.today - 1).to_s,
+                ":start" => to_d(range.first),
+                ":finish" => to_d(range.last),
                 ":author" => author
               },
                expression_attribute_names: {
                 "#date" => "date",
                 "#author" => "author"
               },
-              key_condition_expression: "#date > :date AND #author = :author",
-              index_name: "author_date",
-              table_name: ENV['KANBANIZE_ACTIVITIES_TABLE_NAME'], 
+              key_condition_expression: "#author = :author AND #date BETWEEN :start AND :finish"
             }
           )
+        end
+
+        def dates_to_range(dates)
+          case dates
+          when :yesterday
+            ((Date.today - 1)..Date.today)
+          when :today
+            ((Date.today)..(Date.today + 1))
+          when :this_week
+            ((Date.today - Date.today.wday)..(Date.today))
+          when :last_week
+            ((Date.today - Date.today.wday - 7)..(Date.today - Date.today.wday - 1))
+          end
+        end
+
+        def to_d(date)
+          date.to_datetime.iso8601
         end
 
         def store(client_id:, board_id:, activity:)

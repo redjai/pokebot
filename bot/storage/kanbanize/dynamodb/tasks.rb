@@ -25,8 +25,12 @@ module Storage
             DateTime.parse(history_details.last['entrydate']).iso8601
           end
 
+          def id
+            "#{@client_id}-#{@kanbanize_data['taskid']}"
+          end
+
           def hydrate!
-            @kanbanize_data['id'] = "#{@client_id}-#{@kanbanize_data['taskid']}"
+            @kanbanize_data['id'] = id
             @kanbanize_data['client_id'] = @client_id
           end
 
@@ -70,6 +74,29 @@ module Storage
             opts[:ssl_verify_peer] = (ENV['VERIFY_SSL_PEER'].to_s.downcase != 'false')
           end
         end
+
+        PROJECTIONS = {
+          basic: "Title"
+        }
+
+        
+
+        def fetch(**args)
+
+          if args[:client_id] && args[:task_id]
+            id = "#{args[:client_id]}-#{args[:task_id]}"
+          elsif
+
+          Storage::Kanbanize::DynamoDB::Client::Client.new(
+            dynamo_resource.client.get_item({
+              key: {
+                "id" => 
+              },
+              projection_expression: PROJECTIONS[projection], 
+              table_name: ENV['KANBANIZE_TASKS_TABLE_NAME'],
+            })[:item]
+          )
+        end
         
         def upsert(client_id:, task:)
           task_data = TaskData.new(client_id: client_id, kanbanize_data: task)
@@ -80,23 +107,21 @@ module Storage
             }
           )
 
-          items = task_data.history_details.collect do |history_detail|
-            {
-              put_request: {
-                item: HistoryDetail.new(client_id, history_detail).item
-              }
-            }
+          task_data.history_details.each do |history_detail|
+            store_history_detail(client_id: client_id, history_detail: history_detail)
           end
-          
-          items.each_slice(25) do |slice| # maximum 25 items in a batch write
+        end
 
-            request = {
-              request_items: {
-                ENV['KANBANIZE_HISTORY_DETAILS_TABLE_NAME'] => slice
-              }
-            }
- 
-            dynamo_resource.client.batch_write_item(request)
+        def store_history_detail(client_id:, history_detail:)
+          begin
+            dynamo_resource.client.put_item({
+              table_name: ENV['KANBANIZE_HISTORY_DETAILS_TABLE_NAME'],
+              item: HistoryDetail.new(client_id, history_detail).item,
+              condition_expression: "attribute_not_exists(id)"
+            }).successful?
+          rescue Aws::DynamoDB::Errors::ConditionalCheckFailedException => e
+            Gerty::LOGGER.debug(e)
+            false
           end
         end
 

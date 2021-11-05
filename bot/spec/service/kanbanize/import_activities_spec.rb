@@ -5,13 +5,13 @@ require 'service/kanbanize/import_board_activities'
 
 describe Service::Kanbanize::ImportBoardActivities do
 
-  table!(:KANBANIZE_CLIENTS_TABLE_NAME, 'test-clients-table') 
+  table!(:KANBANIZE_TEAMS_TABLE_NAME, 'test-clients-table') 
 
-  let(:client_id) { bot_request.data['client_id'] }
+  let(:team_id) { bot_request.data['team_id'] }
   let(:kanbanize_api_key){ 'test-api-key' }
   let(:subdomain){ 'test-subdomain' }
 
-  let!(:kanbanize_client){ described_class.create_client(client_id, ["11","12","17"], kanbanize_api_key, subdomain) ; described_class.get_client(client_id) }
+  let!(:kanbanize_client){ described_class.create_client(team_id, ["11","12","17"], kanbanize_api_key, subdomain) ; described_class.get_team(team_id) }
 
   let(:from_date){ (Date.today).strftime("%Y-%m-%d")  }
   let(:to_date){ (Date.today + 1).strftime("%Y-%m-%d")  }
@@ -66,9 +66,9 @@ describe Service::Kanbanize::ImportBoardActivities do
   end
 
   it 'should persist the board id as the last board id' do
-    expect(described_class.get_client(client_id).last_board_id).not_to eq kanbanize_client.board_id
+    expect(described_class.get_team(team_id).last_board_id).not_to eq kanbanize_client.board_id
     described_class.call(bot_request)
-    expect(described_class.get_client(client_id).last_board_id).to eq kanbanize_client.board_id
+    expect(described_class.get_team(team_id).last_board_id).to eq kanbanize_client.board_id
   end
 
 end

@@ -3,7 +3,7 @@ module Migrations
       def up
         %q{
             CREATE TABLE public.columns (
-                client_id varchar(50),
+                team_id varchar(50),
                 board_id integer,
                 workflow integer,
                 column_name varchar(75),

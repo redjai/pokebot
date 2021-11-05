@@ -8,13 +8,13 @@ module Storage
 
       attr_accessor :data
 
-      def initialize(client_id, board_id)
-        @client_id = client_id
+      def initialize(team_idboard_id)
+        @team_id teteam_id
         @board_id = board_id
       end
 
       def store!(activity)
-        data = AuthorActivityData.new(@client_id, @board_id, activity)
+        data = AuthorActivityData.new(@team_id@board_id, activity)
         object = store.bucket.object(data.key)
         if store.bucket.object(data.key).exists?
           false

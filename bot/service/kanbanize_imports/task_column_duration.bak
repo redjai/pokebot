@@ -17,11 +17,11 @@ module Service
 
         return unless bot_request.data['archived']
 
-        client_id = bot_request.data['client_id']
+        team_id = bot_request.data['team_id']
         board_id = bot_request.data['board_id']
 
         fetcher = Storage::Kanbanize::TaskFetcher.new(
-          client_id: client_id,
+          team_id: team_id,
           board_id: board_id,
           archived: bot_request.data['archived'] == 'yes'
         )
@@ -36,7 +36,7 @@ module Service
           end
 
           durations = Storage::Postgres::ColumnDurations.new(
-                                                               client_id: client_id, 
+                                                               team_id: team_id, 
                                                                board_id: board_id,
                                                                workflow: s3task['workflow'],
                                                                task_id: task['task_id'], 

@@ -33,6 +33,7 @@ provider:
     BOT_ENV: ${self:provider.stage}
     USERS_TABLE_NAME: ${self:custom.users_table}
     KANBANIZE_ACTIVITIES_TABLE_NAME: ${self:custom.kanbanize_activities_table}
+    TEAM_IDS: T010JM31KJ9
 
   iamRoleStatements:
 
@@ -209,12 +210,17 @@ custom:
   kanbanize_activities_table: ${self:service}-${self:provider.stage}-insights-service-activities
   users_table: ${self:service}-${self:provider.stage}-users-service-users
   recipe_favourites_table: ${self:service}-${self:provider.stage}-recipe-service-favourites
-  kanbanize_clients_table: ${self:service}-${self:provider.stage}-kanbanize-clients
+  kanbanize_teams_table: ${self:service}-${self:provider.stage}-kanbanize-teams
   kanbanize_imports_bucket: ${self:service}-${self:provider.stage}-kanbanize-imports
   rubyLayer:
     use_docker: true
 
 functions:
+  util:
+    handler: gerty/listeners/util.Util::Handler.handle
+    environment:
+      KANBANIZE_TEAMS_TABLE_NAME: kanbanize_teams_table 
+
   messages:
     handler: gerty/listeners/slack_api_gateway.SlackApiGateway::Handler.handle
     events:
@@ -285,7 +291,7 @@ functions:
              - Arn
     environment:
       BOT_USER_OAUTH_ACCESS_TOKEN: ${file(config.${self:provider.stage}.yml):bot_user_oauth_access_token}
-      KANBANIZE_CLIENTS_TABLE_NAME: ${self:custom.kanbanize_clients_table}  
+      KANBANIZE_TEAMS_TABLE_NAME: ${self:custom.kanbanize_teams_table}  
 
   interactions:
     handler: gerty/listeners/slack_interactions_gateway.Interactions::Handler.handle
@@ -327,7 +333,6 @@ functions:
           description: 'test-rate-schedule'
           rate: cron(*/10 7-22 ? * MON-FRI *) #note the ? (not *) for day of month is needed because we have set 1-5 for day of week. 
           input:
-            client_id: 'livelink'
             action: 'kanbanize-import-activities'
             source: 'cron'
             bounded_context: 'kanbanize_cron'
@@ -336,7 +341,6 @@ functions:
           description: 'find all non archived task ids board by board'
           rate: cron(0 6 * * ? *) #note the ? (not *) for day of month is needed because we have set 1-5 for day of week. 
           input:
-            client_id: 'livelink'
             action: 'find_task_ids_for_boards'
             source: 'cron'
             bounded_context: 'kanbanize_cron'
@@ -345,14 +349,13 @@ functions:
           description: 'find tasks archived yesterday'
           rate: cron(0 6 * * ? *) #note the ? (not *) for day of month is needed because we have set 1-5 for day of week. 
           input:
-            client_id: 'livelink'
             action: 'find_archive_task_ids_for_boards'
             source: 'cron'
             archive: 'yesterday'
             bounded_context: 'kanbanize_cron'
 
     environment:
-      KANBANIZE_CLIENTS_TABLE_NAME: ${self:custom.kanbanize_clients_table}
+      KANBANIZE_TEAMS_TABLE_NAME: ${self:custom.kanbanize_teams_table}
       KANBANIZE_TOPIC_ARN: !Ref KanbanizeSnsTopic
       PAGE_SIZE: 30
       DATE_RANGE_OFFSET: 0
@@ -367,7 +370,7 @@ functions:
              - KanbanizeToKanbanizeImportsSqsQueue
              - Arn
     environment:
-      KANBANIZE_CLIENTS_TABLE_NAME: ${self:custom.kanbanize_clients_table}
+      KANBANIZE_TEAMS_TABLE_NAME: ${self:custom.kanbanize_teams_table}
       KANBANIZE_TASKS_TABLE_NAME: ${self:custom.kanbanize_tasks_table}
       KANBANIZE_TOPIC_ARN: !Ref KanbanizeSnsTopic
       USERS_TOPIC_ARN: !Ref UsersSnsTopic
@@ -381,7 +384,7 @@ functions:
   kanbanize_util:
     handler: gerty/listeners/kanbanize/util.Kanbanize::Util::Handler.handle
     environment:
-      KANBANIZE_CLIENTS_TABLE_NAME: ${self:custom.kanbanize_clients_table}
+      KANBANIZE_TEAMS_TABLE_NAME: ${self:custom.kanbanize_teams_table}
       KANBANIZE_TOPIC_ARN: !Ref KanbanizeSnsTopic
       PAGE_SIZE: 30
       KANBANIZE_DB_CLUSTER: ${self:custom.config.kanbanize_database.cluster}
@@ -889,21 +892,6 @@ resources:
         KeySchema:
           - AttributeName: id
             KeyType: HASH
-        # GlobalSecondaryIndexes:
-        #   - IndexName: created_at
-        #     KeySchema:
-        #       - AttributeName: client_id
-        #         KeyType: HASH
-        #       - AttributeName: created_at
-        #         KeyType: RANGE
-        #     Projection:
-        #         ProjectionType: KEYS_ONLY
-          # - IndexName: updated_at
-          #   KeySchema:
-          #       - AttributeName: updated_at
-          #         KeyType: HASH
-          #   Projection:
-          #       ProjectionType: KEYS_ONLY
         BillingMode: PAY_PER_REQUEST
       
 
@@ -945,13 +933,13 @@ resources:
     KanbanizeClientsTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.kanbanize_clients_table}
+        TableName: ${self:custom.kanbanize_teams_table}
         AttributeDefinitions:
           -
-            AttributeName: client_id
+            AttributeName: team_id
             AttributeType: S
         KeySchema:
-          - AttributeName: client_id
+          - AttributeName: team_id
             KeyType: HASH 
         BillingMode: PAY_PER_REQUEST
 

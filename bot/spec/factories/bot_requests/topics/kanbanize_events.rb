@@ -10,7 +10,7 @@ FactoryBot.define do
     data { 
       { 
         'board_id' => "11", 
-        'client_id' => 'testlink',
+        'team_id' => 'testlink',
         "activities" => [ build(:activity), build(:activity) ] 
       } 
     } 
@@ -27,7 +27,7 @@ FactoryBot.define do
     data { 
       { 
         'board_id' => "11", 
-        'client_id' => 'testlink',
+        'team_id' => 'testlink',
         "activities" => [ build(:activity), build(:activity) ] 
       } 
     } 

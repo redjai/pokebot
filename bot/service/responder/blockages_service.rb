@@ -1,5 +1,5 @@
 require 'date'
-require 'storage/kanbanize/dynamodb/client'
+require 'storage/kanbanize/dynamodb/team'
 require 'gerty/request/events/kanbanize'
 require 'gerty/service/bounded_context'
 require 'service/responder/slack/response'
@@ -10,7 +10,7 @@ module Service
         module Firehose
           module Blockages
           extend self
-          extend Storage::Kanbanize::DynamoDB::Client
+          extend Storage::Kanbanize::DynamoDB::Team
                                          
             def listen
               [ Gerty::Request::Events::Kanbanize::NEW_ACTIVITIES_FOUND ]
@@ -24,7 +24,7 @@ module Service
 
             def call(bot_request)
 
-              client = get_client(bot_request.data['client_id'])
+              client = get_team(bot_request.data['team_id'])
 
               blocked_activities = bot_request.data['activities'].reverse.select do |activity|
                 activity['text'] =~ /block/ || activity['event'] =~ /block/

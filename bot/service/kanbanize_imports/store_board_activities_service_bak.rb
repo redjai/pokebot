@@ -22,7 +22,7 @@ module Service
 
       def call(bot_request)
         store = Storage::Kanbanize::BoardActivityStore.new(
-          bot_request.data['client_id'], 
+          bot_request.data['team_id'], 
           bot_request.data['board_id'],  
         )
 
@@ -35,7 +35,7 @@ module Service
 
           bot_request.events << Gerty::Request::Events::Kanbanize.new_activities_found(
                                 source: self.class.name, 
-                                client_id: bot_request.data['client_id'],
+                                team_id: bot_request.data['team_id'],
                                 board_id: bot_request.data['board_id'],
                                 activities: new_activities
                               )

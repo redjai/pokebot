@@ -3,8 +3,8 @@ require 'storage/kanbanize/s3/task'
 module Storage
   module Postgres
     class ColumnDurations
-      def initialize(client_id:, board_id:, task_id:, workflow:, history_details:)
-        @client_id = client_id
+      def initialize(team_id board_id:, task_id:, workflow:, history_details:)
+        @team_id teteam_id
         @board_id = board_id
         @task_id = task_id
         @workflow = workflow
@@ -50,7 +50,7 @@ module Storage
       end
 
       def task
-        "#{@client_id}:#{@board_id}:#{@task_id}"
+        "#{@team_id#{@board_id}:#{@task_id}"
       end
 
       def delete_history(history_detail)

@@ -14,12 +14,12 @@ describe Service::Kanbanize::NewActivitiesFound do
     
     context 'saving s3 files' do
       let(:board_id){ bot_request.data['board_id'] }
-      let(:client_id){ bot_request.data['client_id'] }
+      let(:team_id){ bot_request.data['team_id'] }
       let(:store){ Storage::Kanbanize::ActivityS3 }
-      let(:activity1){ Storage::Kanbanize::ActivityData.new(client_id, board_id, bot_request.data['activities'].first) }
-      let(:activity2){ Storage::Kanbanize::ActivityData.new(client_id, board_id, bot_request.data['activities'].last) }
+      let(:activity1){ Storage::Kanbanize::ActivityData.new(team_id, board_id, bot_request.data['activities'].first) }
+      let(:activity2){ Storage::Kanbanize::ActivityData.new(team_id, board_id, bot_request.data['activities'].last) }
 
-      let(:found_activities){ {"client_id" => client_id, "activities" => [ activity1.data ], "board_id" => board_id } }
+      let(:found_activities){ {"team_id" => team_id, "activities" => [ activity1.data ], "board_id" => board_id } }
 
       before do
         allow(Gerty::Topic::Sns).to receive(:broadcast).with(topic: [:kanbanize, :users], request: bot_request)

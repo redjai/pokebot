@@ -74,8 +74,8 @@ module Storage
 
     class TaskData
 
-      def initialize(client_id:, board_id:, task_id: nil, task: nil)
-        @client_id = client_id
+      def initialize(team_id:, board_id:, task_id: nil, task: nil)
+        @team_id = team_id
         @board_id = board_id
         @task = task
         @task_id = task_id
@@ -86,11 +86,11 @@ module Storage
       end
 
       def key
-        File.join("tasks", @client_id, @board_id, "#{id}.json")
+        File.join("tasks", @team_id, @board_id, "#{id}.json")
       end
 
       def archive_key
-        File.join("tasks", @client_id, @board_id, "archived", "#{id}.json")
+        File.join("tasks", @team_id, @board_id, "archived", "#{id}.json")
       end
 
       def history_details
@@ -103,8 +103,8 @@ module Storage
 
     class TaskStore
 
-      def initialize(client_id, board_id)
-        @client_id = client_id
+      def initialize(team_id, board_id)
+        @team_id = team_id
         @board_id = board_id
       end
 
@@ -113,14 +113,14 @@ module Storage
       end
 
       def archive!(task)
-        TaskData.new(client_id: @client_id, board_id: @board_id, task: task).tap do |data|
+        TaskData.new(team_id: @team_id, board_id: @board_id, task: task).tap do |data|
           delete(data.key)
           put(data.archive_key, task)
         end
       end
 
       def store!(task)
-        TaskData.new(client_id: @client_id, board_id: @board_id, task: task).tap do |data|
+        TaskData.new(team_id: @team_id, board_id: @board_id, task: task).tap do |data|
           put(data.key, task)
         end
       end
@@ -143,14 +143,14 @@ module Storage
         @store ||= ImportBucket.new
       end
 
-      def initialize(client_id:, board_id:, archived:)
-        @client_id = client_id
+      def initialize(team_id:, board_id:, archived:)
+        @team_id = team_id
         @board_id = board_id
         @archived = archived
       end
 
       def fetch(task_id)
-        data = TaskData.new(client_id: @client_id, board_id: @board_id, task_id: task_id)
+        data = TaskData.new(team_id: @team_id, board_id: @board_id, task_id: task_id)
         key = @archived ? data.archive_key : data.key
         object = store.bucket.object(key)
 

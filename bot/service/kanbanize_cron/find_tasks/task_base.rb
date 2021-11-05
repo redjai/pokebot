@@ -1,8 +1,8 @@
 class TaskBase
   include Service::Kanbanize::Api
 
-  def initialize(client_id:, board_id:, api_key:, subdomain:)
-    @client_id = client_id
+  def initialize(team_id:, board_id:, api_key:, subdomain:)
+    @team_id = team_id
     @board_id = board_id
     @api_key = api_key
     @subdomain = subdomain

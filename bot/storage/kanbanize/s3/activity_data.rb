@@ -2,8 +2,8 @@ class ActivityData
 
   attr_reader :data
 
-  def initialize(client_id, board_id, activity)
-    @client_id = client_id
+  def initialize(team_idboard_id, activity)
+    @team_id teteam_id
     @board_id = board_id
     @data = activity
   end
@@ -49,7 +49,7 @@ end
 class BoardActivityData < ActivityData
 
   def key
-    File.join("boards", "activities", year.to_s, month.to_s, day.to_s, @client_id, @board_id, task_id, file)
+    File.join("boards", "activities", year.to_s, month.to_s, day.to_s, @team_id@board_id, task_id, file)
   end
 
   def file
@@ -61,7 +61,7 @@ end
 class AuthorActivityData < ActivityData
   
   def key
-    File.join("authors", "activities", year.to_s, month.to_s, day.to_s, @client_id, URI.escape(author), @board_id, file)
+    File.join("authors", "activities", year.to_s, month.to_s, day.to_s, @team_idURI.escape(author), @board_id, file)
   end
 
   def file

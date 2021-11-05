@@ -1,6 +1,6 @@
-require 'storage/kanbanize/dynamodb/client'
+require 'storage/kanbanize/dynamodb/team'
 
-describe Storage::Kanbanize::DynamoDB::Client do
+describe Storage::Kanbanize::DynamoDB::Team do
 
   let(:last_board_id){ 2 }
   let(:board_ids){ [3] }
@@ -8,7 +8,7 @@ describe Storage::Kanbanize::DynamoDB::Client do
 
   subject{ 
     described_class.new({ 
-      "client_id" => "test-client-1",
+      "team_id" => "test-client-1",
       "board_ids" => board_ids,
       "last_board_id" => last_board_id
     }) 

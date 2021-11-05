@@ -95,13 +95,13 @@ module DbSpec
         table_name: 'test-clients-table',
         key_schema: [
           {
-            attribute_name: 'client_id',
+            attribute_name: 'team_id',
             key_type: 'HASH'  # Partition key.
           }
         ],
         attribute_definitions: [
           {
-            attribute_name: 'client_id',
+            attribute_name: 'team_id',
             attribute_type: 'S'
           }
         ],

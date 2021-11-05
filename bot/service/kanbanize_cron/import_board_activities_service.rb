@@ -1,6 +1,6 @@
 require 'net/http'
 require_relative '../kanbanize/net/api'
-require 'storage/kanbanize/dynamodb/client'
+require 'storage/kanbanize/dynamodb/team'
 require 'gerty/request/events/cron'
 require 'gerty/service/bounded_context'
 
@@ -14,7 +14,7 @@ module Service
     module ImportBoardActivities # change this name 
       extend self
       extend Service::Kanbanize::Api
-      extend Storage::Kanbanize::DynamoDB::Client
+      extend Storage::Kanbanize::DynamoDB::Team
 
       DEFAULT_PAGE_SIZE = 30
                                 
@@ -29,30 +29,29 @@ module Service
       Gerty::Service::BoundedContext.register(self)
 
       def call(bot_request)
+        get_teams.each do |team|
+          begin
 
-        client = get_client(bot_request.data['client_id'])
+            bot_request.events << Gerty::Request::Events::Kanbanize.activities_imported(
+              source: :kanbanize,
+              activities: activities(
+                kanbanize_api_key: team.kanbanize_api_key,
+                subdomain: team.subdomain,
+                board_id: bot_request.data['board_id'] || team.board_id,
+                event_type: bot_request.data['event_type'],
+                date_range: date_range(bot_request.data['date_range'] || 'today')
+              ),
+              board_id: team.board_id,
+              team_id: team.team_id
+            )
 
-        begin
-
-          bot_request.events << Gerty::Request::Events::Kanbanize.activities_imported(
-            source: :kanbanize,
-            activities: activities(
-              kanbanize_api_key: client.kanbanize_api_key,
-              subdomain: client.subdomain,
-              board_id: bot_request.data['board_id'] || client.board_id,
-              event_type: bot_request.data['event_type'],
-              date_range: date_range(bot_request.data['date_range'] || 'today')
-            ),
-            board_id: client.board_id,
-            client_id: client.id
-          )
-
-        rescue Service::Kanbanize::Api::BadKanbanizeRequest => e
-          Gerty::LOGGER.info(e.inspect)  
-          Gerty::LOGGER.info(client.inspect)
-        end
+          rescue Service::Kanbanize::Api::BadKanbanizeRequest => e
+            Gerty::LOGGER.info(e.inspect)  
+            Gerty::LOGGER.info(team.inspect)
+          end
        
-        set_last_board(client.id, client.board_id)
+          set_last_board(team.team_id, team.board_id)
+        end
       end
 
       def activities(kanbanize_api_key:, subdomain:, board_id:, event_type:, date_range:) 

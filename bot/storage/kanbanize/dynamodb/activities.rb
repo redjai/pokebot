@@ -71,11 +71,11 @@ module Storage
           date.to_datetime.iso8601
         end
 
-        def store(client_id:, board_id:, activity:)
+        def store(team_id:, board_id:, activity:)
 
           monkey_key = Digest::MD5.hexdigest(activity.to_s)
  
-          activity.merge!({ client_id: client_id, 
+          activity.merge!({ team_id: team_id, 
                             board_id: board_id, 
                           monkey_key: monkey_key,
                                 date: DateTime.parse(activity['date']).iso8601
@@ -93,18 +93,18 @@ module Storage
           end
         end
 
-        def upsert(client_id:, board_id:, activities:)
+        def upsert(team_id:, board_id:, activities:)
           (activities || []).select do |activity|
-            store(client_id: client_id, board_id: board_id, activity: activity)
+            store(team_id: team_id, board_id: board_id, activity: activity)
           end
         end
 
-        # def upsert(client_id:, board_id:, activities:)
+        # def upsert(team_id:, board_id:, activities:)
         
         #   items = activities.collect do |activity|
         #     {
         #       put_request: {
-        #         item: activity.merge({ client_id: client_id, 
+        #         item: activity.merge({ team_id: team_id, 
         #                                 board_id: board_id, 
         #                               monkey_key: Digest::MD5.hexdigest(activity.to_s),
         #                                     date: DateTime.parse(activity['date']).iso8601

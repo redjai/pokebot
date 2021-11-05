@@ -1,7 +1,7 @@
 require 'date'
 require 'aws-sdk-s3'
 require_relative '../kanbanize/net/api'
-require 'storage/kanbanize/dynamodb/client'
+require 'storage/kanbanize/dynamodb/team'
 require 'gerty/request/events/kanbanize'
 
 require_relative 'find_tasks/active_tasks'
@@ -14,7 +14,7 @@ module Service
   module Kanbanize
     module FindTaskIdsForBoards
       extend self
-      extend Storage::Kanbanize::DynamoDB::Client
+      extend Storage::Kanbanize::DynamoDB::Team
 
       def listen
         [ Gerty::Request::Events::Cron::Actions::FIND_TASK_IDS_FOR_BOARDS ]
@@ -27,14 +27,15 @@ module Service
       Gerty::Service::BoundedContext.register(self) 
 
       def call(bot_request)
-        client = get_client(bot_request.data['client_id'])
+        get_teams.each do |team|
 
-        client.board_ids.each do |board_id|
-          bot_request.events << ActiveTasks.new( client_id: client.id, 
-                                                  board_id: board_id,
-                                                   api_key: client.kanbanize_api_key,
-                                                 subdomain: client.subdomain ).tasks_found_event        
-          
+          team.board_ids.each do |board_id|
+            bot_request.events << ActiveTasks.new( team_id: team.team_id, 
+                                                    board_id: board_id,
+                                                    api_key: team.kanbanize_api_key,
+                                                  subdomain: team.subdomain ).tasks_found_event
+                  
+          end
         end
       end
     end

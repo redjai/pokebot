@@ -8,9 +8,9 @@ module Storage
 
         class TaskData
 
-          def initialize(client_id:, kanbanize_data:)
+          def initialize(team_id:, kanbanize_data:)
             @kanbanize_data = kanbanize_data
-            @client_id = client_id
+            @team_id = team_id
           end
 
           def history_details
@@ -26,12 +26,12 @@ module Storage
           end
 
           def id
-            "#{@client_id}-#{@kanbanize_data['taskid']}"
+            "#{@team_id}-#{@kanbanize_data['taskid']}"
           end
 
           def hydrate!
             @kanbanize_data['id'] = id
-            @kanbanize_data['client_id'] = @client_id
+            @kanbanize_data['team_id'] = @team_id
           end
 
           def data
@@ -43,9 +43,9 @@ module Storage
 
         class HistoryDetail
 
-          def initialize(client_id, kanbanize_data)
+          def initialize(team_id, kanbanize_data)
             @kanbanize_data = kanbanize_data
-            @client_id = client_id
+            @team_id = team_id
           end
 
           def item
@@ -53,7 +53,7 @@ module Storage
           end
 
           def id
-            "#{@client_id}-#{@kanbanize_data['historyid']}"
+            "#{@team_id}-#{@kanbanize_data['historyid']}"
           end
 
           def entrydate
@@ -79,27 +79,23 @@ module Storage
           basic: "Title"
         }
 
-        
-
-        def fetch(**args)
-
-          if args[:client_id] && args[:task_id]
-            id = "#{args[:client_id]}-#{args[:task_id]}"
-          elsif
-
-          Storage::Kanbanize::DynamoDB::Client::Client.new(
-            dynamo_resource.client.get_item({
-              key: {
-                "id" => 
-              },
-              projection_expression: PROJECTIONS[projection], 
-              table_name: ENV['KANBANIZE_TASKS_TABLE_NAME'],
-            })[:item]
-          )
+        def fetch_all(team_id, task_ids, projection: basic)
+          dynamo_resource.batch_get_item({
+            request_items: {
+              ENV['KANBANIZE_TASKS_TABLE_NAME'] => {
+                keys: task_ids.collect do |task_id|
+                  {
+                    id: "#{@team_id}-#{@kanbanize_data['taskid']}" 
+                  }
+                end 
+              }, 
+            },
+            projection_expression: PROJECTIONS[projection] 
+          })
         end
         
-        def upsert(client_id:, task:)
-          task_data = TaskData.new(client_id: client_id, kanbanize_data: task)
+        def upsert(team_id:, task:)
+          task_data = TaskData.new(team_id: team_id, kanbanize_data: task)
           dynamo_resource.client.put_item(
             {
               item: task_data.data,
@@ -108,15 +104,15 @@ module Storage
           )
 
           task_data.history_details.each do |history_detail|
-            store_history_detail(client_id: client_id, history_detail: history_detail)
+            store_history_detail(team_id: team_id, history_detail: history_detail)
           end
         end
 
-        def store_history_detail(client_id:, history_detail:)
+        def store_history_detail(team_id:, history_detail:)
           begin
             dynamo_resource.client.put_item({
               table_name: ENV['KANBANIZE_HISTORY_DETAILS_TABLE_NAME'],
-              item: HistoryDetail.new(client_id, history_detail).item,
+              item: HistoryDetail.new(team_id, history_detail).item,
               condition_expression: "attribute_not_exists(id)"
             }).successful?
           rescue Aws::DynamoDB::Errors::ConditionalCheckFailedException => e
@@ -143,13 +139,13 @@ module Storage
             {
               expression_attribute_values: {
                 ":created_at" => "2021-10-01",
-                ":client_id" => "livelink"
+                ":team_id" => "livelink"
               },
                expression_attribute_names: {
                 "#created_at" => "created_at",
-                "#client_id" => "client_id"
+                "#team_id" => "team_id"
               },
-              key_condition_expression: "#created_at > :created_at AND #client_id = :client_id",
+              key_condition_expression: "#created_at > :created_at AND #team_id = :team_id",
               index_name: "created_at",
               table_name: ENV['KANBANIZE_TASKS_TABLE_NAME'], 
             }

@@ -35,6 +35,14 @@ module Gerty
         end
       end
 
+      def team
+        @team ||= begin
+          return nil unless auto_load
+          require 'storage/kanbanize/dynamodb/team'
+          Storage::Kanbanize::DynamoDB::Team.fetch_team(context.team_id)
+        end
+      end
+
       # intent was when we couldn't understand why a user has interacted
       # lets replace this by using SlackContext private-metadata in interactions 
       # def intent

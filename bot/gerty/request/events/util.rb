@@ -4,7 +4,7 @@ require_relative '../event'
 # sls invoke \
 # -f kanbanize_util \
 # --stage development \
-# -d "{\"client_id\":\"livelink\",\"action\":\"find-tasks\",\"archive\":\"2021-07-1:2021-08-1\"}"
+# -d "{\"team_id\":\"livelink\",\"action\":\"find-tasks\",\"archive\":\"2021-07-1:2021-08-1\"}"
 
 module Gerty
   module Request

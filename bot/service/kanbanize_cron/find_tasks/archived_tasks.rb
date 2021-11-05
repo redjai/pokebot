@@ -4,15 +4,15 @@ class ArchiveTasks < TaskBase
         
   DEFAULT_PAGE_SIZE = 30
 
-  def initialize(client_id:, board_id:, api_key:, subdomain:, date_range:)
-    super(client_id: client_id, board_id: board_id, api_key: api_key, subdomain: subdomain)
+  def initialize(team_id:, board_id:, api_key:, subdomain:, date_range:)
+    super(team_id: team_id, board_id: board_id, api_key: api_key, subdomain: subdomain)
     @date_range = date_range
   end
 
   def tasks_found_event
     if any?
       Gerty::Request::Events::Kanbanize.archived_tasks_found(
-        client_id: @client_id,
+        team_id: @team_id,
         source: self.class.name, 
         board_id: @board_id, 
         tasks: taskids

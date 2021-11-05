@@ -1,5 +1,6 @@
 require 'gerty/request/events/insights'
 require 'storage/kanbanize/dynamodb/activities'
+require 'storage/kanbanize/dynamodb/tasks'
 
 module Service
   module Insight
@@ -19,7 +20,11 @@ module Service
       def call(bot_request)
         author = bot_request.user['kanbanize_username']
         dates = bot_request.data['date_range'].to_sym
-        puts Storage::Kanbanize::DynamoDB::Activities.fetch_by_author_and_dates(author: author, dates: dates).inspect
+        actvities = Storage::Kanbanize::DynamoDB::Activities.fetch_by_author_and_dates(author: author, dates: dates)
+        tasks = activities.collect do |activity|
+          activity['taskid']
+        end
+        Storage::Kanbanize::DynamoDB::Tasks.fetch_all()
       end 
 
     end

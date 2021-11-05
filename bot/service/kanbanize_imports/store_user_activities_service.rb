@@ -22,14 +22,14 @@ module Service
 
       def call(bot_request)
 
-        new_activities = Storage::Kanbanize::DynamoDB::Activities.upsert( client_id: bot_request.data['client_id'], 
+        new_activities = Storage::Kanbanize::DynamoDB::Activities.upsert( team_id: bot_request.data['team_id'], 
                                                                            board_id: bot_request.data['board_id'], 
                                                                          activities: bot_request.data['activities'] )
       
         if new_activities.any?
           bot_request.events << Gerty::Request::Events::Kanbanize.new_activities_found(
                                 source: self.class.name, 
-                                client_id: bot_request.data['client_id'],
+                                team_id: bot_request.data['team_id'],
                                 board_id: bot_request.data['board_id'],
                                 activities: new_activities
                               )                  

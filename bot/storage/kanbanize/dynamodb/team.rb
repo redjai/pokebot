@@ -3,33 +3,33 @@ require 'aws-sdk-dynamodb'
 module Storage
   module Kanbanize
     module DynamoDB
-      module Client
+      module Team
       extend self
 
-        class Client
+        class Team
 
           def initialize(data)
-            @client = data
+            @team = data
           end
 
           def kanbanize_api_key
-            @client['kanbanize_api_key']
+            @team['kanbanize_api_key']
           end
 
           def subdomain
-            @client['subdomain']
+            @team['subdomain']
           end
 
-          def id
-            @client['client_id']
+          def team_id
+            @team['team_id']
           end
 
           def board_ids 
-            @client['board_ids'].sort
+            @team['board_ids'].sort
           end
 
           def last_board_id
-            @client['last_board_id'] || board_ids.last
+            @team['last_board_id'] || board_ids.last
           end
 
           def board_id
@@ -37,15 +37,15 @@ module Storage
           end
 
           def firehoses
-            @client['firehose']
+            @team['firehose']
           end
 
           def blockages_channel
-            @client['blockages_channel']
+            @team['blockages_channel']
           end
 
           def team_id
-            @client['team_id']
+            @team['team_id']
           end
 
         end
@@ -56,25 +56,25 @@ module Storage
           @@dynamo_resource = Aws::DynamoDB::Resource.new(options)
         end
 
-        def create_client(client_id, board_ids, kanbanize_api_key, subdomain)
+        def create(team_id:, board_ids:, kanbanize_api_key:, subdomain:)
           dynamo_resource.client.put_item(
             {
               item: {
-                "client_id" => client_id,
+                "team_id" => team_id,
                 "board_ids" => board_ids,
                 "kanbanize_api_key" => kanbanize_api_key,
                 "subdomain" => subdomain 
               },
-              table_name: ENV['KANBANIZE_CLIENTS_TABLE_NAME']
+              table_name: ENV['KANBANIZE_TEAMS_TABLE_NAME']
             }
           ) 
         end
 
-        def set_last_board(client_id, board_id)
+        def set_last_board(team_id, board_id)
           dynamo_resource.client.update_item(
             {
               key: {
-                "client_id" => client_id 
+                "team_id" => team_id 
               },  
               update_expression: 'SET #last_board_id = :board_id',
               expression_attribute_names: {
@@ -83,18 +83,24 @@ module Storage
               expression_attribute_values: {
                 ':board_id': board_id
               },
-              table_name: ENV['KANBANIZE_CLIENTS_TABLE_NAME'],
+              table_name: ENV['KANBANIZE_TEAMS_TABLE_NAME'],
             }
           ) 
-        end 
+        end
 
-        def get_client(client_id)
-          Storage::Kanbanize::DynamoDB::Client::Client.new(
+        def get_teams
+          ENV['TEAM_IDS'].split(",").collect do |team_id|
+            get_team(team_id)
+          end
+        end
+
+        def get_team(team_id)
+          Storage::Kanbanize::DynamoDB::Team::Team.new(
             dynamo_resource.client.get_item({
               key: {
-                "client_id" => client_id 
+                "team_id" => team_id 
               }, 
-              table_name: ENV['KANBANIZE_CLIENTS_TABLE_NAME'],
+              table_name: ENV['KANBANIZE_TEAMS_TABLE_NAME'],
             })[:item]
           )
         end

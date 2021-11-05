@@ -19,7 +19,7 @@ module Service
       def call(bot_request)
         author = bot_request.user['kanbanize_username']
         dates = bot_request.data['date_range'].to_sym
-        puts Storage::Kanbanize::DynamoDB::Activities.fetch(author: author, dates: dates).inspect
+        puts Storage::Kanbanize::DynamoDB::Activities.fetch_by_author_and_dates(author: author, dates: dates).inspect
       end 
 
     end

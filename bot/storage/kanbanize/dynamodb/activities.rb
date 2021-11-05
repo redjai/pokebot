@@ -10,9 +10,9 @@ module Storage
       module Activities
         extend self
 
-        def fetch(author:, dates:)
+        def fetch_by_author_and_dates(author:, dates:)
           range = dates_to_range(dates)
-          dynamo_resource.client.query(
+          result = dynamo_resource.client.query(
             {
               table_name: ENV['KANBANIZE_ACTIVITIES_TABLE_NAME'],
               index_name: "author_date",
@@ -28,6 +28,30 @@ module Storage
               key_condition_expression: "#author = :author AND #date BETWEEN :start AND :finish"
             }
           )
+            
+          ids = result.items.collect do |item|
+            {
+              'author' => item['author'],
+              'monkey_key' => item['monkey_key']
+            }
+          end
+
+          fetch_by_ids(ids)
+        end
+
+        def fetch_by_ids(keys)
+          dynamo_resource.batch_get_item({
+            request_items: {
+              ENV['KANBANIZE_ACTIVITIES_TABLE_NAME'] => {
+                keys: keys.collect do |key|
+                  {
+                    author: key['author'], 
+                    monkey_key: key['monkey_key'], 
+                  }
+                end 
+              }, 
+            }, 
+          })
         end
 
         def dates_to_range(dates)

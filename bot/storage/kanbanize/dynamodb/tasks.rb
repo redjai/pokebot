@@ -76,21 +76,21 @@ module Storage
         end
 
         PROJECTIONS = {
-          basic: "Title"
+          basic: "taskid,boardid,title"
         }
 
-        def fetch_all(team_id, task_ids, projection: basic)
+        def fetch_all(team_id, task_ids, projection: :basic)
           dynamo_resource.batch_get_item({
             request_items: {
               ENV['KANBANIZE_TASKS_TABLE_NAME'] => {
                 keys: task_ids.collect do |task_id|
                   {
-                    id: "#{@team_id}-#{@kanbanize_data['taskid']}" 
+                    id: "#{team_id}-#{task_id}" 
                   }
-                end 
+                end.uniq,
+                projection_expression: PROJECTIONS[projection] 
               }, 
-            },
-            projection_expression: PROJECTIONS[projection] 
+            }
           })
         end
         

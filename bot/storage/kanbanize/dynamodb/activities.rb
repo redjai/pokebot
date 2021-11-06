@@ -28,45 +28,39 @@ module Storage
               key_condition_expression: "#author = :author AND #date BETWEEN :start AND :finish"
             }
           )
-            
-          ids = result.items.collect do |item|
+          keys = result.items.collect do |item|
             {
               'author' => item['author'],
               'monkey_key' => item['monkey_key']
             }
           end
 
-          fetch_by_ids(ids)
+          fetch_by_ids(keys)
         end
 
         def fetch_by_ids(keys)
           dynamo_resource.batch_get_item({
             request_items: {
               ENV['KANBANIZE_ACTIVITIES_TABLE_NAME'] => {
-                keys: keys.collect do |key|
-                  {
-                    author: key['author'], 
-                    monkey_key: key['monkey_key'], 
-                  }
-                end 
+                keys: keys
               }, 
             }, 
-          })
+          }).responses[ENV['KANBANIZE_ACTIVITIES_TABLE_NAME']]
         end
 
         def dates_to_range(dates)
           case dates
-          when :yesterday
+          when 'yesterday'
             ((Date.today - 1)..Date.today)
-          when :today
+          when 'today'
             ((Date.today)..(Date.today + 1))
-          when :this_week
+          when 'this week'
             ((Date.today - Date.today.wday)..(Date.today))
-          when :last_week
+          when 'last week'
             ((Date.today - Date.today.wday - 7)..(Date.today - Date.today.wday - 1))
           end
         end
-
+        
         def to_d(date)
           date.to_datetime.iso8601
         end

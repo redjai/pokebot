@@ -33,6 +33,7 @@ provider:
     BOT_ENV: ${self:provider.stage}
     USERS_TABLE_NAME: ${self:custom.users_table}
     KANBANIZE_ACTIVITIES_TABLE_NAME: ${self:custom.kanbanize_activities_table}
+    KANBANIZE_TASKS_TABLE_NAME: ${self:custom.kanbanize_tasks_table}
     TEAM_IDS: T010JM31KJ9
 
   iamRoleStatements:

@@ -8,11 +8,11 @@ module Service
       extend self
 
       def listen
-        [ Gerty::Request::Events::Insights::ACTIVITIES_REQUESTED ]
+        [ Gerty::Request::Events::Insights::DEVELOPER_INSIGHTS_REQUESTED ]
       end
 
       def broadcast
-        []
+        [ :insights ]
       end
 
       Gerty::Service::BoundedContext.register(self)
@@ -24,8 +24,13 @@ module Service
         
         task_ids = activities.collect do |activity|
           activity['taskid']
-        end
-        puts Storage::Kanbanize::DynamoDB::Task.fetch_all(bot_request.context.team_id, task_ids).inspect
+        end.uniq
+        
+        tasks = Storage::Kanbanize::DynamoDB::Task.fetch_all(bot_request.context.team_id, task_ids)
+
+        bot_request.events << Gerty::Request::Events::Insights.developer_insights_found( source: self,
+                                                                                          tasks: tasks, 
+                                                                                     activities: activities )
       end
     end
   end

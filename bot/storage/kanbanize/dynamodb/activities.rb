@@ -58,6 +58,8 @@ module Storage
             ((Date.today - Date.today.wday)..(Date.today))
           when 'last week'
             ((Date.today - Date.today.wday - 7)..(Date.today - Date.today.wday - 1))
+          else
+            raise "unexpected date range #{dates}"
           end
         end
         

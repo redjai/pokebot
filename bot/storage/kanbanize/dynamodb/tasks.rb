@@ -91,7 +91,7 @@ module Storage
                 projection_expression: PROJECTIONS[projection] 
               }, 
             }
-          })
+          }).responses[ENV['KANBANIZE_TASKS_TABLE_NAME']]
         end
         
         def upsert(team_id:, task:)

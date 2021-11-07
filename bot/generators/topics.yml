@@ -13,4 +13,5 @@ sns:
     - kanbanize_imports
   insights:
     - insight
+    - responder
 

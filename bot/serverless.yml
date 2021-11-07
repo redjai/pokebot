@@ -239,7 +239,9 @@ functions:
          arn:
            Fn::GetAtt:
              - InsightsToInsightSqsQueue
-             - Arn  
+             - Arn
+    environment:
+      INSIGHTS_TOPIC_ARN: !Ref InsightsSnsTopic  
 
   intent:
     handler: gerty/listeners/sqs.Handler::Sqs.handle
@@ -290,10 +292,16 @@ functions:
            Fn::GetAtt:
              - UsersToResponderSqsQueue
              - Arn
+      - sqs:
+         arn:
+           Fn::GetAtt:
+             - InsightsToResponderSqsQueue
+             - Arn
+
     environment:
       BOT_USER_OAUTH_ACCESS_TOKEN: ${file(config.${self:provider.stage}.yml):bot_user_oauth_access_token}
-      KANBANIZE_TEAMS_TABLE_NAME: ${self:custom.kanbanize_teams_table}  
-
+      KANBANIZE_TEAMS_TABLE_NAME: ${self:custom.kanbanize_teams_table}
+        
   interactions:
     handler: gerty/listeners/slack_interactions_gateway.Interactions::Handler.handle
     events:
@@ -830,6 +838,49 @@ resources:
           - Ref: InsightsToInsightSqsQueue
       DependsOn:
         - InsightsToInsightSubscription
+      
+
+
+    #### AUTO GENERATED QUEUE - 'responder'
+    InsightsToResponderSqsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-${self:provider.stage}-sns-insights-to-sqs-responder
+    
+    #### AUTO GENERATED - ATTACH 'insights' TOPIC to 'responder' QUEUE
+    InsightsToResponderSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn: !Ref InsightsSnsTopic
+        Endpoint: !GetAtt
+          - InsightsToResponderSqsQueue
+          - Arn
+        Protocol: sqs
+      DependsOn:
+        - InsightsSnsTopic
+        - InsightsToResponderSqsQueue
+    
+    #### AUTO GENERATED - ALLOW 'insights' TOPIC to send messages to 'responder' QUEUE
+    SnSInsightsToSQSResponderSqsQueuePolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Sid: "allow-sns-insights"
+              Effect: Allow
+              Principal: "*"
+              Resource: !GetAtt
+                - InsightsToResponderSqsQueue
+                - Arn
+              Action: "SQS:SendMessage"
+              Condition:
+                ArnEquals:
+                  "aws:SourceArn": !Ref InsightsSnsTopic 
+        Queues:
+          - Ref: InsightsToResponderSqsQueue
+      DependsOn:
+        - InsightsToResponderSubscription
       
 
     #AUTO-END-TOPICS

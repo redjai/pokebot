@@ -38,24 +38,56 @@ module Service
                 { activity: activity, task: task }
               end.each do |row|
                 ago = days_ago(Date.parse(row[:activity]['date']))
-                dated[ago] ||= []
-                dated[ago] << row
+                dated[ago] ||= {}
+                dated[ago][row[:task]] ||= []
+                dated[ago][row[:task]] << row[:activity]
               end
               dated.each do |ago, rows|
                 blocks << ago_section(ago)
-                rows.each do |row|
-                  blocks << row_section(row)
+                rows.each do |task, activities|
+                  blocks << text_section("_#{truncate(task['title'],100)}_")
+                  text = activities.collect do |activity|
+                    "* #{activity['event']}: #{truncate(activity['text'], 100)}"
+                  end.join("\n")
+                  blocks << text_section(text)
+                  blocks << actions(
+                      button_element(text: "View Task", 
+                                    value: task['taskid'], 
+                                  options: { url: link(task) })
+                    )
                 end
+              end
+              blocks.each do |block|
+                puts block.inspect
               end
               blocks
             end
+      
+            def button_block(task)
+              actions(
+                view_recipe_button_element(recipe['sourceUrl']),
+                favourite_unfavourite_button_element(recipe['id'])
+              ) 
+            end
 
             def ago_section(ago)
-              text_section(ago)
+              text_section("*#{ago}*")
+            end
+
+            def link(task)
+              "https://livelinktechnology.kanbanize.com/ctrl_board/#{task['boardid']}/cards/#{task['taskid']}/details/"
             end
     
-            def row_section(row)
-              text_section("#{row[:activity]['event']}, #{row[:activity]['text']} #{row[:task]['title']}")
+            def activity_section(activity)
+              text_section()
+            end
+
+            def truncate(text, max=25)
+              if text.length > max - 3
+                "#{text.slice(0,max - 3)}..."
+              else
+                text 
+              end
             end
           end
         end

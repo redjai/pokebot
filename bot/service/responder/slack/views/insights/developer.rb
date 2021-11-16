@@ -32,42 +32,49 @@ module Service
 
             def insight_blocks
               blocks = []
-              dated = {}
+              data = {}
+
               activities.sort_by{ |activity| activity['date'] }.collect do |activity|
                 task = tasks.find{ |task| task['taskid'] == activity['taskid'] }
                 { activity: activity, task: task }
               end.each do |row|
-                ago = days_ago(Date.parse(row[:activity]['date']))
-                dated[ago] ||= {}
-                dated[ago][row[:task]] ||= []
-                dated[ago][row[:task]] << row[:activity]
+                data[row[:task]] ||= []
+                data[row[:task]] << row[:activity]
               end
-              dated.each do |ago, rows|
-                blocks << ago_section(ago)
-                rows.each do |task, activities|
-                  blocks << text_section("_#{truncate(task['title'],100)}_")
-                  text = activities.collect do |activity|
-                    "* #{activity['event']}: #{truncate(activity['text'], 100)}"
-                  end.join("\n")
-                  blocks << text_section(text)
-                  blocks << actions(
-                      button_element(text: "View Task", 
-                                    value: task['taskid'], 
-                                  options: { url: link(task) })
-                    )
-                end
-              end
-              blocks.each do |block|
-                puts block.inspect
+
+              data.each do |task, activities|
+                blocks << text_section("_*#{truncate(task['title'],100)}:*_")
+                text = activities.collect do |activity|
+                  "* • #{d_o_w(Date.parse(activity['date']))}* #{activity['event']}: #{truncate(activity['text'], 100)}"
+                end.join("\n")
+                blocks << text_section(text)
+                blocks << actions(
+                    button_element(text: "View Task", 
+                                  value: task['taskid'], 
+                                options: { url: link(task) })
+                  )
+                blocks << divider_block
               end
               blocks
             end
       
-            def button_block(task)
-              actions(
-                view_recipe_button_element(recipe['sourceUrl']),
-                favourite_unfavourite_button_element(recipe['id'])
-              ) 
+            def d_o_w(date)
+              case date.wday
+              when 0 
+                '[sun]'
+              when 1
+                '[mon]'
+              when 2
+                '[tue]'
+              when 3
+                '[wed]'
+              when 4
+                '[thu]'
+              when 5
+                '[fri]'
+              when 6
+                '[sat]'
+              end
             end
 
             def ago_section(ago)

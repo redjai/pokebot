@@ -34,6 +34,7 @@ module Service
       end
 
       def import_tasks(bot_request, team)
+      
         collection = bot_request.data['activities'] ||  bot_request.data['tasks']
         
         ids = collection.collect do |activity|
@@ -67,7 +68,7 @@ module Service
           source: self.class.name, 
           team_id: team.team_id, 
           board_id: bot_request.data['board_id'],
-          tasks: ids.collect{ |id| { "task_id" => id } },
+          tasks: ids.collect{ |id| {  "task_id" => id } },
           archived: bot_request.data['archived'] ? 'yes' : 'no'  
         )
       end

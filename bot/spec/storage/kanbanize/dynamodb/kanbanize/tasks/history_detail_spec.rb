@@ -25,7 +25,7 @@ describe Storage::DynamoDB::Kanbanize::Tasks::HistoryDetail do
    context 'entrydate' do
 
      it 'should be an iso8601 date' do
-       expect(subject.entrydate =~ iso8601).to be_truthy 
+       expect(subject.entry_date =~ iso8601).to be_truthy 
      end
 
      it 'should merge the id into the item' do

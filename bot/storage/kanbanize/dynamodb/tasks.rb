@@ -1,4 +1,6 @@
 require 'aws-sdk-dynamodb'
+require_relative 'tasks/task_data'
+require 'gerty/lib/logger'
 
 module Storage
   module Kanbanize
@@ -39,28 +41,37 @@ module Storage
         end
         
         def upsert(team_id:, task:)
-          task_data = TaskData.new(team_id: team_id, kanbanize_data: task)
+          task_data = Storage::DynamoDB::Kanbanize::Tasks::TaskData.new(team_id: team_id, kanbanize_data: task)
           dynamo_resource.client.put_item(
             {
-              item: task_data.data,
+              item: task_data.item,
               table_name: ENV['KANBANIZE_TASKS_TABLE_NAME']
             }
           )
 
           task_data.history_details.each do |history_detail|
-            store_history_detail(team_id: team_id, history_detail: history_detail)
+            store_history_detail(history_detail)
+          end
+
+          task_data.movements.each do |movement|
+            store_movement(movement)
           end
 
           task_data.column_stays.values.each do |column_stay|
-            store_column_stay(column_stay)
+            if column_stay.valid?
+              store_column_stay(column_stay)
+            else
+              Gerty::LOGGER.debug("column stay not valid:")
+              Gerty::LOGGER.debug(column_stay.error_json)
+            end
           end
         end
 
-        def store_history_detail(team_id:, history_detail:)
+        def store_history_detail(history_detail)
           begin
             dynamo_resource.client.put_item({
               table_name: ENV['KANBANIZE_HISTORY_DETAILS_TABLE_NAME'],
-              item: HistoryDetail.new(team_id, history_detail).item,
+              item: history_detail.item,
               condition_expression: "attribute_not_exists(id)"
             }).successful?
           rescue Aws::DynamoDB::Errors::ConditionalCheckFailedException => e
@@ -86,7 +97,7 @@ module Storage
           begin
             dynamo_resource.client.put_item({
               table_name: ENV['KANBANIZE_MOVEMENTS_TABLE_NAME'],
-              item: column_stay.item,
+              item: movement.item,
               condition_expression: "attribute_not_exists(id)"
             }).successful?
           rescue Aws::DynamoDB::Errors::ConditionalCheckFailedException => e

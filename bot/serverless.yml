@@ -137,6 +137,38 @@ provider:
         - dynamodb:BatchWriteItem
       Resource:
          - Fn::GetAtt:
+            - MovementsTable
+            - Arn
+         - Fn::Join: ['/', ["Fn::GetAtt": [ MovementsTable, Arn ], 'index','*']] # * is all objects
+
+    - Effect: "Allow"
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:BatchGetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:BatchWriteItem
+      Resource:
+         - Fn::GetAtt:
+            - ColumnStaysTable
+            - Arn
+         - Fn::Join: ['/', ["Fn::GetAtt": [ ColumnStaysTable, Arn ], 'index','*']] # * is all objects
+
+    - Effect: "Allow"
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:BatchGetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:BatchWriteItem
+      Resource:
+         - Fn::GetAtt:
             - ActivitiesTable
             - Arn
          - Fn::Join: ['/', ["Fn::GetAtt": [ ActivitiesTable, Arn ], 'index','*']] # * is all objects
@@ -213,6 +245,8 @@ custom:
   recipe_favourites_table: ${self:service}-${self:provider.stage}-recipe-service-favourites
   kanbanize_teams_table: ${self:service}-${self:provider.stage}-kanbanize-teams
   kanbanize_imports_bucket: ${self:service}-${self:provider.stage}-kanbanize-imports
+  kanbanize_column_stays_table: ${self:service}-${self:provider.stage}-kanbanize-column-stays
+  kanbanize_movements_table: ${self:service}-${self:provider.stage}-kanbanize-movements
   rubyLayer:
     use_docker: true
 
@@ -388,6 +422,9 @@ functions:
       KANBANIZE_DB_NAME: ${self:custom.config.kanbanize_database.name}
       KANBANIZE_DB_SECRET_ARN: ${self:custom.config.kanbanize_database.secret_arn}
       KANBANIZE_HISTORY_DETAILS_TABLE_NAME: ${self:custom.kanbanize_history_details_table}
+      KANBANIZE_COLUMN_STAYS_TABLE_NAME: ${self:custom.kanbanize_column_stays_table}
+      KANBANIZE_MOVEMENTS_TABLE_NAME: ${self:custom.kanbanize_movements_table}
+      BOARD_ROOT: storage/local/board_structures
       
 
   kanbanize_util:
@@ -994,6 +1031,67 @@ resources:
           - AttributeName: team_id
             KeyType: HASH 
         BillingMode: PAY_PER_REQUEST
+
+    #######################################
+    # Kanbanize Movements Table
+    ######################################      
+    MovementsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.kanbanize_movements_table}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: team_board_id
+            AttributeType: S
+          - AttributeName: entry_date
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH   
+        GlobalSecondaryIndexes:
+          - IndexName: team_board_id_entry_date
+            KeySchema:
+              - AttributeName: team_board_id
+                KeyType: HASH
+              - AttributeName: entry_date
+                KeyType: RANGE
+            Projection:
+              ProjectionType: KEYS_ONLY
+        BillingMode: PAY_PER_REQUEST
+
+
+    #######################################
+    # Kanbanize ColumnStays Table
+    ######################################      
+    ColumnStaysTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.kanbanize_column_stays_table}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: team_board_id
+            AttributeType: S
+          - AttributeName: entry_at
+            AttributeType: S
+
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH 
+        GlobalSecondaryIndexes:
+          - IndexName: team_board_id_entry_at
+            KeySchema:
+              - AttributeName: team_board_id
+                KeyType: HASH
+              - AttributeName: entry_at
+                KeyType: RANGE
+            Projection:
+              ProjectionType: KEYS_ONLY
+        BillingMode: PAY_PER_REQUEST
+
+
+
 
     #####################################
     # Kanbanize Imports Bucket

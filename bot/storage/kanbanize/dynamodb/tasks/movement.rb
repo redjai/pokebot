@@ -1,5 +1,7 @@
 require_relative 'board_structures'
 
+# 
+
 module Storage
   module DynamoDB
     module Kanbanize
@@ -14,6 +16,10 @@ module Storage
             unless history_detail.details.scan(FROM_TO).flatten.empty?
               new(team_id: team_id, board_id: board_id, history_detail: history_detail)
             end
+          end
+
+          def id
+            "#{team_id}-#{history_detail.task_id}-#{history_detail.history_detail_id}"
           end
 
           def from_name
@@ -34,6 +40,24 @@ module Storage
 
           def section_valid?
             !from_section_name.nil? && !to_section_name.nil?
+          end
+
+          def section_boundary?
+            raise "cannot resolve section_boundary - not all sections are valid" unless section_valid?
+            from_section_name != to_section_name
+          end
+
+          def item
+            {
+               id: id,
+               from: from_name,
+               to: to_name,
+               team_board_id: "#{@team_id}-#{@board_id}",
+               task_id: history_detail.task_id,
+               entry_date: history_detail.entry_date,
+               from_section_name: from_section_name,
+               to_section_name: to_section_name
+            }
           end
 
           private

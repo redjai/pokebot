@@ -34,6 +34,45 @@ describe Storage::DynamoDB::Kanbanize::Tasks::Movement do
     end 
   end
 
+  context 'section_boundary' do
+
+    let(:history_detail){ double('HistoryDetail', details: details) }
+    subject{ described_class.build(team_id: team_id, board_id: board_id, history_detail: history_detail) }
+
+    context 'movement does not cross boundary' do
+
+      let(:details){ "From 'Discovery.refining' to 'Discovery.Ready to implement'" }
+
+      it 'should be false' do
+        expect(subject.section_boundary?).to be false
+      end
+
+    end
+
+    context 'movement does cross boundary' do
+
+      let(:details){ "From 'Discovery.refining' to 'Implementing.DOING'" }
+
+      it 'should be true' do
+        expect(subject.section_boundary?).to be true
+      end
+
+    end
+
+    context 'sections are not valid' do
+
+      let(:details){ "From 'BAD' to 'TO_WORSE'" }
+
+      it 'should raise an error' do
+        expect{
+          subject.section_boundary?
+        }.to raise_error("cannot resolve section_boundary - not all sections are valid")
+      end
+
+    end
+
+  end
+
   context 'section' do
 
     let(:history_detail){ double('HistoryDetail', details: details) }

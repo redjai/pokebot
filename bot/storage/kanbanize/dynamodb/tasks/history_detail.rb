@@ -10,7 +10,7 @@ module Storage
           end
 
           def item
-            @kanbanize_data.merge({'id' => id, 'entrydate' => entrydate})
+            @kanbanize_data.merge({'id' => id, 'entrydate' => entry_date})
           end
 
           def history_detail_id
@@ -25,7 +25,7 @@ module Storage
             @kanbanize_data['details']
           end
 
-          def entrydate
+          def entry_date
             DateTime.parse(@kanbanize_data['entrydate']).iso8601
           end
 

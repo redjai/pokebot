@@ -1,0 +1,855 @@
+{
+  "taskid": "690",
+  "boardid": "4",
+  "title": "Inline Text Editing — Builder",
+  "description": "In order to make it more intuitive for customers to edit text, Walmart have requested the ability to edit in-line on rWeb.\n\nDue to concerns about the legibility to small font sizes, we'd like a modal to appear beneath the slot when the text size is beneath a certain size - this is made more complex due to products showing the same font size differently (e.g. 40pt text for [this blanket|https://photos2.walmart.com/project_edit/standard/1f7c1ad918f5f95198e6b99a8502fd51o85080440] is presented differently to 40pt text for [this card|https://photos2.walmart.com/project_edit/card/c58daa8e29e89e802688cdf5fa0cde16o85080441])\n\nUX for how the tray and canvas area should appear for both above and below the threshold is [here](https://www.figma.com/proto/pFgzKkIgse6gQ53kQnzcoN/Inline-text---Hidden-Options?node-id=0%3A1&scaling=min-zoom&page-id=0%3A1).",
+  "type": "None",
+  "assignee": "Jamie",
+  "subtasks": "0",
+  "subtaskscomplete": "0",
+  "color": "#FFCC11",
+  "priority": "Average",
+  "size": null,
+  "deadline": null,
+  "deadlineoriginalformat": null,
+  "extlink": "",
+  "tags": "",
+  "leadtime": 98,
+  "blocked": null,
+  "blockedreason": null,
+  "columnname": "Archive",
+  "lanename": "Client Goals",
+  "subtaskdetails": [],
+  "columnid": "archive_54",
+  "laneid": "9",
+  "position": "2",
+  "workflow": 1,
+  "workflow_id": 8,
+  "attachments": null,
+  "columnpath": "Ready to Archive",
+  "reporter": "Jamie",
+  "customfields": [
+    {
+      "fieldid": 1,
+      "name": "Client",
+      "type": "dropdown",
+      "value": "Walmart",
+      "mandatory": false,
+      "immutable": false
+    }
+  ],
+  "updatedat": "2021-08-03 05:00:53",
+  "loggedtime": 0,
+  "historydetails": [
+    {
+      "eventtype": "Transitions",
+      "historyevent": "Task archived",
+      "taskid": "690",
+      "details": "Title Inline Text Editing — Builder",
+      "author": "superuser",
+      "entrydate": "2021-08-03 05:00:53",
+      "historyid": "19656"
+    },
+    {
+      "eventtype": "Transitions",
+      "historyevent": "Task moved",
+      "taskid": "690",
+      "details": "From 'Done' to 'Ready to Archive'",
+      "author": "Flávio",
+      "entrydate": "2021-07-19 09:47:42",
+      "historyid": "18338"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Deleted",
+      "taskid": "690",
+      "details": "Parent of 1775 Title: Inline text - Individual text unable to me resized on initial creation of text box",
+      "author": "Edward",
+      "entrydate": "2021-07-14 16:29:59",
+      "historyid": "17902"
+    },
+    {
+      "eventtype": "Transitions",
+      "historyevent": "Task moved",
+      "taskid": "690",
+      "details": "From 'In Progress' to 'Done'",
+      "author": "Edward",
+      "entrydate": "2021-07-14 16:29:59",
+      "historyid": "17901"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1775 Title: Inline text - Individual text unable to me resized on initial creation of text box",
+      "author": "Wilbert",
+      "entrydate": "2021-07-13 09:17:33",
+      "historyid": "17535"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1755 Title: Inline Text - Text disappearing from text box",
+      "author": "DB",
+      "entrydate": "2021-07-12 10:06:13",
+      "historyid": "17429"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1761 Title: Fixed slot template overlays not rendered on Canvas",
+      "author": "DB",
+      "entrydate": "2021-07-12 10:06:01",
+      "historyid": "17427"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1763 Title: Fix disappearing text slot",
+      "author": "DB",
+      "entrydate": "2021-07-12 10:05:58",
+      "historyid": "17425"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1746 Title: Merge initiative branch",
+      "author": "Jamie",
+      "entrydate": "2021-07-06 09:19:35",
+      "historyid": "17102"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1743 Title: fix up layer buttons",
+      "author": "Wilbert",
+      "entrydate": "2021-07-05 08:25:59",
+      "historyid": "16998"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Deleted",
+      "taskid": "690",
+      "details": "Predecesor of 472 Title: Prism builder - name selection functionality is not working in MWeb",
+      "author": "Jamie",
+      "entrydate": "2021-07-02 10:09:00",
+      "historyid": "16855"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1684 Title: Prism builder-Inline text-console errors when activating left chiclet in edit mode",
+      "author": "DB",
+      "entrydate": "2021-07-02 09:50:48",
+      "historyid": "16822"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1685 Title: Text was smaller in the popover than the slot",
+      "author": "DB",
+      "entrydate": "2021-07-02 09:50:42",
+      "historyid": "16820"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1697 Title: Inline text appearing on mWeb",
+      "author": "DB",
+      "entrydate": "2021-07-02 09:50:35",
+      "historyid": "16818"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1681 Title: Text decoration not highlight relevant buttons",
+      "author": "Jamie",
+      "entrydate": "2021-06-29 16:14:32",
+      "historyid": "16512"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1680 Title: Sometimes a slot doesn't render",
+      "author": "Jamie",
+      "entrydate": "2021-06-29 16:14:29",
+      "historyid": "16510"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1683 Title: Should be able to edit spine text on books",
+      "author": "Jamie",
+      "entrydate": "2021-06-29 16:14:24",
+      "historyid": "16508"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1682 Title: Should show popover on calendar event text",
+      "author": "Jamie",
+      "entrydate": "2021-06-29 16:14:24",
+      "historyid": "16506"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1672 Title: Fitster somehow not being called when entering edit mode",
+      "author": "DB",
+      "entrydate": "2021-06-29 10:06:43",
+      "historyid": "16420"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Deleted",
+      "taskid": "690",
+      "details": "Parent of 1666 Title: Use px for Quill font sizes but retail Pango sizes",
+      "author": "Jamie",
+      "entrydate": "2021-06-28 14:27:59",
+      "historyid": "16350"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1670 Title: Tag release",
+      "author": "Jamie",
+      "entrydate": "2021-06-28 12:19:41",
+      "historyid": "16328"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1669 Title: Deploy to photos1 for Mike to present to Walmart",
+      "author": "Jamie",
+      "entrydate": "2021-06-28 12:18:55",
+      "historyid": "16322"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1666 Title: Use px for Quill font sizes but retail Pango sizes",
+      "author": "Jamie",
+      "entrydate": "2021-06-28 11:31:03",
+      "historyid": "16307"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1665 Title: Disable 'Next' button on envelopes or any multi-page builders",
+      "author": "Jamie",
+      "entrydate": "2021-06-28 11:31:03",
+      "historyid": "16305"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1668 Title: Minimal scrollbar styles on popover",
+      "author": "Jamie",
+      "entrydate": "2021-06-28 11:31:03",
+      "historyid": "16303"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1667 Title: Use 6 for text size limit, so that it's 12 px visible size",
+      "author": "Jamie",
+      "entrydate": "2021-06-28 11:31:03",
+      "historyid": "16301"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1629 Title: Awkward user experience between stackable slot modes",
+      "author": "Edward",
+      "entrydate": "2021-06-28 08:37:47",
+      "historyid": "16224"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1620 Title: Delete fit text code and use Fitster instead",
+      "author": "DB",
+      "entrydate": "2021-06-24 15:08:48",
+      "historyid": "15971"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1605 Title: Ensure Rich Text is always present before mounting text-tray",
+      "author": "Flávio",
+      "entrydate": "2021-06-24 11:50:35",
+      "historyid": "15920"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1618 Title: Popover double text size if text size is too small",
+      "author": "Edward",
+      "entrydate": "2021-06-24 11:19:25",
+      "historyid": "15898"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1619 Title: Popover scrollbar show empty space",
+      "author": "Edward",
+      "entrydate": "2021-06-24 11:19:25",
+      "historyid": "15896"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1617 Title: Adjust line height on font-size number input",
+      "author": "Edward",
+      "entrydate": "2021-06-24 11:19:25",
+      "historyid": "15894"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1596 Title: Scale popover by amount that slot scaled down by",
+      "author": "Edward",
+      "entrydate": "2021-06-24 10:00:36",
+      "historyid": "15877"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Deleted",
+      "taskid": "690",
+      "details": "Parent of 1580 Title: Inline text - vertical alignment seems wrong",
+      "author": "Jamie",
+      "entrydate": "2021-06-22 12:14:07",
+      "historyid": "15471"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Deleted",
+      "taskid": "690",
+      "details": "Parent of 1578 Title: inline text - unhighlighted text is not being resized",
+      "author": "Jamie",
+      "entrydate": "2021-06-22 12:01:51",
+      "historyid": "15458"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1580 Title: Inline text - vertical alignment seems wrong",
+      "author": "DB",
+      "entrydate": "2021-06-22 09:58:31",
+      "historyid": "15414"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1578 Title: inline text - unhighlighted text is not being resized",
+      "author": "DB",
+      "entrydate": "2021-06-22 09:58:31",
+      "historyid": "15412"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1579 Title: inline text - text options not resetting to default",
+      "author": "DB",
+      "entrydate": "2021-06-22 09:58:30",
+      "historyid": "15410"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1577 Title: in-line text - new empty unfocused text box are invisible",
+      "author": "DB",
+      "entrydate": "2021-06-22 09:58:21",
+      "historyid": "15408"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1573 Title: inline text system test refactor",
+      "author": "DB",
+      "entrydate": "2021-06-22 09:51:15",
+      "historyid": "15396"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1575 Title: Inline text - additional items textbox being created in move mode",
+      "author": "DB",
+      "entrydate": "2021-06-22 09:50:58",
+      "historyid": "15393"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1561 Title: Extract Fitster NPM module",
+      "author": "Jamie",
+      "entrydate": "2021-06-18 15:16:47",
+      "historyid": "15245"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Task updated",
+      "taskid": "690",
+      "details": "Description changed",
+      "author": "Jamie",
+      "entrydate": "2021-06-18 10:00:29",
+      "historyid": "15167"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1549 Title: Slot control text is larger than it's container",
+      "author": "Edward",
+      "entrydate": "2021-06-18 09:58:16",
+      "historyid": "15165"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1548 Title: Ensure slot doesn't defocus whilst editing",
+      "author": "Edward",
+      "entrydate": "2021-06-18 09:58:11",
+      "historyid": "15163"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1529 Title: Refactor text decoration",
+      "author": "DB",
+      "entrydate": "2021-06-16 10:05:38",
+      "historyid": "14663"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1514 Title: text decoration not mounting",
+      "author": "Wilbert",
+      "entrydate": "2021-06-15 10:00:54",
+      "historyid": "14450"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1502 Title: Rich text box unmount on focus change",
+      "author": "Jamie",
+      "entrydate": "2021-06-14 11:34:09",
+      "historyid": "14329"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1445 Title: Write unit tests for text fitting code",
+      "author": "DB",
+      "entrydate": "2021-06-10 10:05:34",
+      "historyid": "13987"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1439 Title: Restore font size and line height when clicking erase",
+      "author": "DB",
+      "entrydate": "2021-06-09 09:49:00",
+      "historyid": "13768"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1431 Title: Ensure a slot always exists",
+      "author": "DB",
+      "entrydate": "2021-06-09 09:48:39",
+      "historyid": "13766"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1436 Title: Scale text by text slot scale factor when text size is smaller than bounding box.",
+      "author": "DB",
+      "entrydate": "2021-06-09 09:48:39",
+      "historyid": "13764"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1433 Title: Confirm edit when deselecting in creating mode",
+      "author": "Jamie",
+      "entrydate": "2021-06-08 16:54:49",
+      "historyid": "13733"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1440 Title: Only save slot in creating mode after confirming slot",
+      "author": "Jamie",
+      "entrydate": "2021-06-08 16:54:49",
+      "historyid": "13731"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1421 Title: A new FitText instance in being created every keydown or text change",
+      "author": "Edward",
+      "entrydate": "2021-06-08 08:49:28",
+      "historyid": "13559"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1426 Title: Popover rich text editor vertical alignment",
+      "author": "Edward",
+      "entrydate": "2021-06-08 08:49:23",
+      "historyid": "13557"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1423 Title: Inline text vertical alignment",
+      "author": "Edward",
+      "entrydate": "2021-06-08 08:49:20",
+      "historyid": "13555"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1422 Title: Inline text match line height from prism render",
+      "author": "Edward",
+      "entrydate": "2021-06-08 08:49:13",
+      "historyid": "13553"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1408 Title: SPIKE: Match text wrapping of long words to Prism render",
+      "author": "Jamie",
+      "entrydate": "2021-06-04 10:27:48",
+      "historyid": "13309"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1254 Title: Tweak in-place text",
+      "author": "DB",
+      "entrydate": "2021-05-25 10:50:49",
+      "historyid": "11738"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1253 Title: Show popover when slot dimensions are too small",
+      "author": "Edward",
+      "entrydate": "2021-05-24 10:50:27",
+      "historyid": "11625"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1251 Title: Refactor mobile experience and ensure it's not affected",
+      "author": "Edward",
+      "entrydate": "2021-05-24 10:48:36",
+      "historyid": "11623"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1250 Title: Create popover when text is too small",
+      "author": "Edward",
+      "entrydate": "2021-05-21 13:15:09",
+      "historyid": "11499"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1178 Title: Disable styling controls whilst in 'move' mode",
+      "author": "DB",
+      "entrydate": "2021-05-17 09:49:58",
+      "historyid": "10598"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1179 Title: Refine positioning of simulated text slot",
+      "author": "Jamie",
+      "entrydate": "2021-05-14 11:27:03",
+      "historyid": "10459"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1177 Title: Disable cart/order controls whilst in edit mode",
+      "author": "Jamie",
+      "entrydate": "2021-05-14 11:27:03",
+      "historyid": "10457"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1155 Title: Match text alignment of real text slot",
+      "author": "Jamie",
+      "entrydate": "2021-05-14 11:27:03",
+      "historyid": "10455"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1175 Title: Disable call to WebPrism when changing text styles",
+      "author": "Jamie",
+      "entrydate": "2021-05-14 11:27:03",
+      "historyid": "10453"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1156 Title: Ensure that scaling browser window moves simulated text slot",
+      "author": "Jamie",
+      "entrydate": "2021-05-14 11:27:03",
+      "historyid": "10451"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Task updated",
+      "taskid": "690",
+      "details": "New title: Inline Text Editing — Builder",
+      "author": "Jamie",
+      "entrydate": "2021-05-11 10:01:39",
+      "historyid": "9873"
+    },
+    {
+      "eventtype": "Transitions",
+      "historyevent": "Task moved",
+      "taskid": "690",
+      "details": "The task was reordered within the same board cell.",
+      "author": "Jamie",
+      "entrydate": "2021-05-11 10:00:13",
+      "historyid": "9869"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Predecesor of 472 Title: Prism builder - name selection functionality is not working in MWeb",
+      "author": "Jamie",
+      "entrydate": "2021-05-06 10:08:14",
+      "historyid": "9029"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1023 Title: Add additional states to text slots",
+      "author": "Jamie",
+      "entrydate": "2021-05-05 11:49:59",
+      "historyid": "8835"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1032 Title: Match text size whilst slot is in 'edit' mode",
+      "author": "Jamie",
+      "entrydate": "2021-05-05 11:49:33",
+      "historyid": "8823"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1031 Title: User clears text slot",
+      "author": "Jamie",
+      "entrydate": "2021-05-05 11:49:33",
+      "historyid": "8825"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1027 Title: Position and match dimensions of real text slot with rich text area",
+      "author": "Jamie",
+      "entrydate": "2021-05-05 11:49:33",
+      "historyid": "8827"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1028 Title: Change visibility of real and simulated slots",
+      "author": "Jamie",
+      "entrydate": "2021-05-05 11:49:33",
+      "historyid": "8829"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1030 Title: User edits exiting slot",
+      "author": "Jamie",
+      "entrydate": "2021-05-05 11:49:33",
+      "historyid": "8831"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1029 Title: User adds new text slot",
+      "author": "Jamie",
+      "entrydate": "2021-05-05 11:49:32",
+      "historyid": "8821"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Deleted",
+      "taskid": "690",
+      "details": "Parent of 519 Title: Implement Inline Text Editing",
+      "author": "Jamie",
+      "entrydate": "2021-05-05 11:17:14",
+      "historyid": "8777"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Deleted",
+      "taskid": "690",
+      "details": "Parent of 499 Title: Create proof of concept for inline text solution",
+      "author": "Jamie",
+      "entrydate": "2021-05-05 11:14:44",
+      "historyid": "8771"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 1022 Title: Inline text UX",
+      "author": "Wilbert",
+      "entrydate": "2021-05-05 10:42:36",
+      "historyid": "8761"
+    },
+    {
+      "eventtype": "Transitions",
+      "historyevent": "Task moved",
+      "taskid": "690",
+      "details": "From 'Preparing' to 'In Progress'",
+      "author": "Wilbert",
+      "entrydate": "2021-05-05 10:42:36",
+      "historyid": "8760"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Task updated",
+      "taskid": "690",
+      "details": "Description changed",
+      "author": "Jamie",
+      "entrydate": "2021-05-04 15:46:53",
+      "historyid": "8557"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Assignee changed",
+      "taskid": "690",
+      "details": "New assignee: Jamie",
+      "author": "DB",
+      "entrydate": "2021-04-08 12:19:14",
+      "historyid": "5323"
+    },
+    {
+      "eventtype": "Transitions",
+      "historyevent": "Task moved",
+      "taskid": "690",
+      "details": "From 'Options' to 'Preparing'",
+      "author": "Wilbert",
+      "entrydate": "2021-04-07 10:07:22",
+      "historyid": "5141"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Child of 569 Title: Implement Inline Text in the Prism builder",
+      "author": "Mike",
+      "entrydate": "2021-03-29 10:07:42",
+      "historyid": "4943"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 519 Title: Implement Inline Text Editing",
+      "author": "Jamie",
+      "entrydate": "2021-03-29 10:05:50",
+      "historyid": "4939"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Link Created",
+      "taskid": "690",
+      "details": "Parent of 499 Title: Create proof of concept for inline text solution",
+      "author": "Jamie",
+      "entrydate": "2021-03-29 10:04:06",
+      "historyid": "4932"
+    },
+    {
+      "eventtype": "Updates",
+      "historyevent": "Task created",
+      "taskid": "690",
+      "details": "Task : Implement inline text editing",
+      "author": "Jamie",
+      "entrydate": "2021-03-29 10:03:50",
+      "historyid": "4931"
+    }
+  ]
+}

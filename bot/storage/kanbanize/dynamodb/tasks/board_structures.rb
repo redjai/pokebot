@@ -23,6 +23,7 @@ module Storage
           end
 
           def board_file(team_id, board_id)
+            puts self.inspect
             File.join(board_root,team_id,"#{board_id}.json")
           end
 

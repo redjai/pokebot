@@ -57,6 +57,15 @@ module Storage
             store_movement(movement)
           end
 
+          task_data.section_stays.values.each do |section_stay|
+            if section_stay.valid?
+              store_section_stay(section_stay)
+            else
+              Gerty::LOGGER.debug("section stay not valid:")
+              Gerty::LOGGER.debug(section_stay.error_json)
+            end
+          end
+
           task_data.column_stays.values.each do |column_stay|
             if column_stay.valid?
               store_column_stay(column_stay)

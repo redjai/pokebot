@@ -58,19 +58,6 @@ describe Storage::DynamoDB::Kanbanize::Tasks::Movement do
       end
 
     end
-
-    context 'sections are not valid' do
-
-      let(:details){ "From 'BAD' to 'TO_WORSE'" }
-
-      it 'should raise an error' do
-        expect{
-          subject.section_boundary?
-        }.to raise_error("cannot resolve section_boundary - not all sections are valid")
-      end
-
-    end
-
   end
 
   context 'section' do
@@ -90,6 +77,16 @@ describe Storage::DynamoDB::Kanbanize::Tasks::Movement do
       it 'should return the to section name based on the from column name' do
         ClimateControl.modify BOARD_ROOT: "spec/structure_files" do
           expect(subject.to_section_name).to eq "progress"
+        end
+      end
+
+    end
+
+    context 'delta' do
+
+      it 'should be valid if there are two section names' do
+        ClimateControl.modify BOARD_ROOT: "spec/structure_files" do
+          expect(subject.delta).to eq ["discovery.refining", "discovery.ready to implement", "implementing.doing"]
         end
       end
 

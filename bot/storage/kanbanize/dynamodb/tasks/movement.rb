@@ -43,8 +43,13 @@ module Storage
           end
 
           def section_boundary?
-            raise "cannot resolve section_boundary - not all sections are valid" unless section_valid?
-            from_section_name != to_section_name
+            section_valid? && from_section_name != to_section_name
+          end
+
+          def delta
+            posa = board_structure.column_index(from_name)
+            posb = board_structure.column_index(to_name)
+            board_structure.columns.collect{|column| column.name }.slice(posa..posb) if posa && posb
           end
 
           def item
@@ -56,7 +61,8 @@ module Storage
                task_id: history_detail.task_id,
                entry_date: history_detail.entry_date,
                from_section_name: from_section_name,
-               to_section_name: to_section_name
+               to_section_name: to_section_name,
+               delta: delta
             }
           end
 

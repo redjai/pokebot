@@ -41,7 +41,7 @@ module Storage
               task_id: task_id,
               entry_history_detail_id: entry_history_detail_id,
               exit_history_detail_id: exit_history_detail_id,
-              column_name: name,
+              stay => name,
               entry_at: entry_at,
               exit_at: exit_at,
               duration: duration
@@ -78,6 +78,10 @@ module Storage
 
         class ColumnStay < Stay
 
+          def stay
+            :column_stay
+          end
+
           def entry=(movement)
             paranoid_set(:name, movement.to_name)
             super(movement)
@@ -89,6 +93,25 @@ module Storage
           end
 
         end
+
+        class SectionStay < Stay
+
+          def stay
+            :section_stay
+          end
+
+          def entry=(movement)
+            paranoid_set(:name, movement.to_section_name)
+            super(movement)
+          end
+
+          def exit=(movement)
+            paranoid_set(:name, movement.from_section_name)
+            super(movement)
+          end
+
+        end
+
       end
     end
   end

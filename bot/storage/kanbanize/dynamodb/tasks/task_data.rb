@@ -51,7 +51,21 @@ module Storage
               end
               stays
             end
-          end          
+          end
+          
+          def section_stays
+            @store_section_stays ||= begin
+              stays = {}
+              movements.each do |movement|
+                next unless movement.section_boundary?
+                stays[movement.from_name] ||= SectionStay.new
+                stays[movement.to_name] ||= SectionStay.new
+                stays[movement.from_name].exit = movement
+                stays[movement.to_name].entry = movement
+              end
+              stays
+            end
+          end   
         end
       end
     end

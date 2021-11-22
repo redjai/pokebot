@@ -50,9 +50,13 @@ module Storage
           def section(column_name)
             column_name.downcase!
             found = columns.find do |column|
-              column.name == column_name
+              column.name.downcase == column_name.downcase
             end
             found.section if found
+          end
+
+          def column_index(column_name)
+            columns.index{|column| column_name == column.name }
           end
 
           private 

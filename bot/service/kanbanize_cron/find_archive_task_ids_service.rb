@@ -29,10 +29,10 @@ module Service
       def call(bot_request)
         get_teams.each do |team|
           team.board_ids.each do |board_id|
-            bot_request.events  << ArchiveTasks.new( team_id: team.team_id, 
+            bot_request.events  << ArchiveTasks.new(   team_id: team.team_id, 
                                                       board_id: board_id,
-                                                      api_key: team.kanbanize_api_key,
-                                                    subdomain: team.subdomain,  
+                                                       api_key: team.kanbanize_api_key,
+                                                     subdomain: team.subdomain,  
                                                     date_range: bot_request.data['archive']).tasks_found_event
           end
         end

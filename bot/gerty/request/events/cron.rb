@@ -11,7 +11,8 @@ module Gerty
         module Actions
           KANBANIZE_IMPORT_ACTIVITIES = 'kanbanize-import-activities'
           FIND_TASK_IDS_FOR_BOARDS = 'find_task_ids_for_boards'
-          FIND_ARCHIVE_TASK_IDS_FOR_BOARDS = 'find_archive_task_ids_for_boards'    
+          FIND_ARCHIVE_TASK_IDS_FOR_BOARDS = 'find_archive_task_ids_for_boards'
+          POP_COMMAND = 'pop_command'    
         end
 
         SCHEDULED_REQUEST = 'cron-scheduled-request' 
@@ -29,6 +30,11 @@ module Gerty
             data: aws_event
           )  
         end
+
+        def command_popped(source:, action:, data:)
+          Gerty::Request::Event.new(source: source, name: action, version: 1.0, data: data)      
+        end
+      
       end
     end
   end

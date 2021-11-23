@@ -414,12 +414,23 @@ functions:
             source: 'cron'
             archive: 'yesterday'
             bounded_context: 'kanbanize_cron'
+      - schedule: 
+          name: 'pop-command'
+          description: 'run pop commands'
+          rate: cron(*/10 * * * ? *) #note the ? (not *) for day of month is needed because we have set 1-5 for day of week. 
+          input:
+            action: 'pop_command'
+            source: 'cron'
+            bounded_context: 'kanbanize_cron'
+            folder: 'test/folder'
+
 
     environment:
       KANBANIZE_TEAMS_TABLE_NAME: ${self:custom.kanbanize_teams_table}
       KANBANIZE_TOPIC_ARN: !Ref KanbanizeSnsTopic
       PAGE_SIZE: 30
       DATE_RANGE_OFFSET: 0
+      KANBANIZE_IMPORTS_BUCKET: ${self:custom.kanbanize_imports_bucket}
 
   kanbanize_imports:
     timeout: 20
@@ -435,7 +446,6 @@ functions:
       KANBANIZE_TASKS_TABLE_NAME: ${self:custom.kanbanize_tasks_table}
       KANBANIZE_TOPIC_ARN: !Ref KanbanizeSnsTopic
       USERS_TOPIC_ARN: !Ref UsersSnsTopic
-      KANBANIZE_IMPORTS_BUCKET: ${self:custom.kanbanize_imports_bucket}
       KANBANIZE_DB_CLUSTER: ${self:custom.config.kanbanize_database.cluster}
       KANBANIZE_DB_NAME: ${self:custom.config.kanbanize_database.name}
       KANBANIZE_DB_SECRET_ARN: ${self:custom.config.kanbanize_database.secret_arn}

@@ -64,7 +64,8 @@ module Service
       end
 
       def parse_date_range(arg)
-        dates = arg.split(":")
+        raise "cannot parse date range unexpected value #{arg}"
+        dates = arg.split("..")
         { 
           from: dates.first,
           to: dates.last

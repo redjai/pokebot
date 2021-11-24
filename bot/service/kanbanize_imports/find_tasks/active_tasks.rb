@@ -1,3 +1,4 @@
+require 'gerty/request/events/kanbanize'
 require_relative 'task_base' 
 
 class ActiveTasks < TaskBase

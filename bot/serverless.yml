@@ -108,6 +108,13 @@ provider:
       Resource: !Ref InsightsSnsTopic # !Ref returns the ARN of SNS topic in the resources element below:
     
 
+    # ALLOW THE iamRole TO PUBLISH TO THE 'cron' SNS Topic
+    - Effect: "Allow"
+      Action:
+        - "SNS:Publish"
+      Resource: !Ref CronSnsTopic # !Ref returns the ARN of SNS topic in the resources element below:
+    
+
     #AUTO-END-TOPIC-ROLE-STATEMENTS
 
     - Effect: "Allow"
@@ -427,7 +434,7 @@ functions:
 
     environment:
       KANBANIZE_TEAMS_TABLE_NAME: ${self:custom.kanbanize_teams_table}
-      KANBANIZE_TOPIC_ARN: !Ref KanbanizeSnsTopic
+      CRON_TOPIC_ARN: !Ref CronSnsTopic
       PAGE_SIZE: 30
       DATE_RANGE_OFFSET: 0
       KANBANIZE_IMPORTS_BUCKET: ${self:custom.kanbanize_imports_bucket}
@@ -440,6 +447,11 @@ functions:
          arn:
            Fn::GetAtt:
              - KanbanizeToKanbanizeImportsSqsQueue
+             - Arn
+      - sqs:
+         arn:
+           Fn::GetAtt:
+             - CronToKanbanizeImportsSqsQueue
              - Arn
     environment:
       KANBANIZE_TEAMS_TABLE_NAME: ${self:custom.kanbanize_teams_table}
@@ -947,6 +959,58 @@ resources:
           - Ref: InsightsToResponderSqsQueue
       DependsOn:
         - InsightsToResponderSubscription
+      
+
+
+    #### AUTO GENERATED TOPIC - 'cron' 
+    #################################
+    CronSnsTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:service}-${self:provider.stage}-cron
+     
+
+
+    #### AUTO GENERATED QUEUE - 'kanbanize_imports'
+    CronToKanbanizeImportsSqsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-${self:provider.stage}-sns-cron-to-sqs-kanbanize_imports
+    
+    #### AUTO GENERATED - ATTACH 'cron' TOPIC to 'kanbanize_imports' QUEUE
+    CronToKanbanizeImportsSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn: !Ref CronSnsTopic
+        Endpoint: !GetAtt
+          - CronToKanbanizeImportsSqsQueue
+          - Arn
+        Protocol: sqs
+      DependsOn:
+        - CronSnsTopic
+        - CronToKanbanizeImportsSqsQueue
+    
+    #### AUTO GENERATED - ALLOW 'cron' TOPIC to send messages to 'kanbanize_imports' QUEUE
+    SnSCronToSQSKanbanizeImportsSqsQueuePolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Sid: "allow-sns-cron"
+              Effect: Allow
+              Principal: "*"
+              Resource: !GetAtt
+                - CronToKanbanizeImportsSqsQueue
+                - Arn
+              Action: "SQS:SendMessage"
+              Condition:
+                ArnEquals:
+                  "aws:SourceArn": !Ref CronSnsTopic 
+        Queues:
+          - Ref: CronToKanbanizeImportsSqsQueue
+      DependsOn:
+        - CronToKanbanizeImportsSubscription
       
 
     #AUTO-END-TOPICS

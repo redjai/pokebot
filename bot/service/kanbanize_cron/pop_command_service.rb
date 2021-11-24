@@ -10,7 +10,7 @@ module Service
       end
 
       def broadcast
-        %w( kanbanize )
+        %w( cron )
       end
 
       Gerty::Service::BoundedContext.register(self)

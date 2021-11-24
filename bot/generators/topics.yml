@@ -14,4 +14,6 @@ sns:
   insights:
     - insight
     - responder
+  cron:
+    - kanbanize_imports
 

@@ -9,7 +9,8 @@ module Service
         [ 
           Gerty::Request::Events::Cron::Actions::FIND_ARCHIVE_TASK_IDS_FOR_BOARDS,
           Gerty::Request::Events::Cron::Actions::FIND_TASK_IDS_FOR_BOARDS,
-          Gerty::Request::Events::Cron::Actions::KANBANIZE_IMPORT_ACTIVITIES
+          Gerty::Request::Events::Cron::Actions::KANBANIZE_IMPORT_ACTIVITIES,
+          Gerty::Request::Events::Cron::Actions::COLUMN_STAY_INSIGHTS_BUILD_REQUESTED
         ]
       end
 

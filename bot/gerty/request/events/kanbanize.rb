@@ -15,6 +15,7 @@ module Gerty
         ARCHIVED_TASKS_FOUND = 'archived_tasks_found'
         TASKS_FOUND = 'tasks_found'
         
+        
         def activities_imported(source:, team_id:, board_id:, activities:)
           data = {
             'board_id' => board_id,

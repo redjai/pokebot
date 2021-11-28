@@ -12,6 +12,7 @@ module Gerty
           KANBANIZE_IMPORT_ACTIVITIES = 'kanbanize-import-activities'
           FIND_TASK_IDS_FOR_BOARDS = 'find_task_ids_for_boards'
           FIND_ARCHIVE_TASK_IDS_FOR_BOARDS = 'find_archive_task_ids_for_boards'
+          COLUMN_STAY_INSIGHTS_BUILD_REQUESTED = 'column_stay_insights_build_requested'
           POP_COMMAND = 'pop_command'    
         end
 

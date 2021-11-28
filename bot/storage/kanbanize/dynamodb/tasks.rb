@@ -126,7 +126,25 @@ module Storage
             Gerty::LOGGER.debug(e)
             false
           end
-        end  
+        end
+        
+        def column_stays(team_board_id:)
+          date_range = ((Date.today - 90)..Date.today)
+          dynamo_resource.client.query({
+            table_name: ENV['KANBANIZE_COLUMN_STAYS_TABLE_NAME'], # required
+            index_name: "team_board_id_entry_at_duration",
+            key_condition_expression: "#team_board_id = :team_board_id AND #entry_at BETWEEN :after AND :before",
+            expression_attribute_names: {
+              '#team_board_id' => 'team_board_id',
+              '#entry_at' => 'entry_at'
+            },
+            expression_attribute_values: {
+              ':team_board_id' => team_board_id,
+              ':after' => date_range.first.to_datetime.iso8601,
+              ':before' => date_range.last.to_datetime.iso8601,
+            }
+          })
+        end
       end 
     end
   end

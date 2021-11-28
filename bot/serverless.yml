@@ -429,8 +429,7 @@ functions:
             action: 'pop_command'
             source: 'cron'
             bounded_context: 'kanbanize_cron'
-            folder: 'test/folder'
-
+            folder: 'cron/10'
 
     environment:
       KANBANIZE_TEAMS_TABLE_NAME: ${self:custom.kanbanize_teams_table}
@@ -444,15 +443,15 @@ functions:
     handler: gerty/listeners/sqs.Handler::Sqs.handle
     events:
       - sqs:
-         arn:
-           Fn::GetAtt:
-             - KanbanizeToKanbanizeImportsSqsQueue
-             - Arn
+          arn:
+            Fn::GetAtt:
+              - KanbanizeToKanbanizeImportsSqsQueue
+              - Arn
       - sqs:
-         arn:
-           Fn::GetAtt:
-             - CronToKanbanizeImportsSqsQueue
-             - Arn
+          arn:
+            Fn::GetAtt:
+              - CronToKanbanizeImportsSqsQueue
+              - Arn
     environment:
       KANBANIZE_TEAMS_TABLE_NAME: ${self:custom.kanbanize_teams_table}
       KANBANIZE_TASKS_TABLE_NAME: ${self:custom.kanbanize_tasks_table}
@@ -1168,19 +1167,30 @@ resources:
             AttributeType: S
           - AttributeName: entry_at
             AttributeType: S
+          - AttributeName: duration
+            AttributeType: N
 
         KeySchema:
           - AttributeName: id
             KeyType: HASH 
+        # GlobalSecondaryIndexes:
+        #   - IndexName: team_board_id_entry_at
+        #     KeySchema:
+        #       - AttributeName: team_board_id
+        #         KeyType: HASH
+        #       - AttributeName: entry_at
+        #         KeyType: RANGE
         GlobalSecondaryIndexes:
-          - IndexName: team_board_id_entry_at
+          - IndexName: team_board_id_entry_at_duration
             KeySchema:
               - AttributeName: team_board_id
                 KeyType: HASH
               - AttributeName: entry_at
                 KeyType: RANGE
             Projection:
-              ProjectionType: KEYS_ONLY
+              NonKeyAttributes:
+                - duration
+              ProjectionType: INCLUDE
         BillingMode: PAY_PER_REQUEST
 
     #######################################

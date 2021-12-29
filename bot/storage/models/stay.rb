@@ -1,10 +1,10 @@
-
+require 'date'
 
 module Storage
   module DynamoDB
     module Kanbanize
       module Tasks
-        class Stay
+        class Cycle
           
           attr_accessor :team_id, :board_id, :task_id, :entry_history_detail_id, :exit_history_detail_id, :name, :entry_at, :exit_at
 
@@ -76,41 +76,41 @@ module Storage
 
         end
 
-        class ColumnStay < Stay
+        # class ColumnStay < Stay
 
-          def stay
-            :column_stay
-          end
+        #   def stay
+        #     :column_stay
+        #   end
 
-          def entry=(movement)
-            paranoid_set(:name, movement.to_name)
-            super(movement)
-          end
+        #   def entry=(movement)
+        #     paranoid_set(:name, movement.to_name)
+        #     super(movement)
+        #   end
 
-          def exit=(movement)
-            paranoid_set(:name, movement.from_name)
-            super(movement)
-          end
+        #   def exit=(movement)
+        #     paranoid_set(:name, movement.from_name)
+        #     super(movement)
+        #   end
 
-        end
+        # end
 
-        class SectionStay < Stay
+        # class SectionStay < Stay
 
-          def stay
-            :section_stay
-          end
+        #   def stay
+        #     :section_stay
+        #   end
 
-          def entry=(movement)
-            paranoid_set(:name, movement.to_section_name)
-            super(movement)
-          end
+        #   def entry=(movement)
+        #     paranoid_set(:name, movement.to_section_name)
+        #     super(movement)
+        #   end
 
-          def exit=(movement)
-            paranoid_set(:name, movement.from_section_name)
-            super(movement)
-          end
+        #   def exit=(movement)
+        #     paranoid_set(:name, movement.from_section_name)
+        #     super(movement)
+        #   end
 
-        end
+        # end
 
       end
     end

@@ -1,3 +1,6 @@
+
+require 'date'
+
 module Storage
   module DynamoDB
     module Kanbanize
@@ -21,6 +24,10 @@ module Storage
             "#{@team_id}-#{@kanbanize_data['historyid']}"
           end
 
+          def history_event
+            @kanbanize_data['historyevent']
+          end
+
           def details
             @kanbanize_data['details']
           end
@@ -32,7 +39,7 @@ module Storage
           def task_id
             @kanbanize_data['taskid']
           end
-          
+         
         end
       end
     end

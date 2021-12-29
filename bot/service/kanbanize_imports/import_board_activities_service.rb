@@ -1,6 +1,6 @@
 require 'net/http'
 require_relative '../kanbanize/net/api'
-require 'storage/kanbanize/dynamodb/team'
+require 'storage/dynamodb/team'
 require 'gerty/request/events/cron'
 require 'gerty/service/bounded_context'
 

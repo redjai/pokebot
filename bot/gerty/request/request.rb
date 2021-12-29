@@ -29,7 +29,7 @@ module Gerty
       def user(auto_load: true)
         @user ||= begin
           return nil unless auto_load
-          require 'storage/kanbanize/dynamodb/user'
+          require 'storage/dynamodb/user'
           Storage::Kanbanize::DynamoDB::User.read( team_id: context.team_id, 
                                                   slack_id: context.slack_id )
         end
@@ -38,22 +38,10 @@ module Gerty
       def team
         @team ||= begin
           return nil unless auto_load
-          require 'storage/kanbanize/dynamodb/team'
+          require 'storage/dynamodb/team'
           Storage::Kanbanize::DynamoDB::Team.fetch_team(context.team_id)
         end
       end
-
-      # intent was when we couldn't understand why a user has interacted
-      # lets replace this by using SlackContext private-metadata in interactions 
-      # def intent
-      #   all.find do |event|
-      #     event['intent']
-      #   end
-      # end
-
-      # def intent?
-      #   !intent.nil?
-      # end
 
       def events?
         events.any?
@@ -99,11 +87,9 @@ module Gerty
       def all
         [@current] + trail 
       end
-
     end
 
     class EventArray < Array
-
       def clean!
         @dirty = false
       end
@@ -113,6 +99,7 @@ module Gerty
       end
 
       def <<(event)
+        raise "events trail is greater than 20" if self.size > 20
         push event.to_h if event
         @dirty = true
       end

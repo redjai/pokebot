@@ -1,7 +1,7 @@
 require 'date'
 require 'aws-sdk-s3'
 require_relative '../kanbanize/net/api'
-require 'storage/kanbanize/dynamodb/team'
+require 'storage/dynamodb/team'
 require 'gerty/request/events/cron'
 
 require_relative 'find_tasks/archived_tasks'

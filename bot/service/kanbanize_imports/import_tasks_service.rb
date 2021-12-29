@@ -1,10 +1,9 @@
 require 'date'
 require 'aws-sdk-s3'
 require_relative '../kanbanize/net/api'
-require 'storage/kanbanize/dynamodb/team'
-require 'storage/kanbanize/s3/task'
 require 'gerty/request/events/kanbanize'
-require 'storage/kanbanize/dynamodb/tasks'
+require 'storage/dynamodb/kanbanize/tasks'
+require 'storage/dynamodb/team'
 
 # this service imports task details for any new activities found that day
 module Service
@@ -54,11 +53,6 @@ module Service
         )
 
         response = response.is_a?(Hash) ? [response] : response
-
-        store = Storage::Kanbanize::TaskStore.new(
-          bot_request.data['team_id'],
-          bot_request.data['board_id'],
-        )
 
         response.each do |task|
           Storage::Kanbanize::DynamoDB::Task.upsert(team_id: team.team_id, task: task)

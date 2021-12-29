@@ -1,5 +1,5 @@
 require 'aws-sdk-dynamodb'
-require 'storage/kanbanize/dynamodb/user_favourites'
+require 'storage/dynamodb/spoonacular/user_favourites'
 require 'gerty/request/events/users'
 require 'gerty/service/bounded_context'
 

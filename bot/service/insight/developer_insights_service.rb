@@ -1,6 +1,6 @@
 require 'gerty/request/events/insights'
-require 'storage/kanbanize/dynamodb/activities'
-require 'storage/kanbanize/dynamodb/tasks'
+require 'storage/dynamodb/kanbanize/activities'
+require 'storage/dynamodb/kanbanize/tasks'
 
 module Service
   module Insight

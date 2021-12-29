@@ -1,4 +1,4 @@
-require 'storage/kanbanize/dynamodb/user'
+require 'storage/dynamodb/user'
 require 'gerty/request/events/users'
 require 'gerty/service/bounded_context'
 

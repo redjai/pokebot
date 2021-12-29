@@ -1,5 +1,5 @@
 require 'gerty/lib/logger'
-require 'storage/kanbanize/dynamodb/team'
+require 'storage/dynamodb/team'
 
 module Util
   class Handler

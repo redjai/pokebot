@@ -1,5 +1,5 @@
 require 'date'
-require 'storage/kanbanize/dynamodb/team'
+require 'storage/dynamodb/team'
 require 'gerty/request/events/kanbanize'
 require 'gerty/service/bounded_context'
 require 'service/responder/slack/response'

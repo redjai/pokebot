@@ -1,6 +1,6 @@
 require 'gerty/request/events/kanbanize'
 require 'date'
-require 'storage/kanbanize/dynamodb/activities'
+require 'storage/dynamodb/kanbanize/activities'
 
 # all of todays activities are imported in 'import board activities'
 # this service saves these to s3 IF they haven't already been saved in an earlier request today

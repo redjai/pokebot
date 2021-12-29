@@ -1,5 +1,5 @@
 require_relative 'spoonacular/api/information_bulk_search'
-require 'storage/kanbanize/dynamodb/recipe_favourites'
+require 'storage/dynamodb/spoonacular/recipe_favourites'
 require 'gerty/request/events/recipes'
 require 'gerty/service/bounded_context'
 

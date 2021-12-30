@@ -11,7 +11,7 @@ module Service
     module ImportTasks
       extend self
       extend Service::Kanbanize::Api
-      extend Storage::Kanbanize::DynamoDB::Team
+      extend Storage::DynamoDB::Team
                                   
       def listen
         [
@@ -55,7 +55,7 @@ module Service
         response = response.is_a?(Hash) ? [response] : response
 
         response.each do |task|
-          Storage::Kanbanize::DynamoDB::Task.upsert(team_id: team.team_id, task: task)
+          Storage::DynamoDB::Kanbanize::Task.upsert(team_id: team.team_id, task: task)
         end
 
         bot_request.events << Gerty::Request::Events::Kanbanize.tasks_imported(

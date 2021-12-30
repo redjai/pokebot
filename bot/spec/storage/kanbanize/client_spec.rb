@@ -1,6 +1,6 @@
-require 'storage/kanbanize/dynamodb/team'
+require 'storage/dynamodb/team'
 
-describe Storage::Kanbanize::DynamoDB::Team do
+describe Storage::DynamoDB::Team do
 
   let(:last_board_id){ 2 }
   let(:board_ids){ [3] }

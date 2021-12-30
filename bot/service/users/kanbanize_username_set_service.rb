@@ -18,7 +18,7 @@ module Service
       Gerty::Service::BoundedContext.register(self)
 
       def call(bot_request)
-        updates = ::Storage::Kanbanize::DynamoDB::User.set_kanbanize_username(
+        updates = ::Storage::DynamoDB::User.set_kanbanize_username(
                                                                              team_id: bot_request.context.team_id, 
                                                                             slack_id: bot_request.context.slack_id, 
                                                                   kanbanize_username: bot_request.data['kanbanize_username'] )

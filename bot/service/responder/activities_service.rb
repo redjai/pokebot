@@ -10,7 +10,7 @@ module Service
         module Firehose
           module Activities
           extend self
-          extend Storage::Kanbanize::DynamoDB::Team
+          extend Storage::DynamoDB::Team
                                 
             def listen
               [ Gerty::Request::Events::Kanbanize::NEW_ACTIVITIES_FOUND ]

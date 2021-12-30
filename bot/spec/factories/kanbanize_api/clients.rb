@@ -1,7 +1,7 @@
-require 'storage/kanbanize/dynamodb/team'
+require 'storage/dynamodb/team'
 
 FactoryBot.define do
-  factory :client, class: Storage::Kanbanize::DynamoDB::Team do
+  factory :client, class: Storage::DynamoDB::Team do
 
     team_id { "test-client-1" }
     boards { ["11", "12", "13"] }

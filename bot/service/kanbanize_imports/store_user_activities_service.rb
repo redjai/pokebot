@@ -22,7 +22,7 @@ module Service
 
       def call(bot_request)
 
-        new_activities = Storage::Kanbanize::DynamoDB::Activities.upsert( team_id: bot_request.data['team_id'], 
+        new_activities = Storage::DynamoDB::Kanbanize::Activities.upsert( team_id: bot_request.data['team_id'], 
                                                                            board_id: bot_request.data['board_id'], 
                                                                          activities: bot_request.data['activities'] )
       

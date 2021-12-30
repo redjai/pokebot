@@ -1,6 +1,6 @@
 require 'storage/kanbanize/dynamodb/tasks/history_detail'
 
-describe Storage::DynamoDB::Kanbanize::Tasks::HistoryDetail do
+describe Storage::Models::Kanbanize::HistoryDetail do
 
   let(:api_history_detail){ build(:api_history_detail) }
   let(:team_id){ Faker::Team.name }

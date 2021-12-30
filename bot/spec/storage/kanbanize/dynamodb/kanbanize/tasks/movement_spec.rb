@@ -1,15 +1,15 @@
 require 'storage/kanbanize/dynamodb/tasks/movement'
 
-describe Storage::DynamoDB::Kanbanize::Tasks::Movement do
+describe Storage::Models::Movement do
 
   let(:team_id){ 'T12345' }
   let(:board_id){ '4' }
   let(:valid_api_history_detail){ build(:api_history_detail, :column_movement) }
-  let(:valid_history_detail){ Storage::DynamoDB::Kanbanize::Tasks::HistoryDetail.new(team_id: team_id, kanbanize_data:  valid_api_history_detail) }
+  let(:valid_history_detail){ Storage::Models::Kanbanize::HistoryDetail.new(team_id: team_id, kanbanize_data:  valid_api_history_detail) }
 
   context '::build' do
   
-    let(:invalid_history_detail){ Storage::DynamoDB::Kanbanize::Tasks::HistoryDetail.new(team_id: team_id, kanbanize_data:  invalid_api_history_detail) }
+    let(:invalid_history_detail){ Storage::Models::Kanbanize::HistoryDetail.new(team_id: team_id, kanbanize_data:  invalid_api_history_detail) }
     let(:invalid_api_history_detail){ build(:api_history_detail, details: 'not a column movement') }
 
     it 'should return a movement if there is a valid from-to detail' do

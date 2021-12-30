@@ -4,8 +4,8 @@ require 'gerty/lib/logger'
 require 'storage/dynamodb/movements'
 
 module Storage
-  module Kanbanize
-    module DynamoDB
+  module DynamoDB
+    module Kanbanize
       module Task
         extend self
           
@@ -42,7 +42,7 @@ module Storage
         end
         
         def upsert(team_id:, task:)
-          task_data = Storage::DynamoDB::Kanbanize::Tasks::TaskData.new(team_id: team_id, kanbanize_data: task)
+          task_data = Storage::Models::Kanbanize::TaskData.new(team_id: team_id, kanbanize_data: task)
           dynamo_resource.client.put_item(
             {
               item: task_data.item,
@@ -51,7 +51,7 @@ module Storage
           )
           
           task_data.movements.each do |movement|
-            Storage::Kanbanize::DynamoDB::Movements.store(movement)
+            Storage::DynamoDB::Movements.store(movement)
           end
 
           # task_data.section_stays.values.each do |section_stay|

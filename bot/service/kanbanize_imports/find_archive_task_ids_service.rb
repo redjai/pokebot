@@ -14,7 +14,7 @@ module Service
   module Kanbanize
     module FindArchiveTaskIdsForBoards
       extend self
-      extend Storage::Kanbanize::DynamoDB::Team
+      extend Storage::DynamoDB::Team
 
       def listen
         [ Gerty::Request::Events::Cron::Actions::FIND_ARCHIVE_TASK_IDS_FOR_BOARDS ]

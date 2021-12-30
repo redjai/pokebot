@@ -23,12 +23,12 @@ FactoryBot.define do
 
   FactoryBot.define do
 
-    factory :history_detail, class: Storage::DynamoDB::Kanbanize::Tasks::HistoryDetail do
+    factory :history_detail, class: Storage::Models::Kanbanize::HistoryDetail do
 
       team_id { "T12345" }
       kanbanize_data { build(:api_history_detail) }
 
-      initialize_with{ Storage::DynamoDB::Kanbanize::Tasks::HistoryDetail.new(team_id: team_id, kanbanize_data: kanbanize_data) }
+      initialize_with{ Storage::Models::Kanbanize::HistoryDetail.new(team_id: team_id, kanbanize_data: kanbanize_data) }
 
       trait :movement do
         kanbanize_data { build(:api_history_detail, :column_movement) }

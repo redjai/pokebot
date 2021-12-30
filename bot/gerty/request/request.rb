@@ -30,7 +30,7 @@ module Gerty
         @user ||= begin
           return nil unless auto_load
           require 'storage/dynamodb/user'
-          Storage::Kanbanize::DynamoDB::User.read( team_id: context.team_id, 
+          Storage::DynamoDB::User.read( team_id: context.team_id, 
                                                   slack_id: context.slack_id )
         end
       end
@@ -39,7 +39,7 @@ module Gerty
         @team ||= begin
           return nil unless auto_load
           require 'storage/dynamodb/team'
-          Storage::Kanbanize::DynamoDB::Team.fetch_team(context.team_id)
+          Storage::DynamoDB::Team.fetch_team(context.team_id)
         end
       end
 

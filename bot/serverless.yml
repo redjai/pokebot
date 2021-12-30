@@ -1101,7 +1101,9 @@ resources:
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
-          - AttributeName: team_board_id_from_to
+          - AttributeName: team_board_id_from
+            AttributeType: S
+          - AttributeName: team_board_id_to
             AttributeType: S
           - AttributeName: date
             AttributeType: S
@@ -1109,9 +1111,17 @@ resources:
           - AttributeName: id
             KeyType: HASH   
         GlobalSecondaryIndexes:
-          - IndexName: team_board_id_from_to_date
+          - IndexName: team_board_id_from_date
             KeySchema:
-              - AttributeName: team_board_id_from_to
+              - AttributeName: team_board_id_from
+                KeyType: HASH
+              - AttributeName: date
+                KeyType: RANGE
+            Projection:
+              ProjectionType: KEYS_ONLY
+          - IndexName: team_board_id_to_date
+            KeySchema:
+              - AttributeName: team_board_id_to
                 KeyType: HASH
               - AttributeName: date
                 KeyType: RANGE

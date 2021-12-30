@@ -7,7 +7,7 @@ module Util
       Gerty::LOGGER.debug(event)
       Gerty::LOGGER.debug(context)
       
-      Storage::Kanbanize::DynamoDB::Team.create(
+      Storage::DynamoDB::Team.create(
         team_id: event['team_id'],
         board_ids: event['board_ids'].split(","),
         kanbanize_api_key: event['kanbanize_api_key'],

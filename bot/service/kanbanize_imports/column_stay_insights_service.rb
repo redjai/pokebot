@@ -23,7 +23,7 @@ module Service
       def call(bot_request)
         date_range = last_90_days
         team_board_id = bot_request.data['team_board_id']
-        stays = Storage::Kanbanize::DynamoDB::Task.board_column_stays(team_board_id: team_board_id, date_range: date_range)
+        stays = Storage::DynamoDB::Kanbanize::Task.board_column_stays(team_board_id: team_board_id, date_range: date_range)
         puts Service::Insight::ColumnStayInsights.new(team_board_id, stays).to_h
       end
 

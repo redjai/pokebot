@@ -14,7 +14,7 @@ module Service
     module ImportBoardActivities # change this name 
       extend self
       extend Service::Kanbanize::Api
-      extend Storage::Kanbanize::DynamoDB::Team
+      extend Storage::DynamoDB::Team
 
       DEFAULT_PAGE_SIZE = 30
                                 

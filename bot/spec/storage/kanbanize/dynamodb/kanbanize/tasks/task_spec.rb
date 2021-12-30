@@ -1,6 +1,6 @@
 require 'storage/kanbanize/dynamodb/tasks/task_data'
 
-describe Storage::DynamoDB::Kanbanize::Tasks::TaskData do
+describe Storage::Models::Kanbanize::TaskData do
 
 
   let(:team_id){ "T12345" }
@@ -11,7 +11,7 @@ describe Storage::DynamoDB::Kanbanize::Tasks::TaskData do
 
   it 'should return an array of Movement' do
     subject.movements.each do |movement|
-      expect(movement).to be_a Storage::DynamoDB::Kanbanize::Tasks::Movement
+      expect(movement).to be_a Storage::Models::Movement
     end
   end
 

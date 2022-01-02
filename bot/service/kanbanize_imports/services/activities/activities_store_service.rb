@@ -1,6 +1,8 @@
-require 'gerty/request/events/kanbanize'
 require 'date'
-require 'storage/dynamodb/kanbanize/activities'
+
+require 'gerty/request/events/kanbanize'
+
+require_relative '../../storage/activities'
 
 # all of todays activities are imported in 'import board activities'
 # this service saves these to s3 IF they haven't already been saved in an earlier request today
@@ -22,7 +24,7 @@ module Service
 
       def call(bot_request)
 
-        new_activities = Storage::DynamoDB::Kanbanize::Activities.upsert( team_id: bot_request.data['team_id'], 
+        new_activities = Service::Kanbanize::Storage::Activities.upsert( team_id: bot_request.data['team_id'], 
                                                                            board_id: bot_request.data['board_id'], 
                                                                          activities: bot_request.data['activities'] )
       

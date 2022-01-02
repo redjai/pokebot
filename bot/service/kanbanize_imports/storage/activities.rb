@@ -4,9 +4,9 @@ require 'digest'
 require 'date'
 require 'gerty/lib/logger'
 
-module Storage
-  module DynamoDB
-    module Kanbanize
+module Service
+  module Kanbanize
+    module Storage
       module Activities
         extend self
 

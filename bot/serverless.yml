@@ -32,9 +32,8 @@ provider:
     HONEYBADGER_API_KEY: ${file(config.${self:provider.stage}.yml):honeybadger_api_key}
     BOT_ENV: ${self:provider.stage}
     USERS_TABLE_NAME: ${self:custom.users_table}
-    KANBANIZE_ACTIVITIES_TABLE_NAME: ${self:custom.kanbanize_activities_table}
-    KANBANIZE_TASKS_TABLE_NAME: ${self:custom.kanbanize_tasks_table}
     TEAM_IDS: T010JM31KJ9
+    KANBANIZE_TEAMS_TABLE_NAME: ${self:custom.kanbanize_teams_table}
 
   iamRoleStatements:
 
@@ -420,18 +419,17 @@ functions:
               - CronToKanbanizeImportsSqsQueue
               - Arn
     environment:
-      KANBANIZE_TEAMS_TABLE_NAME: ${self:custom.kanbanize_teams_table}
-      KANBANIZE_TASKS_TABLE_NAME: ${self:custom.kanbanize_tasks_table}
+      INSIGHTS_TOPIC_ARN: !Ref InsightsSnsTopic  
       KANBANIZE_TOPIC_ARN: !Ref KanbanizeSnsTopic
       USERS_TOPIC_ARN: !Ref UsersSnsTopic
       KANBANIZE_DB_CLUSTER: ${self:custom.config.kanbanize_database.cluster}
       KANBANIZE_DB_NAME: ${self:custom.config.kanbanize_database.name}
       KANBANIZE_DB_SECRET_ARN: ${self:custom.config.kanbanize_database.secret_arn}
       KANBANIZE_HISTORY_DETAILS_TABLE_NAME: ${self:custom.kanbanize_history_details_table}
-      KANBANIZE_COLUMN_STAYS_TABLE_NAME: ${self:custom.kanbanize_column_stays_table}
-      KANBANIZE_SECTION_STAYS_TABLE_NAME: ${self:custom.kanbanize_section_stays_table}
       INSIGHTS_MOVEMENTS_TABLE_NAME: ${self:custom.insights_movements_table}
       BOARD_ROOT: storage/local/kanbanize/board_structures
+      KANBANIZE_ACTIVITIES_TABLE_NAME: ${self:custom.kanbanize_activities_table}
+      KANBANIZE_TASKS_TABLE_NAME: ${self:custom.kanbanize_tasks_table}
       
 
   kanbanize_util:

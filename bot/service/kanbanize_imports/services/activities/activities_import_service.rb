@@ -1,8 +1,9 @@
 require 'net/http'
-require_relative '../kanbanize/net/api'
 require 'storage/dynamodb/team'
 require 'gerty/request/events/cron'
 require 'gerty/service/bounded_context'
+
+require_relative '../../lib/api'
 
 #
 # Reacts to CRON request, fetches activities from kanbanize and publishes them into a topic
@@ -14,8 +15,7 @@ module Service
     module ImportBoardActivities # change this name 
       extend self
       extend Service::Kanbanize::Api
-      extend Storage::DynamoDB::Team
-
+      extend ::Storage::DynamoDB::Team
       DEFAULT_PAGE_SIZE = 30
                                 
       def listen

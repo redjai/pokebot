@@ -1,7 +1,7 @@
-require_relative 'kanbanize/board_structures'
+require_relative 'board_structures'
 
-module Storage
-  module Models
+module Service
+  module Kanbanize
     class Movement
 
       attr_accessor :team_id, :board_id, :from_name, :to_name
@@ -61,29 +61,17 @@ module Storage
         @to_name = to_name.downcase
       end
 
-      def id
-        "#{@team_id}-#{@board_id}-#{@task_id}-#{@movement_id}"
-      end
-
-      def delta
-        posa = board_structure.column_index(from_name)
-        posb = board_structure.column_index(to_name)
-        posb - posa if posa && posb
-      end
-
-      def item
+      def to_h
         {
-            id: id,
-            from: from_name,
-            to: to_name,
-            team_board_id_from: "#{@team_id}-#{@board_id}-#{@from_name}",
-            team_board_id_to: "#{@team_id}-#{@board_id}-#{@to_name}",
+            team_id: @team_id,
+            board_id: @board_id,
             task_id: @task_id,
+            from: @from_name,
+            to: @to_name,
             index: @index,
-            date: @date,
-            delta: delta
+            date: @date
         }
-      end
+      end  
 
       private
 

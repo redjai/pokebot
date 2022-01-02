@@ -1,9 +1,14 @@
 require 'date'
 require 'aws-sdk-s3'
-require_relative '../kanbanize/net/api'
+
 require 'gerty/request/events/kanbanize'
-require 'storage/dynamodb/kanbanize/tasks'
+require 'gerty/request/events/insights'
+
 require 'storage/dynamodb/team'
+
+require_relative '../../storage/tasks'
+require_relative '../../lib/api'
+require_relative '../../lib/task_data'
 
 # this service imports task details for any new activities found that day
 module Service
@@ -11,8 +16,7 @@ module Service
     module ImportTasks
       extend self
       extend Service::Kanbanize::Api
-      extend Storage::DynamoDB::Team
-                                  
+      extend ::Storage::DynamoDB::Team                                  
       def listen
         [
           Gerty::Request::Events::Kanbanize::TASKS_FOUND,
@@ -21,14 +25,16 @@ module Service
       end
 
       def broadcast
-        %w( kanbanize )
+        %w( insight )
       end
 
       Gerty::Service::BoundedContext.register(self)
 
       def call(bot_request)
         get_teams.each do |team|
-          import_tasks(bot_request, team)
+          tasks = import_tasks(bot_request, team)
+          store_tasks(tasks)
+          broadcast_movements(bot_request, tasks)
         end
       end
 
@@ -52,20 +58,30 @@ module Service
           } 
         )
 
-        response = response.is_a?(Hash) ? [response] : response
-
-        response.each do |task|
-          Storage::DynamoDB::Kanbanize::Task.upsert(team_id: team.team_id, task: task)
+        (response.is_a?(Hash) ? [response] : response).collect do |task_data|
+          Service::Kanbanize::TaskData.new(team_id: team.team_id, kanbanize_data: task_data)
         end
+      end
 
-        bot_request.events << Gerty::Request::Events::Kanbanize.tasks_imported(
+      def store_tasks(tasks)
+        tasks.each do |task_data|
+          Service::Kanbanize::Storage::Task.upsert(task_data)
+        end
+      end
+
+      def broadcast_movements(bot_request, tasks)
+        movements = tasks.collect do |task_data|
+          task_data.movements.collect do |movement|
+            movement.to_h
+          end
+        end.flatten
+
+        bot_request.events << Gerty::Request::Events::Insights.movements_found(
           source: self.class.name, 
-          team_id: team.team_id, 
-          board_id: bot_request.data['board_id'],
-          tasks: ids.collect{ |id| {  "task_id" => id } },
-          archived: bot_request.data['archived'] ? 'yes' : 'no'  
+          movements: movements
         )
       end
+
     end
   end
 end

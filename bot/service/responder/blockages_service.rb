@@ -10,8 +10,7 @@ module Service
         module Firehose
           module Blockages
           extend self
-          extend Storage::DynamoDB::Team
-                                         
+          extend ::Storage::DynamoDB::Team                                         
             def listen
               [ Gerty::Request::Events::Kanbanize::NEW_ACTIVITIES_FOUND ]
             end

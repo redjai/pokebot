@@ -25,7 +25,7 @@ module Service
       end
 
       def broadcast
-        %w( insight )
+        %w( insights )
       end
 
       Gerty::Service::BoundedContext.register(self)

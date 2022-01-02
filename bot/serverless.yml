@@ -266,8 +266,9 @@ functions:
              - InsightsToInsightSqsQueue
              - Arn
     environment:
-      INSIGHTS_TOPIC_ARN: !Ref InsightsSnsTopic  
-
+      INSIGHTS_TOPIC_ARN: !Ref InsightsSnsTopic 
+      INSIGHTS_MOVEMENTS_TABLE_NAME: ${self:custom.insights_movements_table}
+ 
   intent:
     handler: gerty/listeners/sqs.Handler::Sqs.handle
     events:    
@@ -426,7 +427,6 @@ functions:
       KANBANIZE_DB_NAME: ${self:custom.config.kanbanize_database.name}
       KANBANIZE_DB_SECRET_ARN: ${self:custom.config.kanbanize_database.secret_arn}
       KANBANIZE_HISTORY_DETAILS_TABLE_NAME: ${self:custom.kanbanize_history_details_table}
-      INSIGHTS_MOVEMENTS_TABLE_NAME: ${self:custom.insights_movements_table}
       BOARD_ROOT: storage/local/kanbanize/board_structures
       KANBANIZE_ACTIVITIES_TABLE_NAME: ${self:custom.kanbanize_activities_table}
       KANBANIZE_TASKS_TABLE_NAME: ${self:custom.kanbanize_tasks_table}

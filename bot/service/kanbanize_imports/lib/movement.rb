@@ -66,14 +66,22 @@ module Service
             team_id: @team_id,
             board_id: @board_id,
             task_id: @task_id,
+            movement_id: @movement_id,
             from: @from_name,
             to: @to_name,
             index: @index,
+            delta: @delta, 
             date: @date
         }
       end  
 
       private
+
+      def delta
+        posa = board_structure.column_index(from_name)
+        posb = board_structure.column_index(to_name)
+        posb - posa if posa && posb
+      end
 
       def board_structure
         BoardStructures.board(@team_id, @board_id)

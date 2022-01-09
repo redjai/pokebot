@@ -25,17 +25,7 @@ module Service
 
       def movements(bot_request)
         bot_request.data['movements'].collect do |movement|
-          Service::Insight::Movement.new(
-                  team_id: movement['team_id'], 
-                  board_id: movement['board_id'],
-                  task_id: movement['task_id'],
-              movement_id: movement['movement+_id'],
-                    index: movement['index'],
-                    delta: movement['delta'],
-                    date: movement['date'],
-                    from: movement['from'],
-                    to: movement['to']
-          )
+          Service::Insight::Movement.from_event(movement)
         end
       end
     end

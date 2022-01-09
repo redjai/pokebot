@@ -30,6 +30,9 @@ module Gerty
           raise "cannot load service #{file}" unless File.exists?(file)
           require file
         end
+        if bounded_context_files.empty?
+          Gerty::LOGGER.debug("FOUND NO SERVICE FILES IN: #{bounded_context_folder}")
+        end
       end
 
       def bounded_context_folder

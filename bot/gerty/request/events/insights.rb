@@ -8,6 +8,7 @@ module Gerty
         extend self
         extend Gerty::Request::Base
 
+        BUILD_ACTIVE_CYCLES = 'build_active_cycles'
         MOVEMENTS_FOUND = 'movements_found'
         DEVELOPER_INSIGHTS_REQUESTED = 'developer_insights_requested'
         DEVELOPER_INSIGHTS_FOUND = 'developer_insights_found'

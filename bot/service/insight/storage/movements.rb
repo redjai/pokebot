@@ -67,13 +67,17 @@ module Service
         
         def fetch_items(team_id:, board_id:, from_or_to:, column:,  before:, after:)
           ids = fetch_item_ids(team_id: team_id, board_id: board_id, from_or_to: from_or_to, column: column,  before: before, after: after)
-          dynamo_resource.client.batch_get_item({
-            request_items: {
-              ENV['INSIGHTS_MOVEMENTS_TABLE_NAME'] => {
-                keys: ids.collect{|id| { "id" => id }}
-              }, 
-            }, 
-          }).responses[ENV['INSIGHTS_MOVEMENTS_TABLE_NAME']]
+          if ids.empty?
+            Gerty::LOGGER.debug("no movements found #{team_id} #{board_id} #{from_or_to} #{column} #{before} #{after}")
+            []
+          else
+            ids.collect do |id|
+              dynamo_resource.client.get_item({
+                table_name: ENV['INSIGHTS_MOVEMENTS_TABLE_NAME'],
+                key: { "id" => id }
+              })[:item]
+            end
+          end
         end
  
         def fetch_item_ids(team_id:, board_id:, from_or_to:, column:,  before:, after:)
@@ -90,7 +94,7 @@ module Service
               ':after' => after.to_datetime.iso8601,
               ':before' => before.to_datetime.iso8601
             }
-          })[:items].collect{|item| item['id']}
+          })[:items].collect{ |item| item['id'] }
         end
       end
     end

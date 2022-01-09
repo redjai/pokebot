@@ -31,7 +31,6 @@ module Service
       end
 
       def self.from_item(team_id:, board_id:, item:)
-          puts item.inspect
         new(
             team_id: team_id,
            board_id: board_id,

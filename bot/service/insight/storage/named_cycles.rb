@@ -53,8 +53,8 @@ module Service
           Service::Insight::NamedCycle.new( team_board_id: item['team_board_id'], 
                                                      name: item['name'], 
                                             next_cycle_at: item['next_cycle_at'],
-                                                     from: item['from'],
-                                                       to: item['to'] )
+                                                    entry: item['entry'],
+                                                     exit: item['exit'] )
         end
 
         def named_cycle_ids(team_id:, board_id:, name:)

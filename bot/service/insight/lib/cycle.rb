@@ -4,17 +4,18 @@ module Service
   module Insight
     class Cycle
       
-      attr_accessor :team_board_id, :name, :from, :to, :cycles
+      attr_accessor :team_board_id, :name, :entry, :exit, :cycles
       
-      def initialize(team_id:, board_id:, name:, from:, to:, after:, before:, percentile:)
+      def initialize(team_id:, board_id:, name:, entry:, exit:, after:, before:, percentile:, movements:)
         @name = name
         @team_id = team_id
         @board_id = board_id
-        @from = from
-        @to = to
+        @entry = entry
+        @exit = exit
         @after = after
         @before = before
         @percentile = percentile
+        @movements = movements
       end
 
       def task_cycles
@@ -25,11 +26,12 @@ module Service
         {
           'team_board_id_name' => "#{@team_id}-#{@board_id}-#{@name}",
           'name' => @name,
-          'from' => @from,
-          'to' => @to,
+          'entry' => @entry,
+          'exit' => @exit,
           'after' => @after.to_datetime.iso8601,
           'before' => @before.to_datetime.iso8601,
-          'percentile' => @percentile
+          'percentile' => @percentile,
+          'movements' => @movements
         }
       end
  

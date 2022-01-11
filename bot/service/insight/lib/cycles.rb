@@ -51,20 +51,25 @@ module Service
       def task_cycles
         @task_cycles ||= begin
           all_cycles = {}
-          add_movements( hash: all_cycles, movements: cycle_entry_movements, action: 'entry' )  # to is when we enter that 'from' column
           add_movements( hash: all_cycles, movements: cycle_exit_movements, action:  'exit' ) # from is when we exit that 'to' column
+          add_movements( hash: all_cycles, movements: cycle_first_active_movements(all_cycles.keys), action: 'entry' )  # to is when we enter that 'from' column
           all_cycles.delete_if{ |task_id, movements| dups.include?(task_id) || movements['entry'].nil? || movements['exit'].nil? }
         end
       end
-    
-      def cycle_entry_movements
+     
+      def cycle_entry_movements(task_ids)
         # we enter the cycle 'from' column when the movement 'to' is that column
-        Service::Insight::Storage::Movements.fetch_to(team_id: @team_id, board_id: @board_id, after: @after, before: @before, to: @named_cycle.entry)
+        Service::Insight::Storage::Movements.fetch_entry_named_movements(team_id: @team_id, board_id: @board_id, task_ids: task_ids,  entry: @named_cycle.entry)
       end
 
+      def cycle_first_active_movements(task_ids)
+        # we enter the cycle 'from' column when the movement 'to' is that column
+        Service::Insight::Storage::Movements.fetch_entry_indexed_movements(team_id: @team_id, board_id: @board_id, task_ids: task_ids, index: 1)
+      end
+      
       def cycle_exit_movements
         # we exit the cycle 'to' column when the movement 'from' is that column
-        Service::Insight::Storage::Movements.fetch_from(team_id: @team_id, board_id: @board_id,  after: @after, before: @before, from: @named_cycle.exit)
+        Service::Insight::Storage::Movements.fetch_exit_named_movements(team_id: @team_id, board_id: @board_id,  after: @after, before: @before, exit: @named_cycle.exit)
       end
 
       def dups
